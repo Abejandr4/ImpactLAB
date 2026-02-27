@@ -1,11 +1,11 @@
   import React, { useState, useEffect } from "react";
-  import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
   import "leaflet/dist/leaflet.css";
   import L from "leaflet";
   import { useNavigate } from "react-router-dom";
   import asteroidImage from "../assets/img/asteroideY.png";
   import { simulateAsteroidImpact } from "../utils/Operaciones";
-  import TextType from "../components/TextType";
+  import PueblaMap from "../components/PueblaMap";
+
 
   // Fix para los iconos de Leaflet
   delete L.Icon.Default.prototype._getIconUrl;
@@ -29,7 +29,7 @@
     const [composition, setComposition] = useState("Roca");
     const [density, setDensity] = useState(DENSITY_RANGES.Roca.initial);
     const navigate = useNavigate();
-    const position = [19.0433, -98.2022]; // Coordenadas de Puebla, México
+    const [position, setPosition] = useState([19.0433, -98.2022]); // Coordenadas de Puebla, México
 
     useEffect(() => {
       setDensity(DENSITY_RANGES[composition].initial);
@@ -39,22 +39,26 @@
 
     const handleLaunch = () => {
       const simParams = {
-        diameter_km: diameter / 1000, // Convertir metros a kilómetros
-        density_kgm3: density, // Ya está en kg/m³
-        velocity_kms: speed, // Ya está en km/s
+        diameter_km: diameter / 1000,
+        density_kgm3: density,
+        velocity_kms: speed,
         angle_deg: angle,
         distance_from_impact_km: 10,
         targetType: "land",
+        lat: position[0], //posición otorgada por el usuario
+        lng: position[1],
+        radius: calculateImpactRadius(diameter, speed) // You'll need this for the backend filter
       };
 
       const results = simulateAsteroidImpact(simParams);
+      
       navigate("/video1", {
         state: {
           simulationResults: results,
           inputParameters: {
             ...simParams,
             composition,
-            targetLocation: "Puebla, México (Tierra)",
+            targetLocation: `Puebla (${position[0].toFixed(4)}, ${position[1].toFixed(4)})`,
           },
         },
       });
@@ -99,21 +103,13 @@
           {/* Mapa */}
           {!isLaunched && (
             <div className="w-full bg-gray-900 rounded-lg p-4 border-2 border-violet-500 h-fit max-h-[85vh]">
-              <div className="h-50 w-auto mb-4 rounded-lg overflow-hidden border border-gray-700">
-                <MapContainer
-                  center={position}
-                  zoom={12}
-                  style={{ height: "100%", width: "100%" }}
-                >
-                  <TileLayer
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    attribution='&copy; OpenStreetMap contributors'
-                  />
-                  <Marker position={position}>
-                    <Popup>Puebla, México</Popup>
-                  </Marker>
-                </MapContainer>
+              <div className="h-96 w-auto mb-4 rounded-lg overflow-hidden border border-gray-700">
+                {/* Call your new interactive component here */}
+                <PueblaMap position={position} setPosition={setPosition} />
               </div>
+              <p className="text-gray-400 text-xs text-center">
+                Haz clic en el mapa para cambiar el punto de impacto (Solo Puebla)
+              </p>
             </div>
           )}
         </div>

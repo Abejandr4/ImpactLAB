@@ -89,13 +89,15 @@ const Impacto = () => {
   const { simulationResults: initialResults, inputParameters: inputs } =
     location.state || {};
 
-  // 3. Add useEffect to fetch the file (assumes data.json is in your /public folder)
   useEffect(() => {
-    fetch("/data.json")
+    // Only fetch when you have a specific impact event or coordinates
+    const queryParams = new URLSearchParams({ lat: 40.7, lon: -74.0, radius: 5 });
+    
+    fetch(`http://localhost:3001/impact-data?${queryParams}`)
       .then((res) => res.json())
       .then((data) => setGeoJsonData(data))
-      .catch((err) => console.error("Error loading data:", err));
-  }, []);
+      .catch((err) => console.error("Error:", err));
+  }, [impactCoordinates]); // Triggered by user action
 
   const [distanceSliderValue, setDistanceSliderValue] = useState(20);
   const [selectedEffect, setSelectedEffect] = useState("Pérdidas");
