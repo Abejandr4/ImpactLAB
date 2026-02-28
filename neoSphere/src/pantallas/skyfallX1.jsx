@@ -47,7 +47,7 @@
         targetType: "land",
         lat: position[0], //posición otorgada por el usuario
         lng: position[1],
-        radius: calculateImpactRadius(diameter, speed) // You'll need this for the backend filter
+        radius: (diameter/speed)*100 // You'll need this for the backend filter
       };
 
       const results = simulateAsteroidImpact(simParams);

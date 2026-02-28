@@ -81,6 +81,7 @@ const headerTextsByEffect = {
 
 const Impacto = () => {
   const location = useLocation();
+  console.log("Estado de la ubicación:", location.state); //para debug y asi
   const navigate = useNavigate();
 
   // 2. Add state for the GeoJSON data
