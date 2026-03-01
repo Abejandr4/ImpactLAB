@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaArrowCircleLeft, FaArrowCircleRight } from "react-icons/fa";
 
-export default function Carousel({ slides }) {
+export default function Carousel({ slides, onImageClick }) {
   const [current, setCurrent] = useState(0);
 
   const nextSlide = () => setCurrent((prev) => (prev + 1) % slides.length);
@@ -42,11 +42,12 @@ export default function Carousel({ slides }) {
             key={i}
             className="absolute w-75 h-100 transition-all duration-500 ease-in-out"
             style={getStyles(i)}
+            onClick={() => onImageClick(s.link)}
           >
             <img
-              src={s}
+              src={s.image}
               alt={`slide-${i}`}
-              className="w-full h-full object-cover rounded-2xl shadow-2xl border-4 border-white/10"
+              className="w-full h-full cursor-pointer object-cover rounded-2xl shadow-2xl border-4 border-white/10"
             />
           </div>
         ))}

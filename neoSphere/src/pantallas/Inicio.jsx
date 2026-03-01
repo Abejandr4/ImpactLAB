@@ -51,13 +51,7 @@ function Inicio() {
             as="button"
             onClick={() => navigate("/slide-gallery")}
           >
-            Galería
-          </HoverBorderGradient>
-          <HoverBorderGradient 
-                containerClassName="hover:bg-[#1D0175] rounded-lg transition px-10 py-4 text-xl min-w-[200px]"
-                as="button"
-                onClick={() => navigate("/orbita")}>
-                Órbitas de los asteroides
+            Galería y orbitas
           </HoverBorderGradient>
           <HoverBorderGradient
             containerClassName="hover:bg-[#1D0175] rounded-lg transition px-10 py-4 text-xl min-w-[200px]"

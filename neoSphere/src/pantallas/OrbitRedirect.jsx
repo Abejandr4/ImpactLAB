@@ -1,3 +1,5 @@
+//Ya no se esta usando pero lod ejamos por cualquier cosa
+
 import React, { useEffect } from "react";
 
 function OrbitRedirect() {
