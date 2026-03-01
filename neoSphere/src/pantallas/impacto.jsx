@@ -20,7 +20,7 @@ L.Icon.Default.mergeOptions({
 import { simulateAsteroidImpact } from "../utils/Operaciones";
 
 // --- CONSTANTES GLOBALES ---
-const IMPACT_POSITION = [19.0413, -98.2062];
+// const IMPACT_POSITION = [19.0413, -98.2062]; coordenadas de puebla
 const MAP_ZOOM = 9;
 const MAX_DISTANCE_KM = 500;
 
@@ -84,13 +84,17 @@ const Impacto = () => {
   console.log("Estado de la ubicación:", location.state); //para debug y asi
   const navigate = useNavigate();
 
-  // 2. Add state for the GeoJSON data
+  //state for geojson
   const [geoJsonData, setGeoJsonData] = useState(null);
 
   const { simulationResults: initialResults, inputParameters: inputs } =
     location.state || {};
 
-  // 3. Add useEffect to fetch the file (assumes data.json is in your /public folder)
+  const impactPos = useMemo(() => {
+      return inputs ? [inputs.lat, inputs.lng] : [19.0433, -98.2022];
+    }, [inputs]);
+
+  // useEffect to fetch data.json
   useEffect(() => {
     fetch("/data.json")
       .then((res) => res.json())
@@ -146,7 +150,7 @@ const Impacto = () => {
     };
 
     let totalPop = 0;
-    const [impactLat, impactLon] = IMPACT_POSITION;
+    const [impactLat, impactLon] = impactPos;
 
     geoJsonData.features.forEach((feature) => {
       try {
@@ -337,7 +341,12 @@ const Impacto = () => {
                 Zona de Impacto: <span className="text-white text-2xl ml-2">{displayData.zone}</span>
               </h2>
               <div className="h-96 rounded-lg overflow-hidden border border-gray-700 shadow-inner">
-                <MapContainer center={IMPACT_POSITION} zoom={MAP_ZOOM} scrollWheelZoom={false} className="h-full w-full">
+                  <MapContainer 
+                        center={impactPos} // UPDATED
+                        zoom={MAP_ZOOM} 
+                        scrollWheelZoom={false} 
+                        className="h-full w-full"
+                      >
                   <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                   
                   {/* Capa GeoJSON del Mapa de Población */}
@@ -350,7 +359,7 @@ const Impacto = () => {
 
                   {craterRadiusMeters > 0 ? (
                     <Circle 
-                      center={IMPACT_POSITION} 
+                      center={impactPos} 
                       radius={craterRadiusMeters} 
                       pathOptions={{ 
                         color: activeStyle.hex, 
@@ -360,7 +369,7 @@ const Impacto = () => {
                       }} 
                     />
                   ) : (
-                    <Marker position={IMPACT_POSITION} />
+                    <Marker position={impactPos} />
                   )}
                 </MapContainer>
               </div>
