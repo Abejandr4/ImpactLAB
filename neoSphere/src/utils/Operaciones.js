@@ -188,10 +188,10 @@ export const simulateAsteroidImpact = ({
     let mercalli = "I";
     if (M_eff > 2) mercalli = "II-III";
     if (M_eff > 4) mercalli = "IV-V";
-    if (M_eff > 5) mercalli = "VI-VII (Minor damage)";
-    if (M_eff > 6) mercalli = "VII-VIII (Moderate damage)";
-    if (M_eff > 7) mercalli = "IX-X (Severe damage)";
-    if (M_eff > 8) mercalli = "XI-XII (Destruction)";
+    if (M_eff > 5) mercalli = "VI-VII (Daños menores)";
+    if (M_eff > 6) mercalli = "VII-VIII (Daño moderado)";
+    if (M_eff > 7) mercalli = "IX-X (Daño severo)";
+    if (M_eff > 8) mercalli = "XI-XII (Destrucción / Colapso)";
 
     return {
       richterMagnitude: richter_magnitude,
