@@ -117,7 +117,7 @@ const Resultados = () => {
         {/* --- SECCIÓN C: BOTÓN DE REGRESO --- */}
         <div className="flex justify-center pt-2">
           <button
-            onClick={() => navigate("/impacto")}
+            onClick={() => navigate("/skyfallx-game")}
             className="w-full md:w-1/2 p-4 text-xl font-extrabold rounded-lg shadow-2xl transition-all bg-gray-700 hover:bg-gray-600 text-white"
           >
             Regresar a la Simulación
