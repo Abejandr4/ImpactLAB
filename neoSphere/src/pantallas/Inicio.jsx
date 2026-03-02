@@ -20,7 +20,7 @@ function Inicio() {
         <img 
           src={Asteroid} 
           alt="Asteroid"
-          className="w-1/2 max-w-2xl transform translate-y-1/4 opacity-80" 
+          className="scale-150 max-w-2xl transform translate-y-1/4 opacity-80" 
           /* translate-y-1/4 pushes it down so it peeks from behind the text */
         />
       </div>
@@ -30,7 +30,7 @@ function Inicio() {
         {/* Título animado */}
         <div className="flex flex-row items-center mb-2">
           <BlurText
-            text="Asteroides"
+            text="ImpactLAB"
             delay={100}
             animateBy="letters"
             direction="top"
@@ -39,7 +39,7 @@ function Inicio() {
         </div>
         
         <div className="mb-12">
-           <h1 className="text-sky-100 text-lg tracking-widest uppercase">
+           <h1 className="text-sky-100 p-4 text-lg tracking-widest uppercase">
              Aprende sobre estos objetos espaciales
            </h1>
         </div>
