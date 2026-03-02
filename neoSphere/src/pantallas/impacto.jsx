@@ -26,6 +26,13 @@ const MAX_DISTANCE_KM = 500;
 
 // --- CONFIGURACIÓN DE ESTILOS POR EFECTO ---
 const effectStyles = {
+  "Sismo": {
+    text: "text-red-500",
+    bg: "bg-red-500",
+    accent: "accent-red-500",
+    border: "border-red-500",
+    hex: "#ef4444" 
+  },
   "Resumen general": {
     text: "text-red-500",
     bg: "bg-red-500",
@@ -71,6 +78,7 @@ const effectStyles = {
 };
 
 const headerTextsByEffect = {
+  "Sismo": "Al momento de impacto, se generará un sismo.",
   "Pérdidas": "Al momento de impacto, habrían numerosas pérdidas de varios tipos.",
   "Cráter": "Este es el efecto del cráter. ¡Puedes ver en el mapa un círculo que representa el diámetro del impacto!",
   "Onda de Choque": "¡La onda de choque expansiva es destructiva! Se propaga a través de la atmósfera causando daños estructurales.",
@@ -132,6 +140,27 @@ const Impacto = () => {
       ? crater.finalDiameter_m / 2
       : 0;
   }, [recalculatedEffects]);
+
+  const sueloAfectado = useMemo(() => {
+    if (!inputs || !inputs.lat) return { zona: "Desconocida", tipoSuelo: "No especificado" };
+
+    const lat = inputs.lat;
+    let zona = "";
+    let tipoSuelo = "";
+
+    if (lat > 19.5) {
+      zona = "Sierra Norte";
+      tipoSuelo = "Roca";
+    } else if (lat > 18.7) {
+      zona = "Valles Centrales";
+      tipoSuelo = "Sedimento";
+    } else {
+      zona = "Mixteca";
+      tipoSuelo = "Suelo Blando";
+    }
+
+    return { zona, tipoSuelo };
+  }, [inputs]);
 
   // 4. Calcular población afectada (ahora que craterRadiusMeters existe arriba)
   const totalAffectedPopulation = useMemo(() => {
@@ -224,6 +253,30 @@ const Impacto = () => {
     }
 
     switch (selectedEffect) {
+      case "Sismo":
+        return (
+          <div className="space-y-4 text-sm pt-2">
+            {/* Sección de Tipo de Suelo */}
+            <div>
+              <p className="font-bold text-red-500 text-lg uppercase tracking-wider">Geología del Impacto</p>
+              <div className="grid grid-cols-2 gap-2 mt-2">
+                <div className="bg-white/5 p-3 rounded border border-white/10">
+                  <p className="text-gray-400 text-xs uppercase">Zona Geográfica</p>
+                  <p className="text-white font-bold text-lg">{sueloAfectado.zona}</p>
+                </div>
+                <div className="bg-white/5 p-3 rounded border border-white/10">
+                  <p className="text-gray-400 text-xs uppercase">Composición</p>
+                  <p className="text-white font-bold text-lg">{sueloAfectado.tipoSuelo}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="text-xs text-gray-500 italic mt-2">
+              * El tipo de suelo influye en la propagación de las ondas sísmicas. 
+              Datos basados en proyecciones de latitud y censos locales.
+            </div>
+          </div>
+        );
       case "Pérdidas":
         return (
           <div className="space-y-1 text-sm pt-2">
@@ -283,6 +336,7 @@ const Impacto = () => {
   }, [selectedEffect, scenario, crater, airBlast, thermalRadiation, ejecta, burstAltitude, displayData, totalAffectedPopulation]);
 
   const effectButtons = [
+    { name: "Sismo", label: "Sismo" },
     { name: "Pérdidas", label: "Pérdidas" },
     { name: "Cráter", label: "Cráter" },
     { name: "Onda de Choque", label: "Onda de Choque" },
