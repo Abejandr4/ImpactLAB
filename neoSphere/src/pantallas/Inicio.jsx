@@ -40,7 +40,7 @@ function Inicio() {
         
         <div className="mb-12">
            <h1 className="text-sky-100 p-4 text-lg tracking-widest uppercase">
-             Aprende sobre estos objetos espaciales
+             Aprende sobre los asteroides
            </h1>
         </div>
 

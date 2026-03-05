@@ -23,7 +23,7 @@ const NavBar = () => {
           onClick={() => navigate("/")}
           className="text-white text-right text-2xl font-bold tracking-widest cursor-pointer hover:text-yellow-400 transition"
         >
-          Asteroides
+          ImpactLAB
         </div>
       </div>
     </nav>

@@ -1,3 +1,5 @@
+import { ImCross } from "react-icons/im";
+
 export default function Modal({ isOpen, onClose, url }) {
   if (!isOpen) return null;
 
@@ -9,7 +11,7 @@ export default function Modal({ isOpen, onClose, url }) {
           onClick={onClose}
           className="absolute top-4 right-4 z-50 bg-black/50 text-white p-2 rounded-full hover:bg-black"
         >
-          ✕
+          <ImCross/>
         </button>
         
         {/* External Content */}
