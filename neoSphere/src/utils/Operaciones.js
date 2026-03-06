@@ -80,10 +80,9 @@ const calculateAffectedPopulation = (impactLat, impactLon, radiusMeters) => {
 
     if (!intensity || intensity <= 0) return { lethality: 0, estimatedVictims: 0 };
 
-    // Coeficientes Probit (ajustar según paper específico si es necesario)
-    // Para sobrepresión o radiación térmica
-    const a = -77.1; 
-    const b = 6.91;
+    // coeficientes ajustados para Puebla
+    const a = 1.5; 
+    const b = 9.0;
 
     const probability = 1 / (1 + Math.exp(-(a + b * Math.log10(intensity))));
     const clampedProb = Math.min(Math.max(probability, 0), 1);
@@ -238,6 +237,7 @@ const calculateAffectedPopulation = (impactLat, impactLon, radiusMeters) => {
     if (r_km < 60) M_eff = richter_magnitude - 0.0238 * r_km;
     else if (r_km < 700) M_eff = richter_magnitude - 0.0048 * r_km - 1.1644;
     else M_eff = richter_magnitude - 1.66 * Math.log10(r_km) - 3.44;
+
 
     let mercalli = "I";
     if (M_eff > 2) mercalli = "II-III";

@@ -311,7 +311,7 @@ const Impacto = () => {
         return (
           <div className="space-y-1 text-sm pt-2">
             <p className="text-lg font-bold text-pink-400">{thermalRadiation.thermalExposure_Jm2.toLocaleString()} J/m²</p>
-            <p className="font-medium text-gray-300">Radio Bola de Fuego: <span className="font-bold text-white text-base">{thermalRadiation.fireballRadius_km.toFixed(2)} km</span></p>
+            <p className="font-medium text-gray-300">Radio de la bola de fuego generada: <span className="font-bold text-white text-base">{thermalRadiation.fireballRadius_km.toFixed(2)} km</span></p>
             <p className="text-sm mt-2 text-pink-400 font-bold italic">Efectos: {thermalRadiation.ignitionEffects}</p>
           </div>
         );
@@ -319,7 +319,7 @@ const Impacto = () => {
         return (
           <div className="space-y-1 text-sm pt-2">
             <p className="font-medium text-gray-300">Grosor capa: <span className="font-bold text-white text-base">{(ejecta.thickness_m * 1000).toFixed(2)} mm</span></p>
-            <p className="font-medium text-gray-300">Frag. promedio: <span className="font-bold text-white text-base">{ejecta.meanFragmentSize_mm.toFixed(2)} mm</span></p>
+            <p className="font-medium text-gray-300">Tamaño de fragmento promedio: <span className="font-bold text-white text-base">{ejecta.meanFragmentSize_mm.toFixed(2)} mm</span></p>
           </div>
         );
       case "Resumen general":
@@ -477,7 +477,7 @@ const Impacto = () => {
             className="px-12 py-4 text-2xl font-extrabold rounded-xl shadow-2xl transition-all bg-gray-700 hover:bg-gray-600 hover:scale-105 text-white border-b-4 border-gray-900 active:border-b-0"
             onClick={() => navigate("/result")}
           >
-            MITIGACIÓN
+            ¿Y... qué se pudo haber hecho?
           </button>
         </div>
       </div>
