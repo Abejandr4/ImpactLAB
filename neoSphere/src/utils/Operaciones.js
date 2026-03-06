@@ -14,6 +14,9 @@ export const simulateAsteroidImpact = ({
   velocity_kms,
   angle_deg,
   distance_from_impact_km,
+  lat, // <--- Nueva entrada
+  lng, // <--- Nueva entrada
+  geoJsonData, // <--- Los datos de población
   targetType = "land", // Solo se admite 'land'
 }) => {
   // --- CONSTANTES GLOBALES Y FÍSICAS ---
@@ -39,6 +42,57 @@ export const simulateAsteroidImpact = ({
   const r_m = distance_from_impact_km * 1000.0; // Distancia del observador (m)
 
   // --- MÓDULOS DE CÁLCULO (Funciones internas) ---
+
+  const getDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371e3;
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  };
+
+const calculateAffectedPopulation = (impactLat, impactLon, radiusMeters) => {
+    if (!geoJsonData || !geoJsonData.features) return 0;
+    let totalPop = 0;
+
+    geoJsonData.features.forEach((feature) => {
+      try {
+        const coords =
+          feature.geometry.type === "MultiPolygon"
+            ? feature.geometry.coordinates[0][0][0]
+            : feature.geometry.coordinates[0][0];
+
+        const distance = getDistance(impactLat, impactLon, coords[1], coords[0]);
+        if (distance <= radiusMeters) {
+          totalPop += Number(feature.properties.POBTOT || 0);
+        }
+      } catch (e) { /* Geometría inválida */ }
+    });
+    return totalPop;
+  };
+
+  const calculateLethality = (intensity, population) => {
+
+    if (!intensity || intensity <= 0) return { lethality: 0, estimatedVictims: 0 };
+
+    // Coeficientes Probit (ajustar según paper específico si es necesario)
+    // Para sobrepresión o radiación térmica
+    const a = -77.1; 
+    const b = 6.91;
+
+    const probability = 1 / (1 + Math.exp(-(a + b * Math.log10(intensity))));
+    const clampedProb = Math.min(Math.max(probability, 0), 1);
+
+    return {
+      lethality: clampedProb,
+      estimatedVictims: Math.round(population * clampedProb),
+    };
+  };
 
   const calculateAtmosphericEntry = () => {
     // Fórmulas para la fragmentación atmosférica y la velocidad de impacto en superficie.
@@ -315,7 +369,13 @@ export const simulateAsteroidImpact = ({
   const ejecta = calculateEjecta(
     crater.transientDiameter_m,
     crater.finalDiameter_m
-  );
+  )
+
+  const craterFinalRadius = crater.finalDiameter_m / 2
+  const population = calculateAffectedPopulation(lat, lng, craterFinalRadius);
+
+  const fireballStats = calculateLethality(thermal, population);
+  const shockwaveStats = calculateLethality(airBlast, population);
 
   // Devolver todos los resultados
   return {
@@ -327,5 +387,10 @@ export const simulateAsteroidImpact = ({
     seismicEffects: seismic,
     ejecta: ejecta,
     airBlast: airBlast,
+    populationAffected: population,
+    lethalityFireball: fireballStats.probability,
+    victimsFireball: fireballStats.victims,
+    lethalityShockwave: shockwaveStats.probability,
+    victimsShockwave: shockwaveStats.victims,
   };
 };

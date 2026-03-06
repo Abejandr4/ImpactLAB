@@ -15,7 +15,7 @@ import { HoverBorderGradient } from "../components/hover-border-gradient";
 
 function SlideGallery() {
     const slides = [
-        {image: imag1, link: "https://asteroid-db-q68v.vercel.app/"},
+        {image: imag1, link: "https://asteroid-db-q68v.vercel.app/?asteroidId=1 Ceres (A801 AA)"},
         {image: imag2, link: "https://asteroid-db-q68v.vercel.app/"},
         {image: imag3, link: "https://wikipedia.com/"},
         {image: imag4, link: "https://wikipedia.com/"},

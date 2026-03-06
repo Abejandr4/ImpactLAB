@@ -403,13 +403,13 @@ const Impacto = () => {
                       >
                   <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                   
-                  {/* Capa GeoJSON del Mapa de Población */}
+                  {/* Capa GeoJSON del Mapa de Población 
                   {geoJsonData && (
                     <GeoJSON 
                       data={geoJsonData} 
                       style={{ color: "#4b5563", weight: 1, fillOpacity: 0.1, interactive: false }} 
                     />
-                  )}
+                  )}*/}
 
                   {craterRadiusMeters > 0 ? (
                     <Circle 
