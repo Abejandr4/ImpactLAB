@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { HoverBorderGradient } from "../components/hover-border-gradient";
+import { TiHome } from "react-icons/ti";
 
 const NavBar = () => {
   const navigate = useNavigate();
@@ -21,8 +22,10 @@ const NavBar = () => {
         {/* Botón de Regreso a la Página Principal */}
         <div
           onClick={() => navigate("/")}
-          className="text-white text-right text-2xl font-bold tracking-widest cursor-pointer hover:text-yellow-400 transition"
+          className="flex justify-end items-center gap-3 text-white text-2xl font-bold tracking-widest cursor-pointer hover:text-yellow-400 transition"
         >
+
+          <TiHome/>
           ImpactLAB
         </div>
       </div>

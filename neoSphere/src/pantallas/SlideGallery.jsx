@@ -15,13 +15,13 @@ import { HoverBorderGradient } from "../components/hover-border-gradient";
 
 function SlideGallery() {
     const slides = [
-        {image: imag1, link: "https://asteroid-db-q68v.vercel.app/?asteroidId=1 Ceres (A801 AA)"},
-        {image: imag2, link: "https://asteroid-db-q68v.vercel.app/"},
-        {image: imag3, link: "https://wikipedia.com/"},
-        {image: imag4, link: "https://wikipedia.com/"},
-        {image: imag5, link: "https://wikipedia.com/"},
-        {image: imag6, link: "https://wikipedia.com/"},
-        {image: imag7, link: "https://asteroid-db-q68v.vercel.app/"}
+        {image: imag1, link: "http://asteroid-db-q68v.vercel.app/%20%20%20%20%201%20Ceres%20%28A801%20AA%29"},
+        {image: imag2, link: "https://asteroid-db-q68v.vercel.app/%20%20%20%20%204%20Vesta%20%28A807%20FA%29"},//vesta
+        {image: imag3, link: "https://asteroid-db-q68v.vercel.app/%20%20%20%20%20243%20Ida%20%28A884%20SB%29"}, //ida 
+        {image: imag4, link: "https://wikipedia.com/"}, //psyche
+        {image: imag5, link: "https://wikipedia.com/"}, //eros
+        {image: imag6, link: "https://wikipedia.com/"}, //mathilde
+        {image: imag7, link: "https://asteroid-db-q68v.vercel.app/"} //hektor
         
     ]
     const navigate = useNavigate();

@@ -464,10 +464,9 @@ const Impacto = () => {
                 Efectos Sísmicos (a {displayData.currentDistanceKm} km)
               </h3>
               <p className="text-4xl font-extrabold text-red-500">MAG: {displayData.seismicDetails.magnitude}</p>
-              <div className="grid grid-cols-2 gap-4 pt-2">
-                <p className="text-sm text-gray-400 font-medium">Escala Richter: <br/><span className="text-lg text-white">{displayData.seismicDetails.richterScale}</span></p>
-                <p className="text-sm text-gray-400 font-medium">Intensidad Mercalli: <br/><span className="text-lg text-white">{displayData.seismicDetails.mercalliIntensity}</span></p>
-              </div>
+              <p className="text-2xl font-medium text-red-500">en la escala Richter</p>
+              <p className="text-4xl font-extrabold text-red-500">{displayData.seismicDetails.mercalliIntensity}</p>
+              <p className="text-2xl font-medium text-red-500">en la escala Mercalli</p>
             </div>
           </div>
         </div>
