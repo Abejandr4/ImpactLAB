@@ -15,13 +15,13 @@ import { HoverBorderGradient } from "../components/hover-border-gradient";
 
 function SlideGallery() {
     const slides = [
-        {image: imag1, link: "https://asteroid-catalogue.vercel.app/%20%20%20%20%201%20Ceres%20%28A801%20AA%29"},
-        {image: imag2, link: "https://asteroid-catalogue.vercel.app/%20%20%20%20%204%20Vesta%20%28A807%20FA%29"},//vesta
-        {image: imag3, link: "https://asteroid-catalogue.vercel.app/%20%20%20%20%20243%20Ida%20%28A884%20SB%29"}, //ida 
-        {image: imag4, link: "https://asteroid-catalogue.vercel.app/%20%20%20%20%2016%20Psyche%20%28A852%20FA%29"}, //psyche
-        {image: imag5, link: "https://asteroid-catalogue.vercel.app/%20%20%20%20%202%20Pallas%20%28A802%20FA%29"}, //eros changed to pallas
-        {image: imag6, link: "https://asteroid-catalogue.vercel.app/%20%20%20%20%20253%20Mathilde%20%28A885%20VA%29"}, //mathilde
-        {image: imag7, link: "https://asteroid-catalogue.vercel.app/%20%20%20%20%20624%20Hektor%20%28A907%20CF%29"} //hektor
+        {image: imag1, text: "Ceres", link: "https://asteroid-catalogue.vercel.app/%20%20%20%20%201%20Ceres%20%28A801%20AA%29"},
+        {image: imag2, text: "Vesta", link: "https://asteroid-catalogue.vercel.app/%20%20%20%20%204%20Vesta%20%28A807%20FA%29"},//vesta
+        {image: imag3, text: "Ida", link: "https://asteroid-catalogue.vercel.app/%20%20%20%20%20243%20Ida%20%28A884%20SB%29"}, //ida 
+        {image: imag4, text: "Psyche", link: "https://asteroid-catalogue.vercel.app/%20%20%20%20%2016%20Psyche%20%28A852%20FA%29"}, //psyche
+        {image: imag5, text: "Pallas", link: "https://asteroid-catalogue.vercel.app/%20%20%20%20%202%20Pallas%20%28A802%20FA%29"}, //eros changed to pallas
+        {image: imag6, text: "Mathilde", link: "https://asteroid-catalogue.vercel.app/%20%20%20%20%20253%20Mathilde%20%28A885%20VA%29"}, //mathilde
+        {image: imag7, text: "Hektor", link: "https://asteroid-catalogue.vercel.app/%20%20%20%20%20624%20Hektor%20%28A907%20CF%29"} //hektor
         
     ]
     const navigate = useNavigate();

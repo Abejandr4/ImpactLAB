@@ -49,6 +49,7 @@ export default function Carousel({ slides, onImageClick }) {
               alt={`slide-${i}`}
               className="w-full h-full cursor-pointer object-cover rounded-2xl shadow-2xl border-4 border-white/10"
             />
+            <p className="text-white text-center text-2xl font-bold tracking-widest cursor-pointer"> {s.text} </p>
           </div>
         ))}
       </div>
