@@ -104,15 +104,20 @@ const Impacto = () => {
 
   // useEffect to fetch data.json
   useEffect(() => {
-    fetch("/data.json")
-      .then((res) => res.json())
-      .then((data) => setGeoJsonData(data))
-      .catch((err) => console.error("Error loading data:", err));
+    fetch("./data.json") // Añade el punto inicial
+  .then((res) => {
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+    return res.json();
+  })
+  .then((data) => setGeoJsonData(data))
+  .catch((err) => console.error("Error loading data:", err));
   }, []);
 
   const [distanceSliderValue, setDistanceSliderValue] = useState(20);
-  const [selectedEffect, setSelectedEffect] = useState("Pérdidas");
-  const [headerText, setHeaderText] = useState(headerTextsByEffect["Pérdidas"]);
+  const [selectedEffect, setSelectedEffect] = useState("Sismo");
+  const [headerText, setHeaderText] = useState(headerTextsByEffect["Sismo"]);
 
   // --- LÓGICA DE CÁLCULO ---
 
