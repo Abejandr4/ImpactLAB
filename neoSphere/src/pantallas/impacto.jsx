@@ -3,6 +3,7 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { MapContainer, TileLayer, Circle, Marker, GeoJSON } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import dataPoblacion from "../../public/data.json";
 
 // --- CONFIGURACIÓN DE ICONOS DE LEAFLET ---
 import L from "leaflet";
@@ -93,7 +94,7 @@ const Impacto = () => {
   const navigate = useNavigate();
 
   //state for geojson
-  const [geoJsonData, setGeoJsonData] = useState(null);
+ const [geoJsonData, setGeoJsonData] = useState(dataPoblacion);
 
   const { simulationResults: initialResults, inputParameters: inputs } =
     location.state || {};
@@ -103,17 +104,17 @@ const Impacto = () => {
     }, [inputs]);
 
   // useEffect to fetch data.json
-  useEffect(() => {
-    fetch("./data.json") // Añade el punto inicial
-  .then((res) => {
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
-    return res.json();
-  })
-  .then((data) => setGeoJsonData(data))
-  .catch((err) => console.error("Error loading data:", err));
-  }, []);
+  // useEffect(() => {
+  //   fetch("./data.json") // Añade el punto inicial
+  // .then((res) => {
+  //   if (!res.ok) {
+  //     throw new Error(`HTTP error! status: ${res.status}`);
+  //   }
+  //   return res.json();
+  // })
+  // .then((data) => setGeoJsonData(data))
+  // .catch((err) => console.error("Error loading data:", err));
+  // }, []);
 
   const [distanceSliderValue, setDistanceSliderValue] = useState(20);
   const [selectedEffect, setSelectedEffect] = useState("Sismo");
