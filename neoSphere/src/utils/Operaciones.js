@@ -207,7 +207,7 @@ const calculateImpactData = (impactLat, impactLon, radiusMeters, propertyKey) =>
       const ignition_threshold =
         ignitionData[material] * Math.pow(energy_Mt, 1 / 6);
       if (thermal_exposure_Jm2 > ignition_threshold) {
-        ignition_effects += `${material} catches fire. `;
+        ignition_effects += `${material} se incendia. `;
       }
     }
 
