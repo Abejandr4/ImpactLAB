@@ -3,7 +3,9 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { MapContainer, TileLayer, Circle, Marker, GeoJSON } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import dataPoblacion from "../../public/data.json";
+
+const response = await fetch('/data.json'); 
+const dataPoblacion = await response.json();
 
 // --- CONFIGURACIÓN DE ICONOS DE LEAFLET ---
 import L from "leaflet";

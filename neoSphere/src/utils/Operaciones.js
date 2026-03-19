@@ -8,6 +8,7 @@
  * @param {object} params - Objeto con los parámetros de entrada para la simulación.
  * @returns {object} - Objeto con los resultados detallados de la simulación.
  */
+
 export const simulateAsteroidImpact = ({
   diameter_km,
   density_kgm3,
