@@ -1,23 +1,12 @@
 {
-  "buildCommand": "npm run build",
-  "installCommand": "npm install",
-  "outputDirectory": "dist",
   "framework": "vite",
-  "scope": "neoSphere",
-  "builds": [
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "cleanUrls": true,
+  "rewrites": [
     {
-      "src": "./neoSphere/**",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "./neoSphere/dist",
-        "buildCommand": "npm run build"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/[^.]+",
-      "dest": "/index.html"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
