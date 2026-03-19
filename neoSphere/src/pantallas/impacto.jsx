@@ -4,14 +4,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { MapContainer, TileLayer, Circle, Marker, GeoJSON } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
-const response = await fetch('/data.json'); 
-const dataPoblacion = await response.json();
-
 // --- CONFIGURACIÓN DE ICONOS DE LEAFLET ---
 import L from "leaflet";
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
+
+const [geoJsonData, setGeoJsonData] = useState(null);
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -105,18 +104,22 @@ const Impacto = () => {
       return inputs ? [inputs.lat, inputs.lng] : [19.0433, -98.2022];
     }, [inputs]);
 
-  // useEffect to fetch data.json
-  // useEffect(() => {
-  //   fetch("./data.json") // Añade el punto inicial
-  // .then((res) => {
-  //   if (!res.ok) {
-  //     throw new Error(`HTTP error! status: ${res.status}`);
-  //   }
-  //   return res.json();
-  // })
-  // .then((data) => setGeoJsonData(data))
-  // .catch((err) => console.error("Error loading data:", err));
-  // }, []);
+useEffect(() => {
+  let isMounted = true;
+
+  fetch('/data.json')
+    .then((res) => {
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+      return res.json();
+    })
+    .then((data) => {
+      if (isMounted) setGeoJsonData(data);
+    })
+    .catch((err) => console.error("Error loading data:", err));
+
+  return () => { isMounted = false; }; // Cleanup
+}, []);
+
 
   const [distanceSliderValue, setDistanceSliderValue] = useState(20);
   const [selectedEffect, setSelectedEffect] = useState("Sismo");
