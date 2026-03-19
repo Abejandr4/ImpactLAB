@@ -129,14 +129,15 @@ const Impacto = () => {
   );
 
   // 2. Recalcular efectos de la simulación
-  const recalculatedEffects = useMemo(() => {
-    if (!inputs) return null;
-    const currentInputs = {
-      ...inputs,
-      distance_from_impact_km: currentDistanceKm,
-    };
-    return simulateAsteroidImpact(currentInputs);
-  }, [inputs, currentDistanceKm]);
+const recalculatedEffects = useMemo(() => {
+  if (!inputs) return null;
+  const currentInputs = {
+    ...inputs,
+    geoJsonData,
+    distance_from_impact_km: currentDistanceKm,
+  };
+  return simulateAsteroidImpact(currentInputs);
+}, [inputs, currentDistanceKm, geoJsonData]);
 
   // 3. Obtener radio del cráter (Necesario para el cálculo de población)
   const craterRadiusMeters = useMemo(() => {
@@ -168,44 +169,8 @@ const Impacto = () => {
     return { zona, tipoSuelo };
   }, [inputs]);
 
-  // 4. Calcular población afectada (ahora que craterRadiusMeters existe arriba)
-  const totalAffectedPopulation = useMemo(() => {
-    if (!geoJsonData || !geoJsonData.features || craterRadiusMeters <= 0) return 0;
-
-    const getDistance = (lat1, lon1, lat2, lon2) => {
-      const R = 6371e3; // Radio de la tierra en metros
-      const φ1 = (lat1 * Math.PI) / 180;
-      const φ2 = (lat2 * Math.PI) / 180;
-      const Δφ = ((lat2 - lat1) * Math.PI) / 180;
-      const Δλ = ((lon2 - lon1) * Math.PI) / 180;
-      const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-                Math.cos(φ1) * Math.cos(φ2) *
-                Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    };
-
-    let totalPop = 0;
-    const [impactLat, impactLon] = impactPos;
-
-    geoJsonData.features.forEach((feature) => {
-      try {
-        // Soporte para Polígonos y MultiPolígonos según tu estructura
-        const coords = feature.geometry.type === "MultiPolygon" 
-          ? feature.geometry.coordinates[0][0][0] 
-          : feature.geometry.coordinates[0][0];
-
-        const polyLon = coords[0];
-        const polyLat = coords[1];
-        const distance = getDistance(impactLat, impactLon, polyLat, polyLon);
-
-        if (distance <= craterRadiusMeters) {
-          totalPop += Number(feature.properties.POBTOT || 0);
-        }
-      } catch (e) { /* Manejo de errores en caso de geometrías nulas */ }
-    });
-
-    return totalPop;
-  }, [geoJsonData, craterRadiusMeters]);
+  const totalAffectedPopulation = recalculatedEffects?.affectedData?.totalPopulation || 0;
+  const totalAffectedHousing = recalculatedEffects?.affectedData?.totalHousing || 0;
 
   // Obtenemos el estilo activo actual de forma memoizada
   const activeStyle = useMemo(() => 
@@ -288,10 +253,17 @@ const Impacto = () => {
           <div className="space-y-1 text-sm pt-2">
             <p className="font-bold text-red-500 text-lg uppercase">Impacto en Zona Poblada</p>
             <div className="bg-red-500/10 p-4 rounded-lg border border-red-500/30 mt-2">
-              <p className="text-gray-300">Población total afectada (radio cráter):</p>
+              <p className="text-gray-300">Población afectada por el cráter:</p>
               <p className="text-4xl font-black text-white">
                 {totalAffectedPopulation.toLocaleString()} 
                 <span className="text-sm ml-2 font-normal text-gray-400">personas</span>
+              </p>
+            </div>
+            <div className="bg-red-500/10 p-4 rounded-lg border border-red-500/30 mt-2">
+              <p className="text-gray-300">Viviendas afectadas:</p>
+              <p className="text-4xl font-black text-white">
+                {totalAffectedHousing.toLocaleString()} 
+                <span className="text-sm ml-2 font-normal text-gray-400">viviendas</span>
               </p>
             </div>
             <p className="font-medium text-gray-400 mt-4 italic">Basado en datos censales (INEGI) locales.</p>

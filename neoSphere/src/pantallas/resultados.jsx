@@ -3,36 +3,34 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import MitigationVideo from "../assets/videos/Mitigation.mp4";
-import SurfaceVideo from "../assets/videos/Surface.mp4"; // Usaremos este como impacto cinético
-import KineticyVideo from "../assets/videos/Kinetic.mp4"; // (Asumiendo que tienes un video 'gravity.mp4')
-import GravityVideo from "../assets/videos/Gravity.mp4"; // (Asumiendo que tienes un video 'coating.mp4')
+import SurfaceVideo from "../assets/videos/Surface.mp4"; 
+import KineticyVideo from "../assets/videos/Kinetic.mp4"; 
+import GravityVideo from "../assets/videos/Gravity.mp4"; 
 
-// NOTA: Tienes que configurar la URL del video como un 'embed' o 'iframe' de YouTube.
-// Esto se hace cambiando "watch?v=" por "embed/".
 const mitigationStrategies = [
   {
     name: "MITIGACIÓN",
     title: "MITIGACIÓN",
     description: "Información general sobre defensa planetaria.",
-    videoSrc: MitigationVideo, // <<-- ¡CAMBIA A URL EMBEBIDA!
+    videoSrc: MitigationVideo, 
   },
   {
     name: "Recubrimiento",
     title: "Recubrimiento",
     description: "Modifica el equilibrio térmico (Efecto Yarkovsky).",
-    videoSrc: SurfaceVideo, // <<-- ¡CAMBIA A URL EMBEBIDA!
+    videoSrc: SurfaceVideo
   },
   {
     name: "Impacto Cinético",
     title: "Impacto Cinético",
     description: "Colisión directa para desviar la trayectoria.",
-    videoSrc: KineticyVideo, // <<-- ¡CAMBIA A URL EMBEBIDA!
+    videoSrc: KineticyVideo
   },
   {
     name: "Tractor Gravedad",
     title: "Tractor Gravedad",
     description: "Uso de atracción gravitatoria constante.",
-    videoSrc: GravityVideo, // <<-- ¡CAMBIA A URL EMBEBIDA!
+    videoSrc: GravityVideo, 
   },
 ];
 

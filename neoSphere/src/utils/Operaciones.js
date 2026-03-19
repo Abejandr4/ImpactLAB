@@ -31,8 +31,6 @@ export const simulateAsteroidImpact = ({
     STEFAN_BOLTZMANN: 5.67e-8, // Constante de Stefan-Boltzmann
     SOUND_SPEED_AIR: 330, // Velocidad del sonido en el aire (m/s)
     ATM_PRESSURE: 101325, // Presión atmosférica al nivel del mar (Pa)
-    // ❌ ELIMINADO RHO_WATER
-    // ❌ ELIMINADO C_D_WATER
   };
 
   // --- CONVERSIÓN DE UNIDADES A SI ---
@@ -44,49 +42,43 @@ export const simulateAsteroidImpact = ({
   // --- MÓDULOS DE CÁLCULO (Funciones internas) ---
 
   const getDistance = (lat1, lon1, lat2, lon2) => {
-    const R = 6371e3;
-    const dLat = ((lat2 - lat1) * Math.PI) / 180;
-    const dLon = ((lon2 - lon1) * Math.PI) / 180;
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos((lat1 * Math.PI) / 180) *
-        Math.cos((lat2 * Math.PI) / 180) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  };
+  const R = 6371e3; // Earth's radius in meters
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+};
 
-const calculateAffectedPopulation = (impactLat, impactLon, radiusMeters) => {
+const calculateImpactData = (impactLat, impactLon, radiusMeters, propertyKey) => {
     if (!geoJsonData || !geoJsonData.features) return 0;
-    let totalPop = 0;
-
-    geoJsonData.features.forEach((feature) => {
+    return geoJsonData.features.reduce((total, feature) => {
       try {
-        const coords =
-          feature.geometry.type === "MultiPolygon"
-            ? feature.geometry.coordinates[0][0][0]
-            : feature.geometry.coordinates[0][0];
-
+        const coords = feature.geometry.type === "MultiPolygon"
+          ? feature.geometry.coordinates[0][0][0]
+          : feature.geometry.coordinates[0][0];
         const distance = getDistance(impactLat, impactLon, coords[1], coords[0]);
         if (distance <= radiusMeters) {
-          totalPop += Number(feature.properties.POBTOT || 0);
+          return total + Number(feature.properties[propertyKey] || 0);
         }
-      } catch (e) { /* Geometría inválida */ }
-    });
-    return totalPop;
+      } catch (e) { /* Ignore invalid geometry */ }
+      return total;
+    }, 0);
   };
 
   const calculateLethality = (intensity, population) => {
-
     if (!intensity || intensity <= 0) return { lethality: 0, estimatedVictims: 0 };
 
     // coeficientes ajustados para Puebla
     const a = 1.5; 
     const b = 9.0;
-
     const probability = 1 / (1 + Math.exp(-(a + b * Math.log10(intensity))));
     const clampedProb = Math.min(Math.max(probability, 0), 1);
-
     return {
       lethality: clampedProb,
       estimatedVictims: Math.round(population * clampedProb),
@@ -372,10 +364,11 @@ const calculateAffectedPopulation = (impactLat, impactLon, radiusMeters) => {
   )
 
   const craterFinalRadius = crater.finalDiameter_m / 2
-  const population = calculateAffectedPopulation(lat, lng, craterFinalRadius);
+  const affectedPopulation = calculateImpactData(lat, lng, craterFinalRadius, "POBTOT");
+  const affectedHousing = calculateImpactData(lat, lng, craterFinalRadius, "TVIVHAB");
 
-  const fireballStats = calculateLethality(thermal, population);
-  const shockwaveStats = calculateLethality(airBlast, population);
+  const fireballStats = calculateLethality(thermal, affectedPopulation);
+  const shockwaveStats = calculateLethality(airBlast, affectedPopulation);
 
   // Devolver todos los resultados
   return {
@@ -387,10 +380,20 @@ const calculateAffectedPopulation = (impactLat, impactLon, radiusMeters) => {
     seismicEffects: seismic,
     ejecta: ejecta,
     airBlast: airBlast,
-    populationAffected: population,
-    lethalityFireball: fireballStats.probability,
-    victimsFireball: fireballStats.victims,
-    lethalityShockwave: shockwaveStats.probability,
-    victimsShockwave: shockwaveStats.victims,
+
+   affectedData: {
+      totalPopulation: affectedPopulation,
+      totalHousing: affectedHousing
+    },
+    victims: {
+      fireball: {
+        probability: fireballStats.lethality,
+        estimated: fireballStats.estimatedVictims
+      },
+      shockwave: {
+        probability: shockwaveStats.lethality,
+        estimated: shockwaveStats.estimatedVictims
+      }
+    }
   };
 };
