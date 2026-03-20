@@ -105,7 +105,9 @@ const Impacto = () => {
 useEffect(() => {
   let isMounted = true;
 
-  fetch('/data.json')
+
+    // A safer way to fetch in Vite
+  fetch(`${import.meta.env.BASE_URL}data.json`)
     .then((res) => {
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
       return res.json();
