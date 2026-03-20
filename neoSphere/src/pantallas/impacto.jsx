@@ -10,8 +10,6 @@ import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
-const [geoJsonData, setGeoJsonData] = useState(null);
-
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x,
@@ -95,7 +93,7 @@ const Impacto = () => {
   const navigate = useNavigate();
 
   //state for geojson
- const [geoJsonData, setGeoJsonData] = useState(dataPoblacion);
+  const [geoJsonData, setGeoJsonData] = useState(null);
 
   const { simulationResults: initialResults, inputParameters: inputs } =
     location.state || {};
