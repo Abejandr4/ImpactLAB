@@ -105,8 +105,6 @@ const Impacto = () => {
 useEffect(() => {
   let isMounted = true;
 
-
-    // A safer way to fetch in Vite
   fetch(`${import.meta.env.BASE_URL}data.json`)
     .then((res) => {
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
@@ -369,10 +367,10 @@ const recalculatedEffects = useMemo(() => {
         </div>
 
         {/* Grid Principal */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
           
           {/* Columna Mapa */}
-          <div className="space-y-6">
+          <div className="space-y-6 lg:col-span-8">
             <div className="bg-gray-800 p-4 rounded-xl shadow-md border border-gray-700">
               <h2 className={`text-xl font-bold mb-3 transition-colors duration-500 ${activeStyle.text}`}>
                 Zona de Impacto: <span className="text-white text-2xl ml-2">{displayData.zone}</span>
@@ -419,7 +417,7 @@ const recalculatedEffects = useMemo(() => {
           </div>
 
           {/* Columna Detalles Dinámicos */}
-          <div className={`space-y-5 bg-gray-800 p-6 rounded-xl shadow-xl border-t-8 transition-all duration-500 ${activeStyle.border}`}>
+          <div className={`lg:col-span-4 space-y-5 bg-gray-800 p-6 rounded-xl shadow-xl border-t-8 transition-all duration-500 ${activeStyle.border}`}>
             <h2 className={`text-xl font-bold transition-colors duration-500 ${activeStyle.text}`}>
               Detalles del Impacto a Distancia
             </h2>
