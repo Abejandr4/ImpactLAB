@@ -14,6 +14,7 @@ import SkyfallX1 from "./pantallas/skyfallX1.jsx"; // Corregido a 's' minúscula
 import Impacto from "./pantallas/impacto.jsx"; // Corregido a 'i' minúscula (probable error)
 import Resultados from "./pantallas/resultados.jsx"; // Corregido a 'r' minúscula (probable error)
 import Orbit from "./pantallas/OrbitRedirect.jsx"; // Nombre completo del archivo
+import Orbitas from "./pantallas/Orbitas.jsx"
 import VideoLayout1 from "./pantallas/VideoLayout1.jsx"; // Asumimos V mayúscula
 //import { Orbit } from "ogl";
 
@@ -33,6 +34,7 @@ function App() {
           <Route path="/impacto" element={<Impacto />} />
           <Route path="/result" element={<Resultados />} />
           <Route path="/orbita" element={<Orbit />} />
+          <Route path="/orbitas" element={<Orbitas />} />
         </Routes>
       </div>
     </Router>

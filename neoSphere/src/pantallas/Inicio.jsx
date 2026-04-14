@@ -49,9 +49,9 @@ function Inicio() {
           <HoverBorderGradient
             containerClassName="hover:bg-[#FFDD0F] rounded-lg transition px-10 py-4 text-xl min-w-[200px]"
             as="button"
-            onClick={() => navigate("/slide-gallery")}
+            onClick={() => navigate("/Orbitas")}
           >
-            Galería y orbitas
+            Orbitas
           </HoverBorderGradient>
           <HoverBorderGradient
             containerClassName="hover:bg-[#1D0175] rounded-lg transition px-10 py-4 text-xl min-w-[200px]"
@@ -59,6 +59,13 @@ function Inicio() {
             onClick={() => navigate("/skyfallx-game")}
           >
             Simulador
+          </HoverBorderGradient>
+          <HoverBorderGradient
+            containerClassName="hover:bg-[#FFDD0F] rounded-lg transition px-10 py-4 text-xl min-w-[200px]"
+            as="button"
+            onClick={() => navigate("/slide-gallery")}
+          >
+            Explora
           </HoverBorderGradient>
         </div>
       </div>
