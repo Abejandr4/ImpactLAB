@@ -11,6 +11,7 @@ import Inicio from "./pantallas/Inicio.jsx"; // Asumimos I mayúscula por ser el
 import Astronomy1 from "./pantallas/astronomy1.jsx"; // Corregido a 'a' minúscula
 import SlideGallery from "./pantallas/SlideGallery.jsx";
 import SkyfallX1 from "./pantallas/skyfallX1.jsx"; // Corregido a 's' minúscula
+import Explora from "./pantallas/explora.jsx";
 import Impacto from "./pantallas/impacto.jsx"; // Corregido a 'i' minúscula (probable error)
 import Resultados from "./pantallas/resultados.jsx"; // Corregido a 'r' minúscula (probable error)
 import Orbit from "./pantallas/OrbitRedirect.jsx"; // Nombre completo del archivo
@@ -30,6 +31,7 @@ function App() {
           <Route path="/astronomy-simulator" element={<Astronomy1 />} />
           <Route path="/slide-gallery" element={<SlideGallery />} />
           <Route path="/skyfallx-game" element={<SkyfallX1 />} />
+          <Route path="/explora" element={<Explora />} />
           <Route path="/video1" element={<VideoLayout1 />} />
           <Route path="/impacto" element={<Impacto />} />
           <Route path="/result" element={<Resultados />} />

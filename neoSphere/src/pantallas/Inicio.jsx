@@ -63,7 +63,7 @@ function Inicio() {
           <HoverBorderGradient
             containerClassName="hover:bg-[#FFDD0F] rounded-lg transition px-10 py-4 text-xl min-w-[200px]"
             as="button"
-            onClick={() => navigate("/slide-gallery")}
+            onClick={() => navigate("explora")}
           >
             Explora
           </HoverBorderGradient>
