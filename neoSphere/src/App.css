@@ -1,7 +1,6 @@
 @import "tailwindcss";
 
 @theme {
-  /* Define the custom animation */
   --animate-ticker: ticker 30s linear infinite;
 
   /* Define the keyframes */
