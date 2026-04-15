@@ -80,25 +80,10 @@
         <div className="flex flex-col md:flex-row gap-6 mt-6 flex-1">
 
           {/*grid vertical */}
-          <div className="w-full flex flex-col gap-4">
+          <div className="w-full md:w-[70%] flex flex-col gap-4">
 
           {/* Sección izquierda: Imagen y parámetros */}
           {/* AJUSTE CLAVE 1: Limito la altura del recuadro izquierdo */}
-          <div className="h-fit max-h-[85vh] w-auto bg-gray-900 rounded-lg p-4 border-2 border-violet-500">
-            <div className="flex justify-center mb-5 ">
-              <img
-                src={asteroidImage}
-                alt="Asteroide"
-                // CLASES CORREGIDAS Y AUMENTADAS: Usando valores válidos de Tailwind.
-                className="object-contain transition-all duration-150"
-                style={{ 
-                  width: `${diameter / 20}px`, 
-                  height: 'auto' 
-                }}
-              />
-            </div>
-
-          </div>
 
           {/* Mapa */}
           {!isLaunched && (
@@ -116,8 +101,14 @@
 
           {/* Sección derecha: Controles*/}
           {/* AJUSTE CLAVE 2: Limito la altura del recuadro derecho */}
-          <div className="h-fit max-h-[85vh] w-full bg-gray-900 rounded-lg p-4 border-2 border-violet-500">
+          <div className="md:w-[30%] h-fit max-h-[85vh] w-full bg-gray-900 rounded-lg p-4 border-2 border-violet-500">
             {/* Controles */}
+              <img src={asteroidImage} alt="Asteroide" className="mx-auto block object-contain transition-all duration-150"
+                style={{ 
+                  width: `${diameter / 20}px`, 
+                  height: 'auto' 
+                }}
+              />
             <div className="space-y-2 mb-6">
               {/* Slider para diámetro */}
               <div>
