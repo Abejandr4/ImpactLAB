@@ -4,7 +4,7 @@ const AsteroidsDisplayBar = ({ asteroids }) => {
 
   return (
     <div className="w-full overflow-hidden bg-black border-y border-zinc-800 py-4">
-      <div className="flex w-max animate-ticker [animation-duration:360s] hover:[animation-play-state:paused]">
+      <div className="flex w-max animate-ticker hover:[animation-play-state:paused]">
         {displayList.map((ast, index) => (
           <div 
             key={index} 
