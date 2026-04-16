@@ -276,4 +276,79 @@
   margin-left: 0.25rem;
 }
 
-/* fin de estilos copiados*/
+/* fin de estilos de simulador en si*/
+
+/*botones de simulador*/
+
+
+/* Bottom right buttons container */
+.simulatorButtons {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  display: flex;
+  gap:0.5rem;
+  z-index: 100;
+  
+  pointer-events: none;
+}
+
+.simulatorActionButton {
+  padding: 0.3rem 0.7rem;
+  font-weight: 1000;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: var(--border-radius-small);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  pointer-events: auto;
+}
+
+.refreshButton {
+  background-color: var(--primary-purple);
+  color: var(--space-dark);
+}
+
+.refreshButton:hover {
+  background-color: var(--yellow-300);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.4);
+}
+
+/* Agregar estos estilos al final de tu archivo styles.css */
+
+/* Camera Preset Buttons */
+.presetButtons {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.presetButton {
+  padding: 0.4rem 0.8rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  border: 1px solid var(--primary-purple);
+  background-color: rgba(15, 23, 42, 0.8);
+  color: var(--primary-purple);
+  border-radius: var(--border-radius-small);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+  pointer-events: auto;
+}
+
+.presetButton:hover {
+  background-color: var(--primary-purple);
+  color: var(--space-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
