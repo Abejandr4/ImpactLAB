@@ -591,7 +591,7 @@ export function ExploraPage() {
           transition={{ delay: 0.1 }}
           style={{
             background: "linear-gradient(90deg, #a78bfa, #ffffff, #f97316)",
-            WebkitBackgroundClip: "text",
+            WebkitBackgroundClip: "text", 
             WebkitTextFillColor: "transparent",
             fontSize: "clamp(1.7rem, 4vw, 2.6rem)",
             fontWeight: 800,
