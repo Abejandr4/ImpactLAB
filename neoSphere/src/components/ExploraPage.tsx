@@ -594,7 +594,7 @@ export function ExploraPage() {
             WebkitBackgroundClip: "text", 
             WebkitTextFillColor: "transparent",
             fontSize: "clamp(1.7rem, 4vw, 2.6rem)",
-            fontWeight: 800,
+            fontWeight: 800, 
             letterSpacing: "-0.02em",
           }}
         >
