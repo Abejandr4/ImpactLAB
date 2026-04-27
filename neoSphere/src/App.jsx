@@ -24,7 +24,7 @@ function App() {
     <Router>
       <NavBar />
       {/* Contenedor principal que permite el scroll si el contenido supera el alto de la pantalla */}
-      <div className="min-h-screen overflow-auto">
+        <div style={{ minHeight: "100vh", overflowY: "auto", position: "relative" }}>
         <Routes>
           {/* Rutas principales */}
           <Route path="/" element={<Inicio />} />

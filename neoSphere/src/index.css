@@ -231,9 +231,9 @@ body {
   background-color: #1b202c; /* Color gris */
   margin: 0;
   padding: 0;
-  height: 100vh;
+  min-height: 100vh; 
   width: 100vw;
-  overflow: hidden; /* Opcional: evita scrollbars no deseados */
+  overflow: auto; /* Opcional: evita scrollbars no deseados */
 }
 
 .appContainer {
@@ -245,7 +245,7 @@ body {
 .mainContent {
   flex-grow: 1;
   padding: 0;
-  overflow: hidden;
+  overflow: auto;
   background-color: #000010;
 }
 
