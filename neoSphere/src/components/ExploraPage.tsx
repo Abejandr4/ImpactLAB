@@ -584,20 +584,8 @@ export function ExploraPage() {
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
       {/* ── Header ── */}
       <div className="text-center mb-8">
-        <motion.div
-          initial={{ opacity: 0, y: -16 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-4"
-          style={{ background: "rgba(139,92,246,0.15)", border: "1px solid rgba(139,92,246,0.4)" }}
-        >
-          <Star size={13} style={{ color: "#a78bfa" }} />
-          <span style={{ color: "#a78bfa", fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.1em" }}>
-            ZONA DE EXPLORACIÓN · 9 A 12 AÑOS
-          </span>
-          <Star size={13} style={{ color: "#a78bfa" }} />
-        </motion.div>
-
-        <motion.h1
+        
+        <motion.h1 
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
