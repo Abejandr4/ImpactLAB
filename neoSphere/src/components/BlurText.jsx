@@ -5,7 +5,7 @@ const buildKeyframes = (from, steps) => {
   const keys = new Set([
     ...Object.keys(from),
     ...steps.flatMap((s) => Object.keys(s)),
-  ]);
+  ]); 
 
   const keyframes = {};
   keys.forEach((k) => {
