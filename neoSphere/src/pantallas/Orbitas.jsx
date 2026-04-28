@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from 'framer-motion';
 import OrbitSimulator from '../components/OrbitSimulator';
 import AsteroidsDisplayBar from "../components/AsteroidsDisplayBar";
-import catalogoAsteroides from "../../public/catalogoAsteroides.json";
+import catalogoAsteroides from '../data/catalogoAsteroides.json';
 
 const Orbitas = () => {
     const [focusedAsteroid, setFocusedAsteroid] = useState(null);

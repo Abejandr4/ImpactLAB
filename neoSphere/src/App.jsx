@@ -19,6 +19,8 @@ import Orbitas from "./pantallas/Orbitas.jsx"
 import VideoLayout1 from "./pantallas/VideoLayout1.jsx"; // Asumimos V mayúscula
 //import { Orbit } from "ogl";
 
+console.log("App is mounting")
+
 function App() {
   return (
     <Router>
