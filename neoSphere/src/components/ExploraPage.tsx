@@ -583,7 +583,7 @@ export function ExploraPage() {
   }, [stars, celebrated]);
 
   return (
-    <div className="w-full px-6 sm:px-10 py-8" style={{ fontSize: "18px" }}>
+    <div className="w-full px-6 sm:px-10 py-8" style={{ zoom: 1.25 }}>
       {/* ── Header ── */}
       <div className="text-center mb-8">
         
