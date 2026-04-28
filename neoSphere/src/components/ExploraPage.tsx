@@ -366,37 +366,39 @@ function TopicContent({ id, color }: { id: string; color: string }) {
     case "asteroids":
       return (
         <div className="space-y-5">
-          <div className="grid md:grid-cols-2 gap-5 items-center">
-            <div>
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Columna izquierda */}
+            <div className="space-y-4">
               <p style={{ color: "rgba(255,255,255,0.85)", fontSize: "0.9rem", lineHeight: 1.7 }}>
                 ¡Imagina que el Sistema Solar es como una gran fábrica que quedó a medio terminar! Los asteroides son los{" "}
                 <strong style={{ color }}>sobrantes de construcción</strong> de cuando se formaron los planetas hace más de 4,500 millones de años.
               </p>
-              <p className="mt-3" style={{ color: "rgba(255,255,255,0.75)", fontSize: "0.85rem", lineHeight: 1.7 }}>
+              <p style={{ color: "rgba(255,255,255,0.75)", fontSize: "0.85rem", lineHeight: 1.7 }}>
                 Son cuerpos rocosos o metálicos que orbitan alrededor del Sol. No son planetas (muy pequeños) ni cometas (sin cola de hielo). ¡Como las "piezas de LEGO" que el Sistema Solar nunca usó! 🧩
               </p>
+              <div className="rounded-2xl overflow-hidden" style={{ height: 180 }}>
+                <img src={asteroidImg} alt="Asteroide" className="w-full h-full object-cover" />
+              </div>
+              <div className="space-y-2">
+                <FunFact emoji="🌌" text="Si juntaras todos los asteroides del Cinturón Principal, formarían una bola más pequeña que la Luna." />
+                <FunFact emoji="💧" text="Los asteroides carbonáceos (Tipo C) contienen agua y aminoácidos. ¡Podrían haber traído los ingredientes de la vida a la Tierra!" />
+              </div>
             </div>
-            <div className="rounded-2xl overflow-hidden" style={{ height: 180 }}>
-              <img src={asteroidImg} alt="Asteroide" className="w-full h-full object-cover" />
+            {/* Columna derecha */}
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-2">
+                <InfoBadge label="Asteroides conocidos" value=">1.3M" color={color} />
+                <InfoBadge label="El más grande" value="Ceres 940km" color="#a78bfa" />
+                <InfoBadge label="Edad (años)" value="4,500 M" color="#fbbf24" />
+                <InfoBadge label="Tipos principales" value="C, S, M" color="#34d399" />
+              </div>
+              <div>
+                <p className="mb-3" style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.8rem", fontWeight: 700, letterSpacing: "0.08em" }}>
+                  🕵️ TIPOS DE ASTEROIDES
+                </p>
+                <AsteroidTypeExplorer />
+              </div>
             </div>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            <InfoBadge label="Asteroides conocidos" value=">1.3M" color={color} />
-            <InfoBadge label="El más grande" value="Ceres 940km" color="#a78bfa" />
-            <InfoBadge label="Edad (años)" value="4,500 M" color="#fbbf24" />
-            <InfoBadge label="Tipos principales" value="C, S, M" color="#34d399" />
-          </div>
-
-          <div>
-            <p className="mb-3" style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.8rem", fontWeight: 700, letterSpacing: "0.08em" }}>
-              🧪 EXPLORADOR DE TIPOS
-            </p>
-            <AsteroidTypeExplorer />
-          </div>
-
-          <div className="space-y-2">
-            <FunFact emoji="🌌" text="Si juntaras todos los asteroides del Cinturón Principal, formarían una bola más pequeña que la Luna. ¡El espacio es increíblemente vacío!" />
-            <FunFact emoji="💧" text="Los asteroides carbonáceos (Tipo C) contienen agua y aminoácidos. ¡Podrían haber traído los ingredientes de la vida a la Tierra primitiva!" />
           </div>
         </div>
       );
@@ -581,7 +583,7 @@ export function ExploraPage() {
   }, [stars, celebrated]);
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
+    <div className="w-full px-6 sm:px-10 py-8" style={{ fontSize: "18px" }}>
       {/* ── Header ── */}
       <div className="text-center mb-8">
         

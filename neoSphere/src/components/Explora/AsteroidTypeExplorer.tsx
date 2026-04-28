@@ -55,7 +55,7 @@ const types: AsteroidType[] = [
       { label: "Brillo (Albedo)", value: 50, unit: "%", color: "#fbbf24" },
       { label: "Contenido de agua", value: 0, unit: "%", color: "#34d399" },
     ],
-    fact: "¡Son los más valiosos! Mainly hierro y níquel. Un asteroide M de 500 m contiene más metales preciosos que toda la producción humana de un siglo. 💎",
+    fact: "¡Son los más valiosos! Principalmente hierro y níquel. Un asteroide M de 500 m contiene más metales preciosos que toda la producción humana de un siglo. 💎",
     examples: ["Psique (16 Psyche)", "Hermes", "Baco"],
   },
 ];
