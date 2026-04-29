@@ -19,7 +19,7 @@ const ceresImg = "https://images-assets.nasa.gov/image/PIA17650/PIA17650~medium.
 const tunguskaImg = "https://www.clarin.com/img/2018/08/17/SkUa3KNUm_720x0__1.jpg"
 const chelyabinskImg = "https://images-assets.nasa.gov/image/PIA16828/PIA16828~small.jpg"
 const dartImg = "https://images-assets.nasa.gov/image/PIA25329/PIA25329~medium.jpg"
-const solarImg = "https://images.unsplash.com/photo-1776287777614-78576d1b0382?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800";
+const solarImg = "https://images-assets.nasa.gov/image/NHQ202111230012/NHQ202111230012~medium.jpg";
 
 // ─── Quiz data ──────────────────────────────────────────────────────────────
 const quizzes: Record<string, QuizQuestion[]> = {
@@ -595,7 +595,7 @@ export function ExploraPage() {
   const activeTopic = topics.find((t) => t.id === openId)!;
 
   return (
-    <div className="w-full min-h-screen" style={{ zoom: 1.25 }}>
+    <div className="w-full min-h-screen" style={{ zoom: 1.25, background: "#050810"  }}>
 
       {/* ── Header centrado ── */}
       <div className="text-center pt-12 pb-8 px-6">
@@ -611,7 +611,7 @@ export function ExploraPage() {
             letterSpacing: "-0.02em",
           }}
         >
-          Explora los Asteroides 🚀
+          Explora los Asteroides
         </motion.h1>
         <motion.p
           initial={{ opacity: 0 }}

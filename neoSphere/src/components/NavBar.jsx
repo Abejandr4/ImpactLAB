@@ -1,7 +1,6 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { HoverBorderGradient } from "../components/hover-border-gradient";
-import { TiHome } from "react-icons/ti";
 
 const NavBar = () => {
   const navigate = useNavigate();
@@ -15,17 +14,17 @@ const NavBar = () => {
 
   return (
     // La barra se fija en la parte superior, tiene un fondo semitransparente oscuro y utiliza Flexbox.
-    <nav className="fixed top-0 left-0 w-full overflow-hidden bg-black bg-opacity-70 p-1 z-50 shadow-lg border-b border-gray-700">
+    <nav className="fixed top-0 left-0 w-full overflow-hidden p-1 z-50 shadow-lg border-b border-gray-700" style={{ background: "rgba(5, 8, 16, 0.85)", backdropFilter: "blur(12px)" }}>
       <div className="flex justify-between items-center max-w-7xl mx-auto">
         {/* Logo o Título de la Aplicación */}
 
         {/* Botón de Regreso a la Página Principal */}
         <div
           onClick={() => navigate("/")}
-          className="flex justify-end items-center gap-3 text-white text-2xl font-bold tracking-widest cursor-pointer hover:text-yellow-400 transition"
+          className="flex justify-end items-center gap-1 text-white text-2xl font-bold tracking-normal cursor-pointer hover:text-yellow-400 transition pl-2"
         >
 
-          <TiHome/>
+          <span style={{ fontSize: "1.4rem" }}>☄️</span>
           ImpactLAB
         </div>
       </div>
