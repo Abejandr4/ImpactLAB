@@ -10,9 +10,15 @@ import { DefenseStrategy } from "./Explora/DefenseStrategy";
 
 // ─── Images ────────────────────────────────────────────────────────────────
 const asteroidImg = "https://ciencia.nasa.gov/wp-content/uploads/sites/2/2023/06/921_683_bennu_carousel_5-jpg.webp?resize=1200,900";
-const earthImg = "https://images.unsplash.com/photo-1777047023436-35b85bc0412f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800";
-const radarImg = "https://images.unsplash.com/photo-1760483087733-1dc9555a20f5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800";
-const dinoImg = "https://images.unsplash.com/photo-1768961871609-8f450ba541b9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800";
+const earthImg = "https://images-assets.nasa.gov/image/PIA22970/PIA22970~orig.jpg";
+const radarImg = "https://images-assets.nasa.gov/image/PIA26711/PIA26711~medium.jpg";
+const historyImg = "https://images-assets.nasa.gov/image/ACD17-0168-009/ACD17-0168-009~medium.jpg"
+const dinoImg = "https://images-assets.nasa.gov/image/jsc2008e027179/jsc2008e027179~medium.jpg";
+const barringerImg = "https://images-assets.nasa.gov/image/PIA03212/PIA03212~orig.jpg"
+const ceresImg = "https://images-assets.nasa.gov/image/PIA17650/PIA17650~medium.jpg"
+const tunguskaImg = "https://www.clarin.com/img/2018/08/17/SkUa3KNUm_720x0__1.jpg"
+const chelyabinskImg = "https://images-assets.nasa.gov/image/PIA16828/PIA16828~small.jpg"
+const dartImg = "https://images-assets.nasa.gov/image/PIA25329/PIA25329~medium.jpg"
 const solarImg = "https://images.unsplash.com/photo-1776287777614-78576d1b0382?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800";
 
 // ─── Quiz data ──────────────────────────────────────────────────────────────
@@ -154,6 +160,7 @@ const timelineEvents = [
     desc: "Un meteorito metálico de ~50 m formó el famoso Barringer Crater en Arizona. Tiene 1.2 km de diámetro y 170 m de profundidad. ¡Hoy es una atracción turística!",
     energy: "10 megatones",
     size: "Como un edificio de 17 pisos de profundidad",
+    img: barringerImg,
   },
   {
     year: "1801",
@@ -163,6 +170,7 @@ const timelineEvents = [
     desc: "El astrónomo italiano Giuseppe Piazzi descubrió Ceres desde Palermo. Al principio lo llamó planeta, pero era demasiado pequeño. ¡Primer asteroide de la historia!",
     energy: "—",
     size: "940 km de diámetro",
+    img: ceresImg,
   },
   {
     year: "1908",
@@ -172,7 +180,7 @@ const timelineEvents = [
     desc: "Un asteroide de ~50 m explotó sobre Siberia sin llegar al suelo. Arrasó 2,150 km² de bosque y derribó 80 millones de árboles. Por suerte era una zona deshabitada.",
     energy: "12-15 megatones",
     size: "Como una ciudad mediana destruida",
-    img: radarImg,
+    img: tunguskaImg,
   },
   {
     year: "2013",
@@ -182,6 +190,7 @@ const timelineEvents = [
     desc: "Un asteroide de 20 m entró a la atmósfera sobre Rusia. Su onda de choque rompió vidrios en 3 ciudades e hirió a 1,600 personas. ¡Fue grabado por miles de dashcams!",
     energy: "400-500 kilotoneladas",
     size: "Como un edificio de 6 pisos",
+    img: chelyabinskImg,
   },
   {
     year: "2022",
@@ -191,6 +200,7 @@ const timelineEvents = [
     desc: "La NASA impactó la nave DART contra el asteroide Dimorphos (170 m). ¡Cambió su órbita 32 minutos! Primera prueba exitosa de defensa planetaria en la historia.",
     energy: "—",
     size: "¡Historia hecha por la humanidad!",
+    img: dartImg,
   },
 ];
 
@@ -313,25 +323,28 @@ function InteractiveTimeline() {
                 transition={{ duration: 0.25 }}
                 className="overflow-hidden"
               >
-                <div
-                  className="px-4 pb-4 pt-2"
-                  style={{ borderTop: `1px solid ${ev.color}33` }}
-                >
-                  {ev.img && (
-                    <div className="rounded-xl overflow-hidden mb-3" style={{ height: 120 }}>
-                      <img src={ev.img} alt={ev.title} className="w-full h-full object-cover" />
+                <div className="px-4 pb-4 pt-2" style={{ borderTop: `1px solid ${ev.color}33` }}>
+                  <div className={`grid gap-4 ${ev.img ? "grid-cols-2" : "grid-cols-1"}`}>
+                    {/* Columna izquierda — info */}
+                    <div>
+                      <p style={{ color: "rgba(255,255,255,0.8)", fontSize: "0.82rem", lineHeight: 1.6 }}>{ev.desc}</p>
+                      <div className="flex gap-3 mt-3 flex-wrap">
+                        <div className="flex-1 min-w-28 p-2 rounded-lg" style={{ background: "rgba(255,255,255,0.05)" }}>
+                          <div style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.65rem" }}>⚡ ENERGÍA</div>
+                          <div style={{ color: ev.color, fontSize: "0.78rem", fontWeight: 700 }}>{ev.energy}</div>
+                        </div>
+                        <div className="flex-1 min-w-28 p-2 rounded-lg" style={{ background: "rgba(255,255,255,0.05)" }}>
+                          <div style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.65rem" }}>📏 TAMAÑO</div>
+                          <div style={{ color: ev.color, fontSize: "0.78rem", fontWeight: 700 }}>{ev.size}</div>
+                        </div>
+                      </div>
                     </div>
-                  )}
-                  <p style={{ color: "rgba(255,255,255,0.8)", fontSize: "0.82rem", lineHeight: 1.6 }}>{ev.desc}</p>
-                  <div className="flex gap-3 mt-3 flex-wrap">
-                    <div className="flex-1 min-w-28 p-2 rounded-lg" style={{ background: "rgba(255,255,255,0.05)" }}>
-                      <div style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.65rem" }}>⚡ ENERGÍA</div>
-                      <div style={{ color: ev.color, fontSize: "0.78rem", fontWeight: 700 }}>{ev.energy}</div>
-                    </div>
-                    <div className="flex-1 min-w-28 p-2 rounded-lg" style={{ background: "rgba(255,255,255,0.05)" }}>
-                      <div style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.65rem" }}>📏 TAMAÑO</div>
-                      <div style={{ color: ev.color, fontSize: "0.78rem", fontWeight: 700 }}>{ev.size}</div>
-                    </div>
+                    {/* Columna derecha — imagen */}
+                    {ev.img && (
+                      <div className="rounded-xl overflow-hidden" style={{ height: 160 }}>
+                        <img src={ev.img} alt={ev.title} className="w-full h-full object-cover" />
+                      </div>
+                    )}
                   </div>
                 </div>
               </motion.div>
@@ -441,7 +454,7 @@ function TopicContent({ id, color }: { id: string; color: string }) {
           <div className="grid md:grid-cols-2 gap-5 items-center">
             <div>
               <p style={{ color: "rgba(255,255,255,0.85)", fontSize: "0.9rem", lineHeight: 1.7 }}>
-                Encontrar asteroides es como buscar pelotas negras en la oscuridad total. ¡Pero los astrónomos lo hacen todos los días usando telescopios con cámaras de miles de megapíxeles y{" "}
+                Encontrar asteroides es como buscar pelotas negras en la oscuridad total. ¡Pero los astrónomos lo hacen todos los días usando telescopios con cámaras de miles de megapíxeles e{" "}
                 <strong style={{ color }}>inteligencia artificial</strong>!
               </p>
             </div>
@@ -487,7 +500,7 @@ function TopicContent({ id, color }: { id: string; color: string }) {
               </p>
             </div>
             <div className="rounded-2xl overflow-hidden" style={{ height: 160 }}>
-              <img src={dinoImg} alt="Dinosaurios" className="w-full h-full object-cover" />
+              <img src={historyImg} alt="Dinosaurios" className="w-full h-full object-cover" />
             </div>
           </div>
 
