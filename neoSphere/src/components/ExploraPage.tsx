@@ -9,7 +9,7 @@ import { NEOOrbits } from "./Explora/NEOOrbits";
 import { DefenseStrategy } from "./Explora/DefenseStrategy";
 
 // ─── Images ────────────────────────────────────────────────────────────────
-const asteroidImg = "https://images.unsplash.com/photo-1638716000957-e0e0e32817b2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800";
+const asteroidImg = "https://ciencia.nasa.gov/wp-content/uploads/sites/2/2023/06/921_683_bennu_carousel_5-jpg.webp?resize=1200,900";
 const earthImg = "https://images.unsplash.com/photo-1777047023436-35b85bc0412f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800";
 const radarImg = "https://images.unsplash.com/photo-1760483087733-1dc9555a20f5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800";
 const dinoImg = "https://images.unsplash.com/photo-1768961871609-8f450ba541b9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800";
@@ -230,7 +230,7 @@ function StepReveal({ steps }: { steps: { icon: string; title: string; desc: str
             background: i <= revealed ? "rgba(139,92,246,0.1)" : "rgba(255,255,255,0.03)",
             border: `1px solid ${i <= revealed ? "rgba(139,92,246,0.35)" : "rgba(255,255,255,0.08)"}`,
           }}
-          onClick={() => setRevealed(Math.max(revealed, i + 1))}
+          onClick={() => setRevealed(i)}
         >
           <div
             className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
@@ -273,7 +273,7 @@ function InteractiveTimeline() {
         <motion.div
           key={i}
           whileHover={{ scale: 1.01 }}
-          className="rounded-xl h-screen overflow-y-auto cursor-pointer"
+          className="rounded-xl cursor-pointer"
           style={{ border: `1px solid ${selected === i ? ev.color : "rgba(255,255,255,0.1)"}` }}
           onClick={() => setSelected(selected === i ? null : i)}
         >
