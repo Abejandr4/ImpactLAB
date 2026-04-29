@@ -366,39 +366,37 @@ function TopicContent({ id, color }: { id: string; color: string }) {
     case "asteroids":
       return (
         <div className="space-y-5">
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* Columna izquierda */}
-            <div className="space-y-4">
+          <div className="grid md:grid-cols-2 gap-5 items-center">
+            <div>
               <p style={{ color: "rgba(255,255,255,0.85)", fontSize: "0.9rem", lineHeight: 1.7 }}>
                 ¡Imagina que el Sistema Solar es como una gran fábrica que quedó a medio terminar! Los asteroides son los{" "}
                 <strong style={{ color }}>sobrantes de construcción</strong> de cuando se formaron los planetas hace más de 4,500 millones de años.
               </p>
-              <p style={{ color: "rgba(255,255,255,0.75)", fontSize: "0.85rem", lineHeight: 1.7 }}>
+              <p className="mt-3" style={{ color: "rgba(255,255,255,0.75)", fontSize: "0.85rem", lineHeight: 1.7 }}>
                 Son cuerpos rocosos o metálicos que orbitan alrededor del Sol. No son planetas (muy pequeños) ni cometas (sin cola de hielo). ¡Como las "piezas de LEGO" que el Sistema Solar nunca usó! 🧩
               </p>
-              <div className="rounded-2xl overflow-hidden" style={{ height: 180 }}>
-                <img src={asteroidImg} alt="Asteroide" className="w-full h-full object-cover" />
-              </div>
-              <div className="space-y-2">
-                <FunFact emoji="🌌" text="Si juntaras todos los asteroides del Cinturón Principal, formarían una bola más pequeña que la Luna." />
-                <FunFact emoji="💧" text="Los asteroides carbonáceos (Tipo C) contienen agua y aminoácidos. ¡Podrían haber traído los ingredientes de la vida a la Tierra!" />
-              </div>
             </div>
-            {/* Columna derecha */}
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-2">
-                <InfoBadge label="Asteroides conocidos" value=">1.3M" color={color} />
-                <InfoBadge label="El más grande" value="Ceres 940km" color="#a78bfa" />
-                <InfoBadge label="Edad (años)" value="4,500 M" color="#fbbf24" />
-                <InfoBadge label="Tipos principales" value="C, S, M" color="#34d399" />
-              </div>
-              <div>
-                <p className="mb-3" style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.8rem", fontWeight: 700, letterSpacing: "0.08em" }}>
-                  🕵️ TIPOS DE ASTEROIDES
-                </p>
-                <AsteroidTypeExplorer />
-              </div>
+            <div className="rounded-2xl overflow-hidden" style={{ height: 180 }}>
+              <img src={asteroidImg} alt="Asteroide" className="w-full h-full object-cover" />
             </div>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <InfoBadge label="Asteroides conocidos" value=">1.3M" color={color} />
+            <InfoBadge label="El más grande" value="Ceres 940km" color="#a78bfa" />
+            <InfoBadge label="Edad (años)" value="4,500 M" color="#fbbf24" />
+            <InfoBadge label="Tipos principales" value="C, S, M" color="#34d399" />
+          </div>
+
+          <div>
+            <p className="mb-3" style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.8rem", fontWeight: 700, letterSpacing: "0.08em" }}>
+              🧪 EXPLORADOR DE TIPOS
+            </p>
+            <AsteroidTypeExplorer />
+          </div>
+
+          <div className="space-y-2">
+            <FunFact emoji="🌌" text="Si juntaras todos los asteroides del Cinturón Principal, formarían una bola más pequeña que la Luna. ¡El espacio es increíblemente vacío!" />
+            <FunFact emoji="💧" text="Los asteroides carbonáceos (Tipo C) contienen agua y aminoácidos. ¡Podrían haber traído los ingredientes de la vida a la Tierra primitiva!" />
           </div>
         </div>
       );
@@ -556,7 +554,7 @@ function TopicContent({ id, color }: { id: string; color: string }) {
 
 // ─── Main Component ─────────────────────────────────────────────────────────
 export function ExploraPage() {
-  const [openId, setOpenId] = useState<string | null>(null);
+  const [openId, setOpenId] = useState<string>(topics[0].id);
   const [stars, setStars] = useState<Set<string>>(new Set());
   const [celebrated, setCelebrated] = useState(false);
 
@@ -568,7 +566,6 @@ export function ExploraPage() {
     });
   };
 
-  // Celebrate when all 5 stars earned
   useEffect(() => {
     if (stars.size === 5 && !celebrated) {
       setCelebrated(true);
@@ -582,201 +579,211 @@ export function ExploraPage() {
     }
   }, [stars, celebrated]);
 
+  const activeTopic = topics.find((t) => t.id === openId)!;
+
   return (
-    <div className="w-full px-6 sm:px-10 py-8" style={{ zoom: 1.25 }}>
-      {/* ── Header ── */}
-      <div className="text-center mb-8">
-        
-        <motion.h1 
+    <div className="w-full min-h-screen" style={{ zoom: 1.25 }}>
+
+      {/* ── Header centrado ── */}
+      <div className="text-center pt-12 pb-8 px-6">
+        <motion.h1
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
           style={{
-            background: "linear-gradient(90deg, #a78bfa, #ffffff, #f97316)",
-            WebkitBackgroundClip: "text", 
+            background: "linear-gradient(90deg, #00b4d8, #ffffff, #8b5cf6)",
+            WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
             fontSize: "clamp(1.7rem, 4vw, 2.6rem)",
-            fontWeight: 800, 
+            fontWeight: 800,
             letterSpacing: "-0.02em",
           }}
         >
-          Descubre el Universo de los Asteroides 🚀
+          Explora los Asteroides 🚀
         </motion.h1>
-
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
           className="mt-2"
-          style={{ color: "rgba(255,255,255,0.55)", fontSize: "0.9rem", maxWidth: 480, margin: "0.5rem auto 0" }}
+          style={{ color: "rgba(255,255,255,0.55)", fontSize: "0.9rem" }}
         >
           Explora cada sección, interactúa con los elementos y ¡gana una ⭐ superando el quiz de cada tema!
         </motion.p>
       </div>
 
-      {/* ── Progress stars ── */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.3 }}
-        className="flex items-center justify-center gap-3 mb-8 p-4 rounded-2xl"
-        style={{ background: "rgba(0,10,30,0.6)", border: "1px solid rgba(255,255,255,0.08)" }}
-      >
-        <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.78rem", fontWeight: 600 }}>
-          Tu progreso:
-        </span>
-        <div className="flex gap-2">
-          {topics.map((t) => {
-            const earned = stars.has(t.id);
-            return (
+      {/* ── Layout sidebar + contenido ── */}
+      <div className="flex gap-0 px-4 pb-10" style={{ minHeight: "80vh" }}>
+
+        {/* Sidebar izquierda */}
+        <div
+          className="flex flex-col gap-2 flex-shrink-0"
+          style={{
+            width: 280,
+            position: "sticky",
+            top: 80,
+            alignSelf: "flex-start",
+          }}
+        >
+          {/* Progreso */}
+          <div
+            className="p-4 rounded-2xl mb-2"
+            style={{ background: "rgba(0,10,30,0.7)", border: "1px solid rgba(255,255,255,0.08)" }}
+          >
+            <div className="flex items-center justify-between mb-2">
+              <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.1em" }}>
+                TU PROGRESO
+              </span>
+              <span style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.78rem", fontWeight: 700 }}>
+                {stars.size}/5 ⭐
+              </span>
+            </div>
+            <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.08)" }}>
               <motion.div
-                key={t.id}
-                animate={earned ? { scale: [1, 1.4, 1] } : {}}
-                transition={{ duration: 0.4 }}
-                title={t.title}
-                className="flex flex-col items-center gap-1"
-              >
-                <div
-                  className="w-9 h-9 rounded-full flex items-center justify-center"
+                animate={{ width: `${(stars.size / 5) * 100}%` }}
+                transition={{ duration: 0.5 }}
+                className="h-full rounded-full"
+                style={{ background: "linear-gradient(90deg, #a78bfa, #00b4d8)" }}
+              />
+            </div>
+          </div>
+
+          {/* Lista de temas */}
+          <div
+            className="rounded-2xl overflow-hidden"
+            style={{ background: "rgba(0,10,30,0.7)", border: "1px solid rgba(255,255,255,0.08)" }}
+          >
+            <p className="px-4 pt-3 pb-2" style={{ color: "rgba(255,255,255,0.3)", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.1em" }}>
+              TEMAS
+            </p>
+            {topics.map((topic) => {
+              const isActive = openId === topic.id;
+              const hasStarr = stars.has(topic.id);
+              return (
+                <button
+                  key={topic.id}
+                  onClick={() => setOpenId(topic.id)}
+                  className="w-full flex items-center gap-3 px-4 py-3 text-left transition-all duration-200"
                   style={{
-                    background: earned ? `${t.color}33` : "rgba(255,255,255,0.05)",
-                    border: `2px solid ${earned ? t.color : "rgba(255,255,255,0.12)"}`,
-                    boxShadow: earned ? `0 0 10px ${t.color}55` : "none",
-                    fontSize: "1rem",
-                    transition: "all 0.3s",
+                    background: isActive ? `${topic.color}18` : "transparent",
+                    borderLeft: `3px solid ${isActive ? topic.color : "transparent"}`,
                   }}
                 >
-                  {earned ? "⭐" : t.emoji}
-                </div>
-              </motion.div>
-            );
-          })}
+                  <div
+                    className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
+                    style={{
+                      background: isActive ? `${topic.color}33` : "rgba(255,255,255,0.06)",
+                      border: `2px solid ${isActive ? topic.color : "rgba(255,255,255,0.12)"}`,
+                      fontSize: "1rem",
+                    }}
+                  >
+                    {hasStarr ? "⭐" : topic.emoji}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div style={{
+                      color: isActive ? topic.color : "rgba(255,255,255,0.8)",
+                      fontWeight: 600,
+                      fontSize: "0.82rem",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}>
+                      {topic.title}
+                    </div>
+                    <div style={{
+                      color: "rgba(255,255,255,0.35)",
+                      fontSize: "0.7rem",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}>
+                      {topic.subtitle}
+                    </div>
+                  </div>
+                  {isActive && (
+                    <div style={{ color: topic.color, flexShrink: 0, fontSize: "0.8rem" }}>›</div>
+                  )}
+                </button>
+              );
+            })}
+          </div>
         </div>
-        <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.78rem", fontWeight: 700 }}>
-          {stars.size}/5
-        </span>
-      </motion.div>
 
-      {/* ── All 5 stars celebration ── */}
-      <AnimatePresence>
-        {stars.size === 5 && (
-          <motion.div
-            initial={{ opacity: 0, y: -12, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            className="mb-6 p-5 rounded-2xl text-center"
-            style={{ background: "linear-gradient(135deg, rgba(251,191,36,0.2), rgba(167,139,250,0.2))", border: "2px solid rgba(251,191,36,0.5)" }}
-          >
-            <div style={{ fontSize: "2.5rem" }}>🏆</div>
-            <p style={{ color: "#fbbf24", fontWeight: 800, fontSize: "1.1rem", marginTop: 6 }}>
-              ¡Eres un experto en asteroides!
-            </p>
-            <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.85rem", marginTop: 4 }}>
-              Completaste los 5 temas y ganaste todas las estrellas. ¡La NASA estaría orgullosa de ti! 🚀
-            </p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ── Topic sections ── */}
-      <div className="space-y-3">
-        {topics.map((topic, idx) => {
-          const isOpen = openId === topic.id;
-          const hasStarr = stars.has(topic.id);
-          return (
+        {/* Panel de contenido derecho */}
+        <div className="flex-1 min-w-0 pl-6">
+          <AnimatePresence mode="wait">
             <motion.div
-              key={topic.id}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 + idx * 0.07 }}
+              key={openId}
+              initial={{ opacity: 0, x: 16 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -16 }}
+              transition={{ duration: 0.25 }}
               className="rounded-2xl overflow-hidden"
               style={{
-                border: `1px solid ${isOpen ? topic.color + "66" : "rgba(255,255,255,0.1)"}`,
-                boxShadow: isOpen ? `0 0 28px ${topic.glowColor}` : "none",
+                border: `1px solid ${activeTopic.color}66`,
                 background: "rgba(0,10,30,0.65)",
                 backdropFilter: "blur(12px)",
-                transition: "box-shadow 0.3s, border-color 0.3s",
               }}
             >
-              {/* Header */}
-              <button
-                onClick={() => setOpenId(isOpen ? null : topic.id)}
-                className="w-full flex items-center gap-3 p-4 text-left"
-                style={{ background: isOpen ? `${topic.glowColor}` : "transparent" }}
+              {/* Topic header */}
+              <div
+                className="flex items-center gap-4 p-6"
+                style={{ background: activeTopic.glowColor, borderBottom: `1px solid ${activeTopic.color}33` }}
               >
                 <div
-                  className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                  className="w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0"
                   style={{
-                    background: isOpen ? `${topic.color}33` : "rgba(255,255,255,0.07)",
-                    border: `2px solid ${isOpen ? topic.color : "rgba(255,255,255,0.15)"}`,
-                    fontSize: "1.1rem",
-                    transition: "all 0.2s",
+                    background: `${activeTopic.color}33`,
+                    border: `2px solid ${activeTopic.color}`,
+                    fontSize: "1.5rem",
                   }}
                 >
-                  {topic.emoji}
+                  {activeTopic.emoji}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span
-                      style={{
-                        color: isOpen ? topic.color : "white",
-                        fontWeight: 700,
-                        fontSize: "clamp(0.9rem, 2vw, 1.05rem)",
-                        transition: "color 0.2s",
-                      }}
-                    >
-                      {topic.title}
-                    </span>
-                    {hasStarr && (
-                      <motion.span
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        style={{ fontSize: "0.9rem" }}
-                      >
-                        ⭐
-                      </motion.span>
-                    )}
-                  </div>
-                  <p className="hidden sm:block mt-0.5" style={{ color: "rgba(255,255,255,0.45)", fontSize: "0.77rem" }}>
-                    {topic.subtitle}
+                <div>
+                  <h2 style={{ color: activeTopic.color, fontWeight: 800, fontSize: "1.3rem" }}>
+                    {activeTopic.title}
+                  </h2>
+                  <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.85rem", marginTop: 2 }}>
+                    {activeTopic.subtitle}
                   </p>
                 </div>
-                <div style={{ color: isOpen ? topic.color : "rgba(255,255,255,0.3)", flexShrink: 0 }}>
-                  <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.25 }}>
-                    <ChevronDown size={20} />
-                  </motion.div>
-                </div>
-              </button>
+              </div>
 
-              {/* Content */}
-              <AnimatePresence>
-                {isOpen && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3, ease: "easeInOut" }}
-                    className="overflow-hidden"
-                  >
-                    <div className="px-4 pb-5" style={{ borderTop: `1px solid ${topic.color}33` }}>
-                      <div className="pt-5">
-                        <TopicContent id={topic.id} color={topic.color} />
-                        <MiniQuiz
-                          questions={quizzes[topic.id]}
-                          color={topic.color}
-                          onPass={() => handlePass(topic.id)}
-                        />
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              {/* Topic body */}
+              <div className="p-6">
+                <TopicContent id={openId} color={activeTopic.color} />
+                <MiniQuiz
+                  questions={quizzes[openId]}
+                  color={activeTopic.color}
+                  onPass={() => handlePass(openId)}
+                />
+              </div>
             </motion.div>
-          );
-        })}
+          </AnimatePresence>
+
+          {/* All stars celebration */}
+          <AnimatePresence>
+            {stars.size === 5 && (
+              <motion.div
+                initial={{ opacity: 0, y: -12 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-4 p-5 rounded-2xl text-center"
+                style={{ background: "linear-gradient(135deg, rgba(251,191,36,0.2), rgba(167,139,250,0.2))", border: "2px solid rgba(251,191,36,0.5)" }}
+              >
+                <div style={{ fontSize: "2.5rem" }}>🏆</div>
+                <p style={{ color: "#fbbf24", fontWeight: 800, fontSize: "1.1rem", marginTop: 6 }}>
+                  ¡Eres un experto en asteroides!
+                </p>
+                <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.85rem", marginTop: 4 }}>
+                  Completaste los 5 temas y ganaste todas las estrellas. ¡La NASA estaría orgullosa de ti! 🚀
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
 
-      {/* Bottom note */}
-      <p className="text-center mt-8" style={{ color: "rgba(255,255,255,0.2)", fontSize: "0.72rem" }}>
+      <p className="text-center pb-6" style={{ color: "rgba(255,255,255,0.2)", fontSize: "0.72rem" }}>
         Información basada en datos de NASA, ESA y el Centro de Planetas Menores (MPC).
       </p>
     </div>
