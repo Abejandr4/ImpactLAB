@@ -47,21 +47,21 @@ function Inicio() {
         {/* Botones - Elevated higher via z-index and mt */}
         <div className="flex flex-row gap-10 mt-10">
           <HoverBorderGradient
-            containerClassName="hover:bg-[#FFDD0F] rounded-lg transition px-10 py-4 text-xl min-w-[200px]"
+            containerClassName="hover:bg-[#bfdbfe] rounded-lg transition px-10 py-4 text-xl min-w-[200px]"
             as="button"
             onClick={() => navigate("/Orbitas")}
           >
             Orbitas
           </HoverBorderGradient>
           <HoverBorderGradient
-            containerClassName="hover:bg-[#1D0175] rounded-lg transition px-10 py-4 text-xl min-w-[200px]"
+            containerClassName="hover:bg-[#bfdbfe] rounded-lg transition px-10 py-4 text-xl min-w-[200px]"
             as="button"
             onClick={() => navigate("/skyfallx-game")}
           >
             Simulador
           </HoverBorderGradient>
           <HoverBorderGradient
-            containerClassName="hover:bg-[#FFDD0F] rounded-lg transition px-10 py-4 text-xl min-w-[200px]"
+            containerClassName="hover:bg-[#bfdbfe] rounded-lg transition px-10 py-4 text-xl min-w-[200px]"
             as="button"
             onClick={() => navigate("/explora")}
           >

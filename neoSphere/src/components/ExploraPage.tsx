@@ -595,7 +595,7 @@ export function ExploraPage() {
   const activeTopic = topics.find((t) => t.id === openId)!;
 
   return (
-    <div className="w-full min-h-screen" style={{ zoom: 1.25, background: "#050810"  }}>
+    <div className="w-full min-h-screen" style={{ zoom: 1.25, background: "#000000"  }}>
 
       {/* ── Header centrado ── */}
       <div className="text-center pt-12 pb-8 px-6">
@@ -603,12 +603,11 @@ export function ExploraPage() {
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
           style={{
-            background: "linear-gradient(90deg, #00b4d8, #ffffff, #8b5cf6)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
+            color: "#ffffff",
             fontSize: "clamp(1.7rem, 4vw, 2.6rem)",
             fontWeight: 800,
             letterSpacing: "-0.02em",
+            textShadow: "0 0 20px rgba(255,255,255,0.3), 0 0 60px rgba(255,255,255,0.1)",
           }}
         >
           Explora los Asteroides
@@ -640,7 +639,7 @@ export function ExploraPage() {
           {/* Progreso */}
           <div
             className="p-4 rounded-2xl mb-2"
-            style={{ background: "rgba(0,10,30,0.7)", border: "1px solid rgba(255,255,255,0.08)" }}
+            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}
           >
             <div className="flex items-center justify-between mb-2">
               <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.1em" }}>
@@ -663,7 +662,7 @@ export function ExploraPage() {
           {/* Lista de temas */}
           <div
             className="rounded-2xl overflow-hidden"
-            style={{ background: "rgba(0,10,30,0.7)", border: "1px solid rgba(255,255,255,0.08)" }}
+            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}
           >
             <p className="px-4 pt-3 pb-2" style={{ color: "rgba(255,255,255,0.3)", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.1em" }}>
               TEMAS
@@ -732,8 +731,8 @@ export function ExploraPage() {
               transition={{ duration: 0.25 }}
               className="rounded-2xl overflow-hidden"
               style={{
-                border: `1px solid ${activeTopic.color}66`,
-                background: "rgba(0,10,30,0.65)",
+                border: "1px solid rgba(255,255,255,0.1)",
+                background: "rgba(255,255,255,0.03)",
                 backdropFilter: "blur(12px)",
               }}
             >
