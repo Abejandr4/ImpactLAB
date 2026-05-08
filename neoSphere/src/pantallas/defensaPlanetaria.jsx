@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { ChevronLeft, X, AlertTriangle } from "lucide-react";
@@ -219,7 +219,6 @@ function StrategyCard({ strategy, viability, isRecommended, onClick }) {
         boxShadow: isRecommended ? `0 0 20px ${strategy.color}22` : "none",
       }}
     >
-      {/* Imagen de la tarjeta */}
       <div style={{ height: 90, overflow: "hidden", position: "relative" }}>
         <img
           src={strategy.img}
@@ -227,7 +226,7 @@ function StrategyCard({ strategy, viability, isRecommended, onClick }) {
           className="w-full h-full object-cover"
           style={{ filter: "brightness(0.55)" }}
         />
-        <div style={{ position: "absolute", inset: 0, background: `linear-gradient(to bottom, transparent 30%, rgba(0,0,0,0.7))` }} />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 30%, rgba(0,0,0,0.7))" }} />
         {isRecommended && (
           <div
             className="absolute top-2 right-2 rounded-full px-2 py-0.5"
@@ -246,7 +245,6 @@ function StrategyCard({ strategy, viability, isRecommended, onClick }) {
         <p style={{ color: "rgba(255,255,255,0.45)", fontSize: "0.72rem", lineHeight: 1.5, marginBottom: "0.65rem" }}>
           {strategy.subtitle}
         </p>
-
         <div className="space-y-1.5">
           <div className="flex justify-between" style={{ fontSize: "0.7rem" }}>
             <span style={{ color: "rgba(255,255,255,0.4)" }}>Tasa de éxito</span>
@@ -259,14 +257,12 @@ function StrategyCard({ strategy, viability, isRecommended, onClick }) {
           </div>
           <ProgressBar value={viability.effectiveness} color={strategy.color} />
         </div>
-
         {!viability.feasible && (
           <div className="flex items-center gap-1.5 mt-2.5 px-2.5 py-1.5 rounded-xl" style={{ background: "rgba(251,146,60,0.08)", border: "1px solid rgba(251,146,60,0.2)" }}>
             <AlertTriangle size={10} style={{ color: "#fb923c", flexShrink: 0 }} />
             <span style={{ color: "#fb923c", fontSize: "0.65rem" }}>Tiempo insuficiente</span>
           </div>
         )}
-
         <div style={{ color: "rgba(255,255,255,0.22)", fontSize: "0.65rem", marginTop: "0.5rem" }}>
           {strategy.cost}
         </div>
@@ -317,8 +313,6 @@ function AssessmentModal({ strategy, viability, recommendedStrategy, leadTimeYea
         <div style={{ height: 160, position: "relative", flexShrink: 0 }}>
           <img src={strategy.img} alt={strategy.name} className="w-full h-full object-cover" style={{ filter: "brightness(0.5)" }} />
           <div style={{ position: "absolute", inset: 0, background: `linear-gradient(to bottom, ${strategy.color}22 0%, rgba(15,15,15,0.95) 100%)` }} />
-
-          {/* Botón cerrar */}
           <button
             onClick={onClose}
             className="absolute top-3 right-3 rounded-full p-1.5 transition-all hover:scale-110"
@@ -326,13 +320,11 @@ function AssessmentModal({ strategy, viability, recommendedStrategy, leadTimeYea
           >
             <X size={14} />
           </button>
-
           {isRecommended && (
             <div className="absolute top-3 left-3 rounded-full px-2.5 py-1" style={{ background: `${strategy.color}33`, border: `1px solid ${strategy.color}66`, backdropFilter: "blur(4px)" }}>
               <span style={{ color: strategy.color, fontSize: "0.65rem", fontWeight: 700 }}>⭐ MEJOR OPCIÓN</span>
             </div>
           )}
-
           <div className="absolute bottom-4 left-4 flex items-center gap-3">
             <div className="flex items-center justify-center rounded-full" style={{ width: 44, height: 44, background: `${strategy.color}33`, border: `2px solid ${strategy.color}`, fontSize: "1.2rem" }}>
               {strategy.emoji}
@@ -416,7 +408,7 @@ function AssessmentModal({ strategy, viability, recommendedStrategy, leadTimeYea
               </div>
             )}
 
-            {/* Efectividad */}
+            {/* Métricas */}
             <div className="space-y-2 p-3.5 rounded-2xl" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
               <div style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.63rem", fontWeight: 700, letterSpacing: "0.08em", marginBottom: 8 }}>MÉTRICAS</div>
               <div className="flex justify-between" style={{ fontSize: "0.72rem" }}>
@@ -486,8 +478,13 @@ export default function DefensaPlanetaria() {
   const [leadTimeYears, setLeadTimeYears] = useState(10);
   const [selectedId, setSelectedId] = useState(null);
 
+  // Elimina scroll horizontal causado por zoom: 1.25
+  useEffect(() => {
+    document.body.style.overflowX = "hidden";
+    return () => { document.body.style.overflowX = ""; };
+  }, []);
+
   const isMetallic = inputs?.composition === "metallic" || inputs?.composition === "Metálico";
-  // Los campos vienen como diameter_km y velocity_kms desde skyfallX1
   const diameterM = inputs?.diameter_km != null ? Math.round(inputs.diameter_km * 1000) : (inputs?.diameter_m ?? 200);
   const velocityKms = inputs?.velocity_kms ?? inputs?.velocity_km_s ?? 15;
 
@@ -528,7 +525,6 @@ export default function DefensaPlanetaria() {
 
   return (
     <>
-      {/* Zoom wrapper — solo para el contenido de la página */}
       <div className="w-full min-h-screen" style={{ zoom: 1.25, background: "#000000" }}>
 
         {/* ── Header ── */}
@@ -541,7 +537,8 @@ export default function DefensaPlanetaria() {
             >
               Defensa Planetaria
             </motion.h1>
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }} style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.85rem", marginTop: 4 }}>
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}
+              style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.85rem", marginTop: 4 }}>
               Evalúa las estrategias de mitigación según los parámetros de tu simulación.
             </motion.p>
           </div>
@@ -590,8 +587,12 @@ export default function DefensaPlanetaria() {
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
             className="rounded-2xl p-5" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.09)" }}>
             <div className="flex justify-between items-center mb-3">
-              <div style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.1em" }}>TIEMPO DISPONIBLE ANTES DEL IMPACTO</div>
-              <span style={{ color: "#10b981", fontWeight: 800, fontSize: "1.15rem" }}>{leadTimeYears} {leadTimeYears === 1 ? "año" : "años"}</span>
+              <div style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.1em" }}>
+                TIEMPO DISPONIBLE ANTES DEL IMPACTO
+              </div>
+              <span style={{ color: "#10b981", fontWeight: 800, fontSize: "1.15rem" }}>
+                {leadTimeYears} {leadTimeYears === 1 ? "año" : "años"}
+              </span>
             </div>
             <input type="range" min={1} max={20} value={leadTimeYears}
               onChange={(e) => setLeadTimeYears(Number(e.target.value))}
@@ -610,7 +611,9 @@ export default function DefensaPlanetaria() {
                 {recommendedStrategy.emoji}
               </div>
               <div>
-                <div style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.08em" }}>ESTRATEGIA RECOMENDADA PARA ESTA AMENAZA</div>
+                <div style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.08em" }}>
+                  ESTRATEGIA RECOMENDADA PARA ESTA AMENAZA
+                </div>
                 <div style={{ color: "#10b981", fontWeight: 800, fontSize: "1.05rem", marginTop: 2 }}>{recommendedStrategy.name}</div>
                 <div style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.78rem", marginTop: 2 }}>
                   Mejor equilibrio entre efectividad y viabilidad con tus parámetros actuales.
@@ -655,7 +658,7 @@ export default function DefensaPlanetaria() {
         </p>
       </div>
 
-      {/* Modal fuera del zoom para que no se vea afectado */}
+      {/* Modal fuera del zoom */}
       <AnimatePresence>
         {selectedStrategy && (
           <AssessmentModal
