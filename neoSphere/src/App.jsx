@@ -17,6 +17,8 @@ import Resultados from "./pantallas/resultados.jsx"; // Corregido a 'r' minúscu
 import Orbit from "./pantallas/OrbitRedirect.jsx"; // Nombre completo del archivo
 import Orbitas from "./pantallas/Orbitas.jsx"
 import VideoLayout1 from "./pantallas/VideoLayout1.jsx"; // Asumimos V mayúscula
+import DefensaPlanetaria from "./pantallas/defensaPlanetaria.jsx";//Defensa planetaria
+
 //import { Orbit } from "ogl";
 
 console.log("App is mounting")
@@ -39,6 +41,7 @@ function App() {
           <Route path="/result" element={<Resultados />} />
           <Route path="/orbita" element={<Orbit />} />
           <Route path="/orbitas" element={<Orbitas />} />
+          <Route path="/defensa-planetaria" element={<DefensaPlanetaria />} />
         </Routes>
       </div>
     </Router>
