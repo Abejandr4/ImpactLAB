@@ -330,15 +330,35 @@ const recalculatedEffects = useMemo(() => {
     <div className="h-screen overflow-y-auto bg-blue-950 text-white font-sans p-4 sm:p-6">
       <div className="bg-gray-900 rounded-xl shadow-2xl p-4 sm:p-6 max-w-7xl mx-auto">
         
-        {/* Header con transición de color */}
-        <header className="px-0 sm:px-10 py-10 border-b border-gray-800 mb-6 transition-all duration-500">
-          <h1 className={`text-3xl font-bold tracking-widest transition-colors duration-500 ${activeStyle.text}`}>
-            RESULTADOS DE LA SIMULACIÓN
-          </h1>
-          <div className="mt-4 text-xl text-gray-300 leading-relaxed min-h-12">
-             <p>{headerText}</p>
-          </div>
-        </header>
+        <header className="px-0 sm:px-10 py-10 border-b border-gray-800 mb-6 transition-all duration-500 flex justify-between items-start">
+  
+  {/* Título y descripción (izquierda) */}
+  <div>
+    <h1 className={`text-3xl font-bold tracking-widest transition-colors duration-500 ${activeStyle.text}`}>
+      RESULTADOS DE LA SIMULACIÓN
+    </h1>
+    <div className="mt-4 text-xl text-gray-300 leading-relaxed min-h-12">
+      <p>{headerText}</p>
+    </div>
+  </div>
+
+  {/* Botones (derecha) */}
+  <div className="flex flex-col sm:flex-row gap-3 ml-4 mt-1 shrink-0">
+    <button
+      onClick={() => navigate("/skyfallx-game")}
+      className="px-4 py-2 rounded-lg font-semibold text-sm bg-gray-700 hover:bg-gray-600 text-white border border-gray-500 transition-all"
+    >
+      Crear otro Impacto
+    </button>
+    <button
+      onClick={() => navigate("/mi-nueva-pagina")}
+      className="px-4 py-2 rounded-lg font-semibold text-sm bg-red-600 hover:bg-red-500 text-white transition-all"
+    >
+      Defensa Planetaria
+    </button>
+  </div>
+
+</header>
 
         {/* Sección de Botones */}
         <div className="w-full bg-gray-800/50 p-6 rounded-xl shadow-xl mb-8 border border-gray-700">
