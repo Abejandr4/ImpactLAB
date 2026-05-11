@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  --animate-ticker: ticker 100000s linear infinite;
+  --animate-ticker: ticker 120s linear infinite;
 
   /* Define the keyframes */
   @keyframes ticker {
@@ -351,4 +351,880 @@
   color: var(--space-dark);
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+
+/* styles.css - CSS unificado para Asteroid-DB Dashboard (combinando AsteroidDashboard, AsteroidDetails y AsteroidList, agregando estilos faltantes de JSX) */
+
+/* Variables para reciclar colores, tamaños y estilos comunes (reutilización máxima) */
+:root {
+    --space-light: #000000; /* Fondo principal oscuro */
+    --space-dark: #0f172a; /* Texto oscuro */
+    --primary-purple: #621ad4; /* Amarillo principal / COLOR PRINCIPAL */
+    --yellow-300: #fde047; /* Variante hover */
+    --accent-gray: #838795; /* Valores de datos */
+    --accent-blue: #162248; /* Valores de datos */
+    --red-600: #dc2626; /* Hazardous tag */
+    --green-600: #16a34a; /* Safe tag */
+    --red-500: #ef4444; /* Hazardous indicator */
+    --green-indicatorRefresh: #88eb06; /* Safe indicator */
+    --slate-700: #10131d; /* Fondo items */
+    --slate-600: #475569; /* Hover */
+    --slate-300: #cbd5e1; /* Subtítulos */
+    --gray-400: #9ca3af; /* Labels y loading */
+    --gray-900-opacity: rgba(15, 23, 42, 0.6); /* Data cards */
+    --border-dark: #000101; /* Bordes */
+    --border-slate-700: #050708; /* Bordes button container */
+    --padding-standard: 1rem;
+    --border-radius-standard: 0.5rem;
+    --border-radius-pill: 9999px;
+    --border-radius-small: 0.375rem;
+    --font-bold: bold;
+    --transition-standard: all 0.2s;
+    --shadow-standard: 0 4px 14px 0 rgba(0, 0, 0, 0.25);
+    --shadow-hover: 0 6px 20px 0 rgba(0, 0, 0, 0.3);
+    --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.AI{
+    bottom: auto;
+    size: 3rem;
+}
+
+/* Estilos de AsteroidDashboard */
+.dashboardContainer {
+    display: flex;
+    height: 100%;
+    padding: 0.2rem;
+    box-sizing: border-box;
+    gap: 0.5rem;
+
+}
+
+.listColumn {
+    width: 33.333333%;
+    max-width: 24rem;
+}
+
+.detailsColumn {
+    width: 66.666667%;
+    height: 100%;
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+/* Estilos de AsteroidDetails */
+.detailsPanel {
+    padding: 2rem;
+    background-color: #222531;
+    border-radius: var(--border-radius-standard);
+    height: 100%;
+    overflow-y: auto;
+}
+.moduleGroup2{
+    margin-bottom: 6rem;
+}
+
+.welcomeMessage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    background: var(--slate-700);
+    
+}
+
+.welcomeTitle {
+    font-size: 2.25rem;
+    font-weight: var(--font-bold);
+    color: var(--primary-purple);
+}
+
+.welcomeSubtitle {
+    margin-top: var(--padding-standard);
+    font-size: 1.25rem;
+    color: var(--slate-300);
+    text-shadow: 0 0 5px #575252, 0 0 10px #39391a, 0 0 20px #facc15, 0 0 40px #facc15, 0 0 80px #243535, 0 0 90px #1c1c1c, 0 0 100px #264d4d, 0 0 150px #3e3e3e;
+}
+.detailsHeader {
+    text-align: right;
+}
+.detailsTitle {
+    font-size: 3rem;
+    font-weight: var(--font-bold);
+    margin-bottom: 0.5rem;
+    color: var(--yellow-300);
+    text-align: right;
+    margin-top: 0rem;
+}
+
+.tag {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: var(--font-bold);
+    border-radius: var(--border-radius-pill);
+    color: white;
+}
+
+.hazardous {
+    background-color: var(--red-600);
+}
+
+.safe {
+    background-color: var(--green-600);
+}
+
+.dataGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.dataCard {
+    background-color: var(--gray-900-opacity);
+    padding: var(--padding-standard);
+    border-radius: var(--border-radius-standard);
+    box-shadow: var(--shadow-card);
+}
+
+.dataLabel {
+    font-size: 0.875rem;
+    color: var(--slate-300);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.dataValue {
+    font-size: 1.5rem;
+    font-weight: var(--font-bold);
+    color: #bef6ff;
+}
+
+.buttonContainer {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-slate-700);
+    display: flex;
+    justify-content: center;
+}
+
+.simulatorButton {
+    background-color: var(--primary-purple);
+    color: var(--space-dark);
+    font-weight: var(--font-bold);
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: var(--border-radius-standard);
+    cursor: pointer;
+    transition: var(--transition-standard) ease-in-out;
+    box-shadow: var(--shadow-standard);
+}
+
+.simulatorButton:hover {
+    background-color: var(--yellow-300);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+/* Estilos de AsteroidList */
+.listContainer {
+    
+    height: 100%;
+    border-radius: var(--border-radius-standard);
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.listTitle {
+    font-size: 2rem;
+    font-weight: var(--font-bold);
+    margin-bottom: var(--padding-standard);
+    border-bottom: 2px solid var(--border-dark);
+    padding-bottom: 0.5rem;
+    color: var(--primary-purple);
+}
+
+.list {
+    overflow-y:scroll;
+    flex-grow: 1;
+    list-style: none;
+    padding-left: 0;
+}
+
+.loading {
+    padding: var(--padding-standard);
+    font-style: italic;
+    color: var(--gray-400);
+}
+
+.listItem {
+    width: 100%;
+    text-align: left;
+    padding: 0.75rem;
+    margin: 0.25rem 0;
+    border-radius: var(--border-radius-small);
+    transition: var(--transition-standard);
+    cursor: pointer;
+    border: none;
+    background-color: var(--slate-700);
+    color: #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.listItem:hover {
+    background-color: var(--slate-600);
+    transform: scale(1.002);
+}
+
+.selected {
+    background-color: var(--primary-purple);
+    color: var(--space-dark);
+    font-weight: var(--font-bold);
+    box-shadow: var(--shadow-standard);
+}
+
+.itemContent {
+    display: flex;
+    flex-direction: column;
+}
+
+.itemName {
+    font-size: 1rem;
+    font-weight: var(--font-bold);
+}
+
+.itemDetails {
+    font-size: 0.8rem;
+    color: var(--slate-300);
+    margin-top: 0rem;
+}
+.listItem.selected .itemName,
+.listItem.selected .itemDetails {
+  color: #000000; /* Negro */
+}
+.hazardousIndicator {
+    width: 10px;
+    height: 10px;
+    background-color: var(--red-500);
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-left: 0.75rem;
+    box-shadow: 0 0 8px var(--red-500);
+}
+
+.safeIndicator {
+    width: 10px;
+    height: 10px;
+    background-color: var(--green-indicatorRefresh);
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-left: 0.75rem;
+    box-shadow: 0 0 8px #97c900;
+}
+
+.infoDetails {
+  color: var(--gray-400);
+ transform: translateY(-25px);
+ margin: 0px;
+}
+.tabButton {
+    width: 33%;
+    text-align: center;
+    padding: 0.75rem;
+    margin: 0.25rem 0;
+    border-radius: var(--border-radius-small);
+    transition: var(--transition-standard);
+    cursor: pointer;
+    border: none;
+    background-color: var(--slate-700);
+    color: #e2e8f0;
+    flex: 1;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tabButton:hover {
+    background-color: var(--slate-600);
+    transform: scale(1.02);
+}
+.returnButton {
+  /* Let the button's width adapt to its content */
+  display: inline-block;
+  width: auto;
+
+  /* Visual styling and spacing */
+  background-color: var(--slate-600);
+  color: #e2e8f0;
+  padding: 0.2rem; /* Increased padding for a better look and feel */
+  margin-bottom: 0.75rem; /* Space below the button */
+  border: none;
+  border-radius: var(--border-radius-small);
+  text-align: center;
+  font-size: 1rem;
+
+  /* Interaction feedback */
+  cursor: pointer;
+  transition: var(--transition-standard);
+  
+  /* Note: The 'flex', 'justify-content', and 'align-items' properties 
+     were removed as they are for flex containers, not for the button itself. */
+}
+
+.returnButton:hover {
+  background-color: var(--slate-600);
+  transform: scale(1.02);
+}
+
+
+.searchInput {
+    width: 95%;
+    padding: 0.5rem;
+    background-color: var(--slate-700);
+    color: white;
+    border: 1px solid var(--primary-purple);
+    border-radius: var(--border-radius-small);
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.searchInput::placeholder {
+    color: var(--gray-400);
+}
+
+.filterTabs {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+/* Estilos para OrbitSimulator (traducidos de Tailwind a custom, para unificación) */
+.simulatorContainer {
+    position: absolute; /* right-5 */
+    width: 100%;
+    height: 100%;
+    border: 2px var(--slate-600);
+    border-radius: var(--border-radius-standard);
+    overflow: hidden;
+    z-index: 10;
+}
+
+
+/* -----------------------------------------------*/
+/* ORBIT SIMULATOR*/
+
+.simulatorWrapper {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--border-radius-standard);
+}
+
+/* Main panel is now horizontal */
+.controlsPanel {
+  position: absolute;
+  top: 0.4rem;
+  left: 0.4rem;
+  backdrop-filter: blur(3px);
+  padding: 0.75rem;
+  border-radius: var(--border-radius-small);
+  border: 1px solid var(--color-border);
+  z-index: 10;
+  display: flex; /* Changed to flex for horizontal layout */
+  align-items: center; /* Vertically align items */
+  gap: 1.5rem; /* Space between asteroid control and planet grid */
+  box-shadow: var(--shadow-panel);
+}
+
+/* Grid container for planets */
+.planetsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 columns */
+  grid-template-rows: repeat(2, 1fr);    /* 2 rows */
+  gap: 0.75rem 1rem; /* Row gap and column gap */
+}
+
+.controlItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem; /* Tighter gap for items in the grid */
+}
+
+.controlItem label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: white;
+  white-space: nowrap;
+}
+
+.controlItem input[type="color"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+.controlItem input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+.controlItem input[type="color"]::-webkit-color-swatch {
+  border: 2px solid var(--color-border-hover);
+  border-radius: 50%;
+}
+
+/* Appended styles for new filters and info popup */
+
+.listTitleContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid var(--border-dark);
+  margin-top: -20px;
+}
+
+.suggestionButton {
+  background-color: var(--slate-600);
+  color: var(--primary-purple);
+  border: 1px solid var(--primary-purple);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-standard);
+}
+
+.suggestionButton:hover {
+  background-color: var(--primary-purple);
+  color: var(--space-dark);
+}
+
+.filterGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.filterLabel {
+  font-size: 0.8rem;
+  color: var(--slate-300);
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+}
+
+.filterSelect {
+  width: 100%;
+  padding: 0.5rem;
+  background-color: var(--slate-700);
+  color: white;
+  border: 1px solid var(--border-dark);
+  border-radius: var(--border-radius-small);
+  font-size: 0.9rem;
+}
+
+/* Info Popup Styles */
+.infoPopupOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.infoPopupContent {
+  background-color: var(--space-dark);
+  padding: 2rem;
+  border-radius: var(--border-radius-standard);
+  border: 1px solid var(--primary-purple);
+  width: 90%;
+  max-width: 500px;
+  box-shadow: var(--shadow-hover);
+}
+
+.infoPopupTitle {
+  color: var(--primary-purple);
+  margin-top: 0;
+  border-bottom: 1px solid var(--border-dark);
+  padding-bottom: 0.5rem;
+}
+
+.infoPopupContent ul {
+  padding-left: 1.2rem;
+  color: var(--slate-300);
+}
+
+.infoPopupContent ul li {
+  margin-bottom: 0.75rem;
+}
+
+.infoPopupContent ul ul {
+  margin-top: 0.5rem;
+}
+
+.infoPopupCloseButton {
+  background-color: var(--slate-700);
+  color: white;
+  border: 1px solid var(--border-dark);
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-small);
+  cursor: pointer;
+  transition: var(--transition-standard);
+  margin-top: 1.5rem;
+  display: block;
+  margin-left: auto;
+}
+
+.infoPopupCloseButton:hover {
+  background-color: var(--slate-600);
+}
+
+/* Appended styles for new interactive modules */
+
+
+.moduleGroupTitle {
+  color: var(--slate-300);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+
+.moduleGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.moduleButton {
+  background-color: var(--border-slate-700);
+  border-radius: var(--border-radius-standard);
+  padding: 1rem;
+  border: 1px solid var(--border-dark);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 90px;
+}
+
+.moduleButton:hover {
+  background-color: var(--space-light);
+  border-color: var(--primary-purple);
+  transform:translateX(2px);
+  scale: 1.0;
+}
+
+
+
+.moduleButton .dataUnit {
+  font-size: 1rem;
+  color: var(--gray-400);
+  margin-left: 0.25rem;
+}
+
+/* Updated Popup Styles for better presentation */
+.infoPopupOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.infoPopupContent {
+  background-color: #161e2d; /* Slightly lighter than space-dark */
+  padding: 2rem;
+  border-radius: var(--border-radius-standard);
+  border-top: 4px solid var(--primary-purple);
+  width: 90%;
+  max-width: 500px;
+  box-shadow: var(--shadow-hover);
+}
+
+.infoPopupTitle {
+  color: var(--primary-purple);
+  margin-top: 0;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.infoPopupDescription {
+  color: var(--slate-300);
+  line-height: 1.6;
+}
+
+.infoPopupCloseButton {
+  background-color: var(--primary-purple);
+  color: var(--space-dark);
+  font-weight: bold;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--border-radius-small);
+  cursor: pointer;
+  transition: var(--transition-standard);
+  margin-top: 1.5rem;
+  float: right; /* Position to the right */
+}
+
+.infoPopupCloseButton:hover {
+  background-color: var(--yellow-300);
+}
+
+
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboardContainer {
+    flex-direction: column;
+  }
+  .listColumn, .detailsColumn {
+    width: 100%;
+    max-width: none;
+  }
+  .dataGrid {
+    grid-template-columns: 1fr;
+  }
+  .controlsPanel {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .planetsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .simulatorButtons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+
+/* Bottom right buttons container */
+.simulatorButtons {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  display: flex;
+  gap:0.5rem;
+  z-index: 100;
+  
+  pointer-events: none;
+}
+
+.simulatorActionButton {
+  padding: 0.3rem 0.7rem;
+  font-weight: 1000;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: var(--border-radius-small);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  pointer-events: auto;
+}
+
+.refreshButton {
+  background-color: var(--primary-purple);
+  color: var(--space-dark);
+}
+
+.refreshButton:hover {
+  background-color: var(--yellow-300);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.4);
+}
+
+/* Agregar estos estilos al final de tu archivo styles.css */
+
+/* Camera Preset Buttons */
+.presetButtons {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.presetButton {
+  padding: 0.4rem 0.8rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  border: 1px solid var(--primary-purple);
+  background-color: rgba(15, 23, 42, 0.8);
+  color: var(--primary-purple);
+  border-radius: var(--border-radius-small);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+  pointer-events: auto;
+}
+
+.presetButton:hover {
+  background-color: var(--primary-purple);
+  color: var(--space-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* AI Insights Styles */
+.aiInsightsContainer {
+  margin-top: 2rem;
+  border-top: 1px solid var(--border-dark);
+  padding-top: 2rem;
+}
+
+.aiInsightsToggle {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: var(--accent-blue);
+  border: 1px solid var(--primary-purple);
+  border-radius: var(--border-radius-small);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: var(--primary-purple);
+  font-weight: 600;
+  font-size: 2.5rem;
+}
+
+.aiInsightsToggle:hover {
+  background-color: var(--accent-gray);
+  transform: translateY(-2px);
+}
+
+.aiInsightsToggle .arrow {
+  transition: transform 0.3s ease;
+  font-size: 2.5rem;
+}
+
+.aiInsightsToggle .arrow.expanded {
+  transform: rotate(180deg);
+}
+
+.aiInsightsContent {
+  overflow: hidden;
+}
+
+.aiInsightsLoading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  gap: 1rem;
+}
+.errormsg{
+    color: var(--gray-400);
+}
+
+.spinner {
+  border: 3px solid rgba(250, 204, 21, 0.3);
+  border-top: 3px solid var(--primary-purple);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.aiInsightsError {
+  padding: 1.5rem;
+  background-color: rgba(220, 38, 38, 0.1);
+  border: 1px solid var(--red-600);
+  border-radius: var(--border-radius-small);
+  text-align: center;
+}
+
+.aiInsightsError .retryButton {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: var(--primary-purple);
+  color: var(--space-dark);
+  border: none;
+  border-radius: var(--border-radius-small);
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.aiInsightsError .retryButton:hover {
+  background-color: var(--yellow-300);
+}
+
+.aiInsightsText {
+  padding: 1.5rem;
+  background-color: rgba(15, 23, 42, 0.5);
+  border-radius: var(--border-radius-small);
+  line-height: 1.8;
+  color: white;
+  margin: 1rem 0;
+  text-decoration: none !important;
+}
+.aiInsightsText * {
+  text-decoration: none !important;
+}
+
+.aiInsightsEmpty {
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--gray-400);
+  font-style: italic;
+}
+
+/* Responsive adjustments for preset buttons */
+@media (max-width: 768px) {
+  .presetButtons {
+    flex-direction: column;
+    right: 0.3rem;
+    top: 0.3rem;
+  }
+  
+  .presetButton {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+  }
 }
