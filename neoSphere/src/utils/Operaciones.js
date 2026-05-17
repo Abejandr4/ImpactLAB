@@ -57,20 +57,61 @@ export const simulateAsteroidImpact = ({
 };
 
 const calculateImpactData = (impactLat, impactLon, radiusMeters, propertyKey) => {
-    if (!geoJsonData || !geoJsonData.features) return 0;
-    return geoJsonData.features.reduce((total, feature) => {
-      try {
-        const coords = feature.geometry.type === "MultiPolygon"
-          ? feature.geometry.coordinates[0][0][0]
-          : feature.geometry.coordinates[0][0];
-        const distance = getDistance(impactLat, impactLon, coords[1], coords[0]);
-        if (distance <= radiusMeters) {
-          return total + Number(feature.properties[propertyKey] || 0);
-        }
-      } catch (e) { /* Ignore invalid geometry */ }
-      return total;
-    }, 0);
+  if (!geoJsonData || !geoJsonData.features) return 0;
+ 
+  // Devuelve [lon, lat] promedio de todos los vértices de las manzanas del "perimetro"
+  const getCentroid = (geometry) => {
+    let ring;
+    if (geometry.type === "MultiPolygon") {
+      ring = geometry.coordinates[0][0]; // primer anillo del primer polígono
+    } else if (geometry.type === "Polygon") {
+      ring = geometry.coordinates[0];     // anillo exterior
+    } else {
+      return null;
+    }
+    if (!ring || ring.length === 0) return null;
+ 
+    let sumLon = 0;
+    let sumLat = 0;
+    let count = 0;
+    for (const point of ring) {
+      // point = [lon, lat]
+      if (
+        Array.isArray(point) &&
+        Number.isFinite(point[0]) &&
+        Number.isFinite(point[1])
+      ) {
+        sumLon += point[0];
+        sumLat += point[1];
+        count++;
+      }
+    }
+    if (count === 0) return null;
+    return [sumLon / count, sumLat / count]; // [lon, lat]
   };
+ 
+  return geoJsonData.features.reduce((total, feature) => {
+    try {
+      if (!feature.geometry) return total;
+      const centroid = getCentroid(feature.geometry);
+      if (!centroid) return total;
+ 
+      // getDistance espera (lat1, lon1, lat2, lon2)
+      const distance = getDistance(
+        impactLat,
+        impactLon,
+        centroid[1], // lat
+        centroid[0]  // lon
+      );
+ 
+      if (distance <= radiusMeters) {
+        return total + Number(feature.properties[propertyKey] || 0);
+      }
+    } catch (e) {
+    }
+    return total;
+  }, 0);
+};
 
   const calculateLethality = (intensity, population) => {
     if (!intensity || intensity <= 0) return { lethality: 0, estimatedVictims: 0 };
