@@ -607,7 +607,7 @@ export function ExploraPage() {
             fontSize: "clamp(1.7rem, 4vw, 2.6rem)",
             fontWeight: 800,
             letterSpacing: "-0.02em",
-            textShadow: "0 0 20px rgba(255,255,255,0.3), 0 0 60px rgba(255,255,255,0.1)",
+            textShadow: "0 0 20px rgba(255,255,255,0.2), 0 0 40px rgba(255,255,255,0.08)",
           }}
         >
           Explora los Asteroides
