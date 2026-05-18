@@ -233,7 +233,7 @@ function OrbitSimulator({ onReturn, targetAsteroid, asteroids = [], selectedAste
           {!panelCollapsed && (
             <div className="p-3 space-y-3 overflow-y-auto max-h-[65vh]">
               
-              {/* LISTA INTERACTIVA DE SELECCIÓN */}
+              {/* LISTA INTERACTIVA DE SELECCIÓN
               <div className="flex flex-col gap-1.5">
                 <span className="text-[9px] tracking-[0.2em] text-violet-500/60 uppercase font-bold">// SELECCIÓN DE OBJETIVO</span>
                 <input 
@@ -268,7 +268,7 @@ function OrbitSimulator({ onReturn, targetAsteroid, asteroids = [], selectedAste
                     })
                   )}
                 </div>
-              </div>
+              </div> */}
 
               {/* DETALLES MATEMÁTICOS DE TELEMETRÍA */}
               {selectedAsteroid && (
