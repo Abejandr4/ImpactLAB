@@ -903,23 +903,6 @@ const Impacto = () => {
               })}
             </div>
 
-            <button
-              onClick={() => navigate("/result")}
-              className="w-full mt-6 transition-all hover:opacity-90"
-              style={{
-                padding: "1rem",
-                borderRadius: 10,
-                fontWeight: 700,
-                fontSize: "0.9rem",
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "#fff",
-                background:
-                  "linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)",
-              }}
-            >
-              ¿Y… qué se pudo haber hecho?
-            </button>
           </div>
         </aside>
       </div>

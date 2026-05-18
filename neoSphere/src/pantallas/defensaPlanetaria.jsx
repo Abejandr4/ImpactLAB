@@ -642,13 +642,22 @@ export default function DefensaPlanetaria() {
 
           {/* ── Navegación inferior ── */}
           <div className="flex flex-col sm:flex-row justify-center gap-3 pt-4">
-            <button onClick={() => navigate(-1)} className="px-8 py-3 rounded-2xl font-bold transition-all hover:scale-105"
-              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.7)", fontSize: "0.88rem" }}>
-              ← Volver a resultados
-            </button>
-            <button onClick={() => navigate("/skyfallx-game")} className="px-8 py-3 rounded-2xl font-bold transition-all hover:scale-105"
-              style={{ background: "rgba(16,185,129,0.1)", border: "1px solid rgba(16,185,129,0.3)", color: "#10b981", fontSize: "0.88rem" }}>
-              Probar otro asteroide →
+            <button
+              onClick={() => navigate("/result")}
+              className="w-full mt-6 transition-all hover:opacity-90"
+              style={{
+                padding: "1rem",
+                borderRadius: 10,
+                fontWeight: 700,
+                fontSize: "0.9rem",
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: "#fff",
+                background:
+                  "linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)",
+              }}
+            >
+              ¿Y… qué se pudo haber hecho?
             </button>
           </div>
         </div>
