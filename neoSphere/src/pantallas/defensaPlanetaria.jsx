@@ -15,7 +15,7 @@ const STRATEGIES = [
     emoji: "🚀",
     name: "Impacto Cinético",
     subtitle: "¡Un choque directo a toda velocidad!",
-    color: "#60a5fa",
+    color: "#f97316",
     img: "https://images-assets.nasa.gov/image/PIA25329/PIA25329~medium.jpg",
     minLeadYears: 5,
     maxDiameterM: 1000,
@@ -34,7 +34,7 @@ const STRATEGIES = [
     emoji: "🎨",
     name: "Efecto Yarkovsky",
     subtitle: "Usar el calor del Sol para empujarlo",
-    color: "#22d3ee",
+    color: "#ef4444",
     img: "https://ciencia.nasa.gov/wp-content/uploads/sites/2/2023/06/921_683_bennu_carousel_5-jpg.webp?resize=1200,900",
     minLeadYears: 15,
     maxDiameterM: 400,
@@ -53,7 +53,7 @@ const STRATEGIES = [
     emoji: "🛰️",
     name: "Tractor de Gravedad",
     subtitle: "Atracción invisible en el espacio",
-    color: "#4ade80",
+    color: "#60a5fa" ,
     img: "https://images-assets.nasa.gov/image/NHQ202111230012/NHQ202111230012~medium.jpg",
     minLeadYears: 12,
     maxDiameterM: 500,
@@ -72,7 +72,7 @@ const STRATEGIES = [
     emoji: "⚡",
     name: "Ablación Láser",
     subtitle: "Vaporizar la roca para crear propulsión",
-    color: "#facc15",
+    color: "#a78bfa" ,
     img: "https://images-assets.nasa.gov/image/PIA26711/PIA26711~medium.jpg",
     minLeadYears: 8,
     maxDiameterM: 600,
@@ -91,7 +91,7 @@ const STRATEGIES = [
     emoji: "💥",
     name: "Explosión Nuclear",
     subtitle: "El empuje más extremo de todos",
-    color: "#fb923c",
+    color: "#fbbf24" ,
     img: "https://images-assets.nasa.gov/image/jsc2008e027179/jsc2008e027179~medium.jpg",
     minLeadYears: 2,
     maxDiameterM: 10000,
@@ -110,7 +110,7 @@ const STRATEGIES = [
     emoji: "⛵",
     name: "Vela Solar",
     subtitle: "Navegando con la luz de las estrellas",
-    color: "#f472b6",
+    color: "#34d399" ,
     img: "https://images-assets.nasa.gov/image/PIA03212/PIA03212~orig.jpg",
     minLeadYears: 18,
     maxDiameterM: 200,
@@ -172,11 +172,30 @@ function calcViability(strategy, { diameterM, leadTimeYears, isMetallic, velocit
   return { successRate, effectiveness, feasible, overallScore };
 }
 
+// Analogías de Tamaño
+const getSizeAnalogy = (d) => {
+  if (d <= 5)   return { icon: "🪑", label: "mesa de comedor grande" };
+  if (d < 80)   return { icon: "⚽", label: "campo de fútbol" };
+  if (d < 170)  return { icon: "⚽", label: "1.5 campos de fútbol — umbral de peligro" };
+  if (d < 250)  return { icon: "🏢", label: "rascacielos de 50 pisos (promedio NEA)" };
+  if (d < 600)  return { icon: "⛪", label: "la base de la Pirámide de Cholula" };
+  if (d < 1500) return { icon: "🏛️", label: "10 veces el Zócalo de Puebla" };
+  if (d < 3500) return { icon: "⚽", label: "30 campos de fútbol seguidos" };
+  return               { icon: "🎡", label: "56 Estrellas de Puebla en línea recta" };
+};
+
 function getComparativeText(meters) {
-  if (meters < 50) return `🚌 ~${Math.max(1, Math.round(meters / 12))} autobuses`;
-  if (meters < 500) return `⚽ ~${Math.round(meters / 100)} canchas`;
-  return `🗼 ~${Math.round(meters / 300)} Torres Eiffel`;
+  const analogy = getSizeAnalogy(meters);
+  return `${analogy.icon} ${analogy.label}`;
 }
+
+// Analogías de Velocidad
+const getSpeedAnalogy = (s) => {
+  if (s <= 6)  return "Equivale a ir de CDMX a Puebla en menos de 20 segundos";
+  if (s <= 12) return "30 veces más rápida que el sonido en el aire";
+  if (s <= 16) return "Un objeto cruzaría todo México en solo 3.5 minutos";
+  return              "Un objeto cruzaría el diámetro de la Tierra en 10 minutos";
+};
 
 // ─── Tarjeta de estrategia (Vista Principal) ──────────────────────────────────
 function StrategyCard({ strategy, onClick }) {
@@ -209,7 +228,7 @@ function StrategyCard({ strategy, onClick }) {
           {strategy.description.substring(0, 100)}...
         </p>
         <span style={{ color: strategy.color, fontSize: "0.65rem", fontWeight: "bold", background: `${strategy.color}22`, padding: "6px", borderRadius: "6px", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-          Leer más y probar 🚀
+          Leer más y probar
         </span>
       </div>
     </motion.div>
@@ -448,7 +467,7 @@ export default function DefensaPlanetaria() {
     <>
       <div className="w-full min-h-screen bg-black" style={{ zoom: 1.25 }}>
         
-        {/* Cabecera compacta con padding superior restaurado (pt-10) y separada del contenido (pb-8) */}
+        {/* Cabecera compacta */}
         <div className="px-6 pt-14 pb-8 flex justify-between items-start">
           <div>
             <motion.h1
@@ -498,7 +517,7 @@ export default function DefensaPlanetaria() {
           </div>
         </div>
 
-        {/* Contenedor principal con MÁS espacio vertical entre secciones (space-y-8) */}
+        {/* Contenedor principal con espacio vertical entre secciones (space-y-8) */}
         <div className="px-6 pb-12 space-y-8">
 
           {/* Panel de Parámetros de la Amenaza */}
@@ -508,7 +527,7 @@ export default function DefensaPlanetaria() {
             </div>
             
             <div className="flex flex-row gap-4 items-center">
-              {/* ¡Imagen a la izquierda, AHORA MÁS GRANDE (140px)! */}
+              {/* ¡Imagen a la izquierda, de 140px! */}
               <div style={{ 
                 width: "140px", height: "140px", flexShrink: 0, 
                 display: "flex", alignItems: "center", justifyContent: "center" 
@@ -518,16 +537,16 @@ export default function DefensaPlanetaria() {
                   alt={isMetallic ? "Asteroide metálico" : "Asteroide rocoso"}
                   style={{
                     width: "100%", height: "100%", objectFit: "contain",
-                    filter: "drop-shadow(0 0 20px rgba(255,255,255,0.2))", // Le subí un poquito la sombra para que resalte
+                    filter: "drop-shadow(0 0 20px rgba(255,255,255,0.2))",
                   }}
                 />
               </div>
               
-              {/* Cuadrícula de datos a la derecha, más compacta */}
+              {/* Cuadrícula de datos a la derecha, ¡AHORA CON LA ANALOGÍA DE VELOCIDAD! */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full">
                 {[
                   { value: `${diameterM} m`, label: "Diámetro", extra: getComparativeText(diameterM) },
-                  { value: `${velocityKms} km/s`, label: "Velocidad" },
+                  { value: `${velocityKms} km/s`, label: "Velocidad", extra: getSpeedAnalogy(velocityKms) },
                   { value: isMetallic ? "Metálico" : "Roca", label: "Composición" },
                   { value: `${angleDeg}°`, label: "Ángulo" }
                 ].map((item, idx) => (
