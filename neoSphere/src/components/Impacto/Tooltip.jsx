@@ -2,17 +2,58 @@
 //
 // Tooltip con ícono ⓘ tap-to-toggle (también funciona con hover en desktop).
 //
-// El estado de "qué tooltip está abierto" NO vive aquí, vive en el padre
-// (impacto.jsx) para garantizar que solo uno esté abierto a la vez.
-
-import React from "react";
+// IMPORTANTE: la burbuja se renderiza vía React Portal directo en document.body
+// para evitar que el overflow del sidebar la recorte. La posición se calcula
+// dinámicamente leyendo el getBoundingClientRect del ícono.
+ 
+import React, { useState, useEffect, useRef } from "react";
+import ReactDOM from "react-dom";
 import { TOOLTIPS } from "../../utils/tooltips";
 import { PALETTE } from "../../utils/categorias";
  
+const TOOLTIP_WIDTH = 240;
+const TOOLTIP_OFFSET = 10; // px entre el ícono y la burbuja
+ 
 const Tooltip = ({ tooltipId, abierto, onToggle, accent }) => {
   const data = TOOLTIPS[tooltipId];
+  const iconRef = useRef(null);
+  const [pos, setPos] = useState({ top: 0, left: 0 });
  
-  // Si el id no existe, no renderizamos nada (no rompe la UI).
+  // Calcular posición de la burbuja cuando se abre o se hace scroll/resize
+  useEffect(() => {
+    if (!abierto || !iconRef.current) return;
+ 
+    const updatePos = () => {
+      const rect = iconRef.current?.getBoundingClientRect();
+      if (!rect) return;
+ 
+      const iconCenterX = rect.left + rect.width / 2;
+      const iconBottomY = rect.bottom;
+ 
+      // Centrar burbuja bajo el ícono
+      let left = iconCenterX - TOOLTIP_WIDTH / 2;
+ 
+      // Clamp para que no se salga del viewport (8px de margen)
+      const minLeft = 8;
+      const maxLeft = window.innerWidth - TOOLTIP_WIDTH - 8;
+      left = Math.max(minLeft, Math.min(left, maxLeft));
+ 
+      setPos({
+        top: iconBottomY + TOOLTIP_OFFSET,
+        left,
+      });
+    };
+ 
+    updatePos();
+    // capture:true — escucha scrolls anidados (como el del <aside>)
+    window.addEventListener("scroll", updatePos, true);
+    window.addEventListener("resize", updatePos);
+    return () => {
+      window.removeEventListener("scroll", updatePos, true);
+      window.removeEventListener("resize", updatePos);
+    };
+  }, [abierto]);
+ 
   if (!data) return null;
  
   const color = accent || PALETTE.textSec;
@@ -28,8 +69,8 @@ const Tooltip = ({ tooltipId, abierto, onToggle, accent }) => {
         lineHeight: 0,
       }}
     >
-      {/* --- Ícono ⓘ --- */}
       <button
+        ref={iconRef}
         type="button"
         onClick={(e) => {
           e.stopPropagation();
@@ -66,45 +107,48 @@ const Tooltip = ({ tooltipId, abierto, onToggle, accent }) => {
         i
       </button>
  
-      {/* --- Burbuja: solo descripción, sin título, en capitalización normal --- */}
-      {abierto && (
-        <div
-          data-tooltip="true"
-          onClick={(e) => e.stopPropagation()}
-          style={{
-            position: "absolute",
-            top: "calc(100% + 8px)",
-            left: "50%",
-            transform: "translateX(-50%)",
-            zIndex: 1000,
-            width: 240,
-            padding: "0.7rem 0.85rem",
-            borderRadius: 10,
-            background: "rgba(15,15,15,0.98)",
-            border: `1px solid ${color}55`,
-            boxShadow: `0 8px 24px rgba(0,0,0,0.6), 0 0 16px ${color}22`,
-            backdropFilter: "blur(8px)",
-            textTransform: "none",
-            letterSpacing: "normal",
-          }}
-        >
-          <p
+      {/* Burbuja vía Portal: vive en document.body, fuera del overflow del sidebar */}
+      {abierto &&
+        ReactDOM.createPortal(
+          <div
+            data-tooltip="true"
+            onClick={(e) => e.stopPropagation()}
             style={{
-              margin: 0,
-              color: PALETTE.textMain,
-              fontSize: "0.82rem",
-              lineHeight: 1.45,
-              fontWeight: 400,
+              position: "fixed",
+              top: pos.top,
+              left: pos.left,
+              zIndex: 9999,
+              width: TOOLTIP_WIDTH,
+              padding: "0.7rem 0.85rem",
+              borderRadius: 10,
+              background: "rgba(15,15,15,0.98)",
+              border: `1px solid ${color}55`,
+              boxShadow: `0 8px 24px rgba(0,0,0,0.6), 0 0 16px ${color}22`,
+              backdropFilter: "blur(8px)",
               textTransform: "none",
               letterSpacing: "normal",
+              pointerEvents: "auto",
             }}
           >
-            {data.descripcion}
-          </p>
-        </div>
-      )}
+            <p
+              style={{
+                margin: 0,
+                color: PALETTE.textMain,
+                fontSize: "0.82rem",
+                lineHeight: 1.45,
+                fontWeight: 400,
+                textTransform: "none",
+                letterSpacing: "normal",
+              }}
+            >
+              {data.descripcion}
+            </p>
+          </div>,
+          document.body
+        )}
     </span>
   );
 };
  
 export default Tooltip;
+ 

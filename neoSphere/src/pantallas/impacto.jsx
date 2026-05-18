@@ -8,6 +8,7 @@ import CategoriaTermica from "../components/Impacto/CategoriaTermica";
 import CategoriaOnda from "../components/Impacto/CategoriaOnda";
 import CategoriaSismo from "../components/Impacto/CategoriaSismo";
 import CategoriaEyecta from "../components/Impacto/CategoriaEyecta";
+import CategoriaVulnerabilidad from "../components/Impacto/CategoriaVulnerabilidad";
 
 // --- CONFIGURACIÓN DE ICONOS DE LEAFLET ---
 import L from "leaflet";
@@ -62,6 +63,7 @@ const Impacto = () => {
   }, []);
 
   // --- ESTADO ---
+  const [filtroEfecto, setFiltroEfecto] = useState("todos");
   const [distanceSliderValue, setDistanceSliderValue] = useState(20);
   const [tooltipAbierto, setTooltipAbierto] = useState(null);
   // Categoría abierta en el acordeón (solo una a la vez). Por defecto la primera.
@@ -140,11 +142,6 @@ const Impacto = () => {
 
     return { zona, tipoSuelo };
   }, [inputs]);
-
-  const totalAffectedPopulation =
-    recalculatedEffects?.affectedData?.combinedReferencePopulation || 0;
-  const totalAffectedHousing =
-    recalculatedEffects?.affectedData?.housingInBlast || 0;
 
   // Estilo del acento activo (la categoría abierta)
   const activeCat = useMemo(
@@ -307,72 +304,16 @@ const Impacto = () => {
         );
 
       case "vulnerabilidad":
-        // Aún no se refactoriza — la haremos en Fase 4.
         return (
-          <div>
-            <div
-              className="rounded-xl p-4 mb-3"
-              style={{
-                background: `${activeCat.hex}14`,
-                border: `1px solid ${activeCat.hex}33`,
-              }}
-            >
-              <span style={{ ...labelStyle, fontSize: "0.75rem" }}>
-                Población afectada
-              </span>
-              <p
-                style={{
-                  fontSize: "2rem",
-                  fontWeight: 800,
-                  color: "#fff",
-                  lineHeight: 1.15,
-                }}
-              >
-                {totalAffectedPopulation.toLocaleString()}
-                <span
-                  style={{
-                    fontSize: "0.85rem",
-                    fontWeight: 400,
-                    color: PALETTE.textSec,
-                    marginLeft: 8,
-                  }}
-                >
-                  personas
-                </span>
-              </p>
-            </div>
-            <div
-              className="rounded-xl p-4"
-              style={{
-                background: `${activeCat.hex}14`,
-                border: `1px solid ${activeCat.hex}33`,
-              }}
-            >
-              <span style={{ ...labelStyle, fontSize: "0.75rem" }}>
-                Viviendas afectadas
-              </span>
-              <p
-                style={{
-                  fontSize: "2rem",
-                  fontWeight: 800,
-                  color: "#fff",
-                  lineHeight: 1.15,
-                }}
-              >
-                {totalAffectedHousing.toLocaleString()}
-                <span
-                  style={{
-                    fontSize: "0.85rem",
-                    fontWeight: 400,
-                    color: PALETTE.textSec,
-                    marginLeft: 8,
-                  }}
-                >
-                  viviendas
-                </span>
-              </p>
-            </div>
-          </div>
+          <CategoriaVulnerabilidad
+            recalculatedEffects={recalculatedEffects}
+            isAirburst={isAirburst}
+            accent={activeCat.hex}
+            filtroEfecto={filtroEfecto}
+            setFiltroEfecto={setFiltroEfecto}
+            tooltipAbierto={tooltipAbierto}
+            onToggleTooltip={handleToggleTooltip}
+          />
         );
 
       default:
