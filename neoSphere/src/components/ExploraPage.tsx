@@ -595,7 +595,7 @@ export function ExploraPage() {
   const activeTopic = topics.find((t) => t.id === openId)!;
 
   return (
-    <div className="w-full min-h-screen" style={{ zoom: 1.25, background: "#000000"  }}>
+    <div className="w-full min-h-screen" style={{ zoom: 1.1, background: "#000000"  }}>
 
       {/* ── Header centrado ── */}
       <div className="text-center pt-12 pb-8 px-6">

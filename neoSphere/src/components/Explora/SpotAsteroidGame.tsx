@@ -226,14 +226,15 @@ export function SpotAsteroidGame() {
                     ? { opacity: 0, scale: 2 }
                     : dot.isAsteroid
                     ? {
-                        opacity: [0.7, 1, 0.7],
-                        scale: [1, 1.3, 1],
+                        opacity: 1,
+                        x: [0, 2, -2, 1, -1, 0],
+                        y: [0, -1, 2, -2, 1, 0],
                       }
                     : { opacity: 0.8 }
                 }
                 transition={
                   dot.isAsteroid && !dot.clicked
-                    ? { repeat: Infinity, duration: 1.5 + Math.random() }
+                    ? { repeat: Infinity, duration: 6 + Math.random() * 4, ease: "easeInOut" }
                     : { duration: 0.3 }
                 }
                 style={{
