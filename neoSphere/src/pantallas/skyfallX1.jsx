@@ -52,8 +52,8 @@ const getSizeAnalogy = (d) => {
   if (d <= 5)   return { icon: "🪑", label: "mesa de comedor grande" };
   if (d < 80)   return { icon: "⚽", label: "campo de fútbol" };
   if (d < 170)  return { icon: "⚽", label: "1.5 campos de fútbol — umbral de peligro" };
-  if (d < 250)  return { icon: "🏢", label: "rascacielos de 50 pisos (promedio NEA)" };
-  if (d < 600)  return { icon: "🏛️", label: "varias manzanas del Zócalo de Puebla" };
+  if (d < 250)  return { icon: "🏢", label: "rascacielos de 50 pisos (promedio NEA - Near Earth Asteroids)" };
+  if (d < 600)  return { icon: "⛪", label: "la base de la Pirámide de Cholula" };
   if (d < 1500) return { icon: "🏛️", label: "10 veces el Zócalo de Puebla" };
   if (d < 3500) return { icon: "⚽", label: "30 campos de fútbol seguidos" };
   return               { icon: "🎡", label: "56 Estrellas de Puebla en línea recta" };
@@ -61,10 +61,10 @@ const getSizeAnalogy = (d) => {
 
 // ── Analogías de velocidad ────────────────────────────────────────────────────
 const getSpeedAnalogy = (s) => {
-  if (s <= 6)  return "De CDMX a Puebla en menos de 20 segundos";
+  if (s <= 6)  return "Equivale a ir de CDMX a Puebla en menos de 20 segundos";
   if (s <= 12) return "30 veces más rápida que el sonido en el aire";
-  if (s <= 16) return "Cruzaría todo México en solo 3.5 minutos";
-  return              "Cruzaría el diámetro de la Tierra en 10 minutos";
+  if (s <= 16) return "Un objeto cruzaría todo México en solo 3.5 minutos";
+  return              "Un objeto cruzaría el diámetro de la Tierra en 10 minutos";
 };
 
 // ── Slider ────────────────────────────────────────────────────────────────────
@@ -249,28 +249,6 @@ const SkyfallX1 = () => {
         }}>
           <div style={{ position: "absolute", inset: 0, borderRadius: "14px", overflow: "hidden" }}>
             <PueblaMap position={position} setPosition={setPosition} />
-          </div>
-
-          {/* Tooltip auto-hide */}
-          <div style={{
-            position: "absolute",
-            top: "42%", left: "50%",
-            transform: "translate(-50%, -50%)",
-            background: "rgba(0,0,0,0.65)",
-            color: "#fff",
-            borderRadius: "12px",
-            padding: "0.7rem 1.4rem",
-            fontSize: "0.9rem",
-            fontWeight: 600,
-            textAlign: "center",
-            pointerEvents: "none",
-            zIndex: 500,
-            whiteSpace: "nowrap",
-            border: "1px solid rgba(255,255,255,0.08)",
-            opacity: showMapHint ? 1 : 0,
-            transition: "opacity 1s ease",
-          }}>
-            Selecciona el lugar del impacto
           </div>
 
           {/* Badge coordenadas — esquina superior izquierda */}
@@ -536,12 +514,13 @@ const SkyfallX1 = () => {
                 src={ASTEROID_TYPES[typeIndex].img}
                 alt={ASTEROID_TYPES[typeIndex].label}
                 style={{ width: "110px", height: "70px", objectFit: "contain",
-                  filter: "drop-shadow(0 0 18px rgba(124,58,237,0.45))" }}
+                filter: "drop-shadow(0 0 18px rgba(124,58,237,0.45))",
+                display: "block", margin: "0 auto" }}
               />
             </div>
 
             <p style={{
-              textAlign: "center", fontSize: "0.65rem", letterSpacing: "0.15em",
+              textAlign: "center", fontSize: "0.75rem", letterSpacing: "0.15em",
               color: "rgba(255,255,255,0.3)", textTransform: "uppercase", margin: "0 0 0.3rem",
             }}>
               Confirmar lanzamiento
@@ -568,8 +547,8 @@ const SkyfallX1 = () => {
                   padding: "0.6rem 1rem",
                   borderBottom: i < arr.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
                 }}>
-                  <span style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.35)" }}>{lbl}</span>
-                  <span style={{ fontSize: "0.85rem", fontWeight: 600, color }}>{val}</span>
+                  <span style={{ fontSize: "0.88rem", color: "rgba(255,255,255,0.35)" }}>{lbl}</span>
+                  <span style={{ fontSize: "0.95rem", fontWeight: 600, color }}>{val}</span>
                 </div>
               ))}
             </div>
@@ -579,10 +558,10 @@ const SkyfallX1 = () => {
               display: "flex", alignItems: "center", gap: "0.5rem",
               background: "rgba(168,85,247,0.07)", border: "1px solid rgba(168,85,247,0.15)",
               borderRadius: "8px", padding: "0.5rem 0.9rem", marginBottom: "0.6rem",
-              fontSize: "0.78rem", color: "rgba(255,255,255,0.45)", lineHeight: 1.4,
+              fontSize: "0.88rem", color: "rgba(255,255,255,0.45)", lineHeight: 1.4,
             }}>
-              <span style={{ fontSize: "1rem" }}>{analogy.icon}</span>
-              Tamaño de{" "}
+              <span style={{ fontSize: "1.1rem" }}>{analogy.icon}</span>
+              Equivale a {" "}
               <strong style={{ color: "rgba(255,255,255,0.75)", fontWeight: 600, marginLeft: "0.2rem" }}>
                 {analogy.label}
               </strong>
@@ -593,16 +572,16 @@ const SkyfallX1 = () => {
               display: "flex", alignItems: "center", gap: "0.5rem",
               background: "rgba(6,182,212,0.06)", border: "1px solid rgba(6,182,212,0.13)",
               borderRadius: "8px", padding: "0.5rem 0.9rem", marginBottom: "1.5rem",
-              fontSize: "0.78rem", color: "rgba(255,255,255,0.45)", lineHeight: 1.4,
+              fontSize: "0.88rem", color: "rgba(255,255,255,0.45)", lineHeight: 1.4,
             }}>
-              <span style={{ fontSize: "1rem" }}>⚡</span>
+              <span style={{ fontSize: "1.1rem" }}>⚡</span>
               {speedAnalogy}
             </div>
 
             <button
               onClick={handleLaunch}
               style={{
-                width: "100%", padding: "0.95rem",
+                width: "100%", padding: "1.05rem",
                 background: "linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)",
                 border: "none", borderRadius: "10px", color: "#fff",
                 fontSize: "0.9rem", fontWeight: 700, letterSpacing: "0.1em",
@@ -619,7 +598,7 @@ const SkyfallX1 = () => {
               onClick={() => setIsLaunched(false)}
               style={{
                 width: "100%", padding: "0.55rem", background: "none", border: "none",
-                color: "rgba(255,255,255,0.25)", fontSize: "0.75rem", cursor: "pointer",
+                color: "rgba(255,255,255,0.25)", fontSize: "0.85rem", cursor: "pointer",
                 letterSpacing: "0.08em", textTransform: "uppercase", transition: "color 0.15s",
               }}
               onMouseEnter={e => e.currentTarget.style.color="rgba(255,255,255,0.6)"}
