@@ -70,7 +70,7 @@ export const CATEGORIES = [
   },
   {
     id: "vulnerabilidad",
-    label: "Vulnerabilidad",
+    label: "Pérdidas",
     hex: "#10b981", // verde
     glow: "rgba(16,185,129,0.35)",
     radioKey: null, // agrupador
