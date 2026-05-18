@@ -1,151 +1,132 @@
 import { useState, useMemo, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
-import { ChevronLeft, X, AlertTriangle } from "lucide-react";
+import { X, AlertTriangle, Loader2 } from "lucide-react";
+import Confetti from "react-confetti"; 
 
-// ─── Estrategias ─────────────────────────────────────────────────────────────
+// Importación de las imágenes
+import asteroidRoca from "../assets/img/roca.png";
+import asteroidMetalico from "../assets/img/metalico.png";
+
+// ─── Estrategias Expandidas para Primaria Alta (10-12 años) ───────────────────
 const STRATEGIES = [
   {
     id: "kinetic",
     emoji: "🚀",
     name: "Impacto Cinético",
-    subtitle: "Colisión directa para desviar la trayectoria",
+    subtitle: "¡Un choque directo a toda velocidad!",
     color: "#60a5fa",
-    glowColor: "rgba(96,165,250,0.18)",
     img: "https://images-assets.nasa.gov/image/PIA25329/PIA25329~medium.jpg",
     minLeadYears: 5,
     maxDiameterM: 1000,
-    baseSucessRate: 75,
+    baseSucessRate: 85, 
     baseEffectiveness: 80,
-    cost: "$300M – $500M USD",
-    techReadiness: "Alta",
     metalPenalty: 20,
-    description:
-      "Colisionar una nave espacial a alta velocidad contra el asteroide para alterar su trayectoria mediante transferencia de momento lineal. Es la única estrategia probada en la práctica (NASA DART, 2022).",
+    description: "Enviamos una nave espacial pesada a miles de kilómetros por hora para chocar de frente contra el asteroide. Al impactar, le transfiere todo su 'momento lineal' (la fuerza de su movimiento). Esto frena o empuja la roca un poquito, suficiente para que años después no pase por la Tierra. Es ideal para rocas medianas y la NASA ya comprobó que funciona con la misión DART.",
+    analogy: "🎮 Es como jugar al billar cósmico: si golpeas una bola en movimiento con otra bola rápida, cambias su dirección al instante.",
     notes: [
-      { icon: "✅", text: "Tecnología demostrada exitosamente en misión NASA DART (2022)" },
-      { icon: "⚠️", text: "Efectividad reducida en asteroides metálicos por su mayor densidad" },
-      { icon: "📦", text: "Puede requerir múltiples impactores para objetos de gran tamaño" },
+      { icon: "✅", text: "Tecnología probada y exitosa en la vida real." },
+      { icon: "🪨", text: "Si el asteroide es de metal pesado, cuesta mucho más trabajo desviarlo." }
     ],
   },
   {
     id: "coating",
     emoji: "🎨",
-    name: "Recubrimiento",
-    subtitle: "Modifica el Efecto Yarkovsky gradualmente",
+    name: "Efecto Yarkovsky",
+    subtitle: "Usar el calor del Sol para empujarlo",
     color: "#22d3ee",
-    glowColor: "rgba(34,211,238,0.18)",
     img: "https://ciencia.nasa.gov/wp-content/uploads/sites/2/2023/06/921_683_bennu_carousel_5-jpg.webp?resize=1200,900",
     minLeadYears: 15,
     maxDiameterM: 400,
     baseSucessRate: 55,
     baseEffectiveness: 60,
-    cost: "$200M – $400M USD",
-    techReadiness: "Media",
     metalPenalty: 45,
-    description:
-      "Aplicar una capa reflectante o absorbente sobre la superficie del asteroide para modificar el Efecto Yarkovsky — la presión de radiación solar que altera lentamente la órbita de un cuerpo rocoso.",
+    description: "Enviamos una nave para pintar de negro una parte del asteroide con polvo especial. El color oscuro absorbe más luz del Sol. Cuando ese lado del asteroide rota y se enfría, libera energía térmica hacia el espacio. Esa pequeña fuga de calor actúa como un motor minúsculo que empuja la roca. Se necesitan muchísimos años, pero es súper seguro.",
+    analogy: "☀️ Es como usar una playera negra en un día soleado: absorbes más calor. Ese calor extra funciona como un motor que nunca se apaga.",
     notes: [
-      { icon: "☀️", text: "Aprovecha el Efecto Yarkovsky: diferencia de temperatura entre el lado iluminado y oscuro" },
-      { icon: "📏", text: "Solo viable para asteroides de menos de ~400 m de diámetro" },
-      { icon: "⏳", text: "Requiere el mayor tiempo de todos los métodos pasivos para ser efectivo" },
+      { icon: "⏳", text: "Es el método más lento de todos. Se necesitan décadas." },
+      { icon: "📏", text: "Solo sirve para asteroides que midan menos de 400 metros." }
     ],
   },
   {
     id: "gravity",
     emoji: "🛰️",
     name: "Tractor de Gravedad",
-    subtitle: "Atracción gravitacional sostenida",
+    subtitle: "Atracción invisible en el espacio",
     color: "#4ade80",
-    glowColor: "rgba(74,222,128,0.18)",
     img: "https://images-assets.nasa.gov/image/NHQ202111230012/NHQ202111230012~medium.jpg",
     minLeadYears: 12,
     maxDiameterM: 500,
     baseSucessRate: 65,
     baseEffectiveness: 70,
-    cost: "$500M – $1B USD",
-    techReadiness: "Media",
     metalPenalty: 0,
-    description:
-      "Estacionar una nave espacial masiva cerca del asteroide durante años. La atracción gravitacional mutua altera lentamente la órbita del objeto sin necesidad de contacto físico.",
+    description: "Colocamos una nave espacial inmensamente pesada a volar al lado del asteroide, pero sin tocarlo. En el espacio, todo lo que tiene masa tiene gravedad. La nave enciende sus motores suavemente para no chocar y, al hacerlo, su propia gravedad va 'arrastrando' al asteroide fuera de su camino. Es excelente porque no hay riesgo de fragmentar la roca.",
+    analogy: "🧲 Es como usar un imán invisible. Como la nave pesa mucho, jala poco a poco a la roca hacia un lado.",
     notes: [
-      { icon: "🎯", text: "Muy preciso y controlable — sin riesgo de fragmentar el asteroide" },
-      { icon: "🤝", text: "No requiere aterrizaje ni contacto directo con la superficie" },
-      { icon: "⚖️", text: "Impráctico para asteroides grandes: se necesitaría una nave de masa enorme" },
+      { icon: "🎯", text: "Es muy preciso y seguro porque no hay riesgo de romper la roca." },
+      { icon: "⚖️", text: "Si el asteroide es gigante, necesitaríamos construir una nave inmensamente pesada." }
     ],
   },
   {
     id: "laser",
     emoji: "⚡",
     name: "Ablación Láser",
-    subtitle: "Vaporización de superficie para propulsión",
+    subtitle: "Vaporizar la roca para crear propulsión",
     color: "#facc15",
-    glowColor: "rgba(250,204,21,0.18)",
     img: "https://images-assets.nasa.gov/image/PIA26711/PIA26711~medium.jpg",
     minLeadYears: 8,
     maxDiameterM: 600,
     baseSucessRate: 60,
     baseEffectiveness: 65,
-    cost: "$1B – $2B USD",
-    techReadiness: "Baja",
     metalPenalty: 35,
-    description:
-      "Vaporizar material de la superficie del asteroide con láseres de alta potencia. El material expulsado actúa como propulsor reactivo que desvía gradualmente la trayectoria del cuerpo.",
+    description: "Disparamos láseres súper potentes hacia la roca. El calor es tan extremo que la superficie pasa de sólido a gas al instante (un proceso llamado sublimación). Este gas sale disparado con muchísima fuerza hacia el espacio, empujando al asteroide en la dirección opuesta, justo como lo hace el escape de fuego en un cohete espacial.",
+    analogy: "🔍 Es como usar una lupa gigante para concentrar la luz. Al quemar la roca, el humo que sale disparado la empuja hacia atrás.",
     notes: [
-      { icon: "🔭", text: "Puede operar desde distancia segura sin necesidad de aterrizaje" },
-      { icon: "🪙", text: "Ineficaz en asteroides metálicos por alta reflectividad y conductividad térmica" },
-      { icon: "⚡", text: "Requiere fuente de energía nuclear o paneles solares de enorme área" },
+      { icon: "🔭", text: "Podemos operar los láseres desde una distancia segura." },
+      { icon: "🪙", text: "Si el asteroide es de metal brillante, el láser se refleja y pierde fuerza." }
     ],
   },
   {
     id: "nuclear",
     emoji: "💥",
     name: "Explosión Nuclear",
-    subtitle: "Mayor poder de deflexión disponible",
+    subtitle: "El empuje más extremo de todos",
     color: "#fb923c",
-    glowColor: "rgba(251,146,60,0.18)",
     img: "https://images-assets.nasa.gov/image/jsc2008e027179/jsc2008e027179~medium.jpg",
     minLeadYears: 2,
     maxDiameterM: 10000,
     baseSucessRate: 90,
     baseEffectiveness: 95,
-    cost: "$2B – $5B USD",
-    techReadiness: "Alta",
     metalPenalty: 5,
-    description:
-      "Detonar un dispositivo nuclear cerca o sobre la superficie del asteroide. La energía liberada vaporiza material y genera una fuerza de propulsión que altera la trayectoria del cuerpo.",
+    description: "¡No perforamos la roca como en las películas! Detonamos una carga nuclear cerca del asteroide, sin tocarlo. Los rayos X y la radiación de la explosión calientan la roca tan rápido que una capa entera se vaporiza y explota hacia el espacio, dándole un empujón brutal a lo que queda del asteroide. Es la última opción si nos queda poco tiempo o si el asteroide es colosal.",
+    analogy: "💨 Es como hacer explotar un fuego artificial gigante al lado de un globo: la onda de energía lo avienta lejos.",
     notes: [
-      { icon: "💪", text: "Opción de último recurso con el mayor poder de deflexión de todas las estrategias" },
-      { icon: "⚠️", text: "Riesgo de fragmentar el asteroide en múltiples impactores igualmente peligrosos" },
-      { icon: "🌐", text: "Requiere coordinación internacional y es políticamente muy complejo" },
+      { icon: "💪", text: "Tiene el mayor poder para desviar rocas gigantes en poco tiempo." },
+      { icon: "⚠️", text: "Riesgo extremo: podría fracturar el asteroide y crear una lluvia de meteoritos peligrosos." }
     ],
   },
   {
     id: "solar",
-    emoji: "☀️",
+    emoji: "⛵",
     name: "Vela Solar",
-    subtitle: "Presión de radiación solar continua",
+    subtitle: "Navegando con la luz de las estrellas",
     color: "#f472b6",
-    glowColor: "rgba(244,114,182,0.18)",
     img: "https://images-assets.nasa.gov/image/PIA03212/PIA03212~orig.jpg",
     minLeadYears: 18,
     maxDiameterM: 200,
     baseSucessRate: 50,
     baseEffectiveness: 55,
-    cost: "$100M – $300M USD",
-    techReadiness: "Baja",
     metalPenalty: 30,
-    description:
-      "Desplegar una vela reflectante unida al asteroide para aprovechar la presión de radiación solar. El efecto es continuo y no requiere combustible, pero es extremadamente lento.",
+    description: "Atamos el asteroide a una tela reflectante ultradelgada del tamaño de varias canchas de fútbol. Aunque la luz del Sol (los fotones) no tiene masa, sí tiene 'impulso'. Al rebotar constantemente contra la vela brillante, la presión de la luz va empujando la vela, y al asteroide con ella, a lo largo de décadas.",
+    analogy: "⛵ Es exactamente igual a un barco de vela en el mar, pero en lugar de usar el viento, la vela es empujada por la luz del Sol.",
     notes: [
-      { icon: "💰", text: "La opción más económica si se cuenta con tiempo suficiente (18+ años)" },
-      { icon: "🪐", text: "Solo viable para asteroides muy pequeños de menos de 200 m de diámetro" },
-      { icon: "🔬", text: "Tecnología experimental — probada solo en misiones pequeñas como IKAROS" },
+      { icon: "🪐", text: "Solo funciona para asteroides muy pequeños y rocosos." },
+      { icon: "🔬", text: "Es una tecnología experimental que todavía estamos perfeccionando." }
     ],
   },
 ];
 
-// ─── Cálculo de viabilidad ────────────────────────────────────────────────────
+// ─── Funciones Auxiliares ────────────────────────────────────────────────────
 function calcViability(strategy, { diameterM, leadTimeYears, isMetallic, velocityKms }) {
   let successRate = strategy.baseSucessRate;
   let effectiveness = strategy.baseEffectiveness;
@@ -191,98 +172,129 @@ function calcViability(strategy, { diameterM, leadTimeYears, isMetallic, velocit
   return { successRate, effectiveness, feasible, overallScore };
 }
 
-// ─── Barra de progreso ────────────────────────────────────────────────────────
-function ProgressBar({ value, color }) {
-  return (
-    <div className="w-full rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.08)", height: 5 }}>
-      <motion.div
-        initial={{ width: 0 }}
-        animate={{ width: `${value}%` }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="h-full rounded-full"
-        style={{ background: color }}
-      />
-    </div>
-  );
+function getComparativeText(meters) {
+  if (meters < 50) return `🚌 ~${Math.max(1, Math.round(meters / 12))} autobuses`;
+  if (meters < 500) return `⚽ ~${Math.round(meters / 100)} canchas`;
+  return `🗼 ~${Math.round(meters / 300)} Torres Eiffel`;
 }
 
-// ─── Tarjeta de estrategia ────────────────────────────────────────────────────
-function StrategyCard({ strategy, viability, isRecommended, onClick }) {
+// ─── Tarjeta de estrategia (Vista Principal) ──────────────────────────────────
+function StrategyCard({ strategy, onClick }) {
   return (
     <motion.div
       whileHover={{ scale: 1.02 }}
       onClick={onClick}
-      className="rounded-2xl cursor-pointer overflow-hidden"
+      className="rounded-xl cursor-pointer overflow-hidden flex flex-col"
       style={{
         background: "rgba(255,255,255,0.04)",
-        border: `1px solid ${isRecommended ? strategy.color : "rgba(255,255,255,0.1)"}`,
-        boxShadow: isRecommended ? `0 0 20px ${strategy.color}22` : "none",
+        border: `1px solid rgba(255,255,255,0.1)`,
+        height: "100%",
       }}
     >
-      <div style={{ height: 90, overflow: "hidden", position: "relative" }}>
+      <div style={{ height: 100, overflow: "hidden", position: "relative", flexShrink: 0 }}>
         <img
           src={strategy.img}
           alt={strategy.name}
           className="w-full h-full object-cover"
-          style={{ filter: "brightness(0.55)" }}
+          style={{ filter: "brightness(0.65)" }}
         />
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 30%, rgba(0,0,0,0.7))" }} />
-        {isRecommended && (
-          <div
-            className="absolute top-2 right-2 rounded-full px-2 py-0.5"
-            style={{ background: `${strategy.color}33`, border: `1px solid ${strategy.color}66`, fontSize: "0.6rem", fontWeight: 700, color: strategy.color, backdropFilter: "blur(4px)" }}
-          >
-            ⭐ RECOMENDADA
-          </div>
-        )}
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 30%, rgba(0,0,0,0.8))" }} />
         <div className="absolute bottom-2 left-3 flex items-center gap-2">
-          <span style={{ fontSize: "1rem" }}>{strategy.emoji}</span>
-          <span style={{ color: strategy.color, fontWeight: 700, fontSize: "0.82rem" }}>{strategy.name}</span>
+          <span style={{ fontSize: "1.1rem" }}>{strategy.emoji}</span>
+          <span style={{ color: strategy.color, fontWeight: 700, fontSize: "0.95rem" }}>{strategy.name}</span>
         </div>
       </div>
-
-      <div style={{ padding: "0.85rem" }}>
-        <p style={{ color: "rgba(255,255,255,0.45)", fontSize: "0.72rem", lineHeight: 1.5, marginBottom: "0.65rem" }}>
-          {strategy.subtitle}
+      <div className="flex-1 flex flex-col justify-between" style={{ padding: "0.75rem", textAlign: "center" }}>
+        <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.75rem", marginBottom: "0.6rem", flexGrow: 1 }}>
+          {strategy.description.substring(0, 100)}...
         </p>
-        <div className="space-y-1.5">
-          <div className="flex justify-between" style={{ fontSize: "0.7rem" }}>
-            <span style={{ color: "rgba(255,255,255,0.4)" }}>Tasa de éxito</span>
-            <span style={{ color: strategy.color, fontWeight: 700 }}>{viability.successRate}%</span>
-          </div>
-          <ProgressBar value={viability.successRate} color={strategy.color} />
-          <div className="flex justify-between" style={{ fontSize: "0.7rem" }}>
-            <span style={{ color: "rgba(255,255,255,0.4)" }}>Efectividad</span>
-            <span style={{ color: strategy.color, fontWeight: 700 }}>{viability.effectiveness}%</span>
-          </div>
-          <ProgressBar value={viability.effectiveness} color={strategy.color} />
-        </div>
-        {!viability.feasible && (
-          <div className="flex items-center gap-1.5 mt-2.5 px-2.5 py-1.5 rounded-xl" style={{ background: "rgba(251,146,60,0.08)", border: "1px solid rgba(251,146,60,0.2)" }}>
-            <AlertTriangle size={10} style={{ color: "#fb923c", flexShrink: 0 }} />
-            <span style={{ color: "#fb923c", fontSize: "0.65rem" }}>Tiempo insuficiente</span>
-          </div>
-        )}
-        <div style={{ color: "rgba(255,255,255,0.22)", fontSize: "0.65rem", marginTop: "0.5rem" }}>
-          {strategy.cost}
-        </div>
+        <span style={{ color: strategy.color, fontSize: "0.65rem", fontWeight: "bold", background: `${strategy.color}22`, padding: "6px", borderRadius: "6px", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+          Leer más y probar 🚀
+        </span>
       </div>
     </motion.div>
   );
 }
 
-// ─── Modal de evaluación ──────────────────────────────────────────────────────
-function AssessmentModal({ strategy, viability, recommendedStrategy, leadTimeYears, diameterM, isRecommended, onClose }) {
-  let verdict, verdictColor;
+// ─── Modal de evaluación Interactivo ──────────────────────────
+function AssessmentModal({ strategy, viability, leadTimeYears, diameterM, isMetallic, onClose }) {
+  const [testState, setTestState] = useState('reading'); 
+
+  const runSimulation = () => {
+    setTestState('simulating');
+    setTimeout(() => {
+      setTestState('results');
+    }, 1800);
+  };
+
+  let verdict, verdictColor, emojiVerdict;
   if (viability.overallScore >= 70) {
-    verdict = "Esta estrategia tiene alta probabilidad de éxito con los parámetros de esta amenaza.";
+    verdict = "¡Misión Exitosa! Logramos desviar el asteroide.";
     verdictColor = "#4ade80";
+    emojiVerdict = "🟢";
   } else if (viability.overallScore >= 45) {
-    verdict = "Viabilidad moderada. Presenta limitaciones importantes con estos parámetros específicos.";
+    verdict = "Impacto Parcial. Funcionó a medias, hay daños.";
     verdictColor = "#facc15";
+    emojiVerdict = "🟡";
   } else {
-    verdict = "Baja viabilidad para esta amenaza. Se recomienda considerar otras estrategias disponibles.";
+    verdict = "¡Misión Fallida! El asteroide no se desvió.";
     verdictColor = "#f87171";
+    emojiVerdict = "🔴";
+  }
+
+  let reasonText = "";
+  const timeDiff = leadTimeYears - strategy.minLeadYears;
+
+  if (viability.overallScore >= 70) {
+    reasonText = "¡Misión superada! 🌟 ";
+    if (timeDiff >= 5) {
+      reasonText += "¡Tener tantos años de ventaja fue la clave! ⏳ Nos dio el tiempo perfecto para empujar el asteroide sin presiones.";
+    } else if (diameterM < strategy.maxDiameterM * 0.5) {
+      reasonText += "¡Fue pan comido! 🥖 Como el asteroide era pequeñito, nuestra tecnología lo mandó a volar rapidísimo.";
+    } else {
+      reasonText += "¡Nuestra tecnología espacial funcionó de maravilla! 🚀 Logramos vencer el impulso de esta enorme roca espacial.";
+    }
+  } else if (viability.overallScore >= 45) {
+    reasonText = "Análisis del radar 📡: ¡Uf, por poco! 😅 Logramos desviar una parte, pero la Tierra recibió algunos rasguños. ";
+    if (timeDiff < 0) reasonText += "Nos faltó un poquito más de tiempo para prepararnos mejor. ";
+    else if (diameterM > strategy.maxDiameterM) reasonText += "La roca resultó ser demasiado grande para moverla por completo. ";
+    else if (isMetallic) reasonText += "Al ser de metal, costó muchísimo trabajo empujarla. ";
+    reasonText += "¡La próxima vez necesitamos una estrategia con más poder!";
+  } else {
+    let issues = [];
+    if (timeDiff < 0) issues.push(`¡el tiempo se nos acabó muy rápido! ⏳ Necesitábamos al menos ${strategy.minLeadYears} años de preparación y solo teníamos ${leadTimeYears}`);
+    if (diameterM > strategy.maxDiameterM) issues.push(`¡la roca era demasiado gigantesca! 🏔️ Nuestra máquina no tuvo la fuerza suficiente para mover un asteroide de más de ${strategy.maxDiameterM} metros`);
+    if (isMetallic && strategy.metalPenalty > 0) issues.push(`al ser de metal pesado, ¡era súper duro y pesadísimo de mover! 🛡️`);
+
+    if (issues.length > 0) {
+      const joined = issues.join(" y además, ");
+      reasonText = "Análisis del radar 📡: ¡Oh no! La misión falló porque " + joined + ". ¡Tenemos que intentar otra estrategia!";
+    } else {
+      reasonText = "Análisis del radar 📡: El empujón que le dimos no fue suficiente para alterar su órbita a tiempo. ¡Necesitamos un plan con más poder!";
+    }
+  }
+
+  let modalAnimation = { opacity: 1, scale: 1, y: 0, x: 0, rotate: 0, boxShadow: `0 0 60px ${strategy.color}22` };
+  let modalTransition = { duration: 0.22 };
+
+  if (testState === 'results') {
+    if (viability.overallScore >= 70) {
+      modalAnimation = { opacity: 1, scale: 1, y: 0, x: 0, rotate: 0, boxShadow: `0 0 60px ${strategy.color}22` };
+    } else if (viability.overallScore >= 45) {
+      modalAnimation = { 
+        opacity: 1, scale: 1, y: 0, x: 0, 
+        rotate: [-3, 3, -2, 2, -1, 1, 0], 
+        boxShadow: [`0 0 60px ${strategy.color}22`, `0 0 100px #facc1588`, `0 0 60px ${strategy.color}22`] 
+      };
+      modalTransition = { duration: 0.6, ease: "easeInOut" };
+    } else {
+      modalAnimation = { 
+        opacity: 1, scale: 1, y: 0, rotate: 0,
+        x: [-12, 12, -10, 10, -5, 5, 0], 
+        boxShadow: [`0 0 60px ${strategy.color}22`, `0 0 100px #f8717188`, `0 0 60px ${strategy.color}22`] 
+      };
+      modalTransition = { duration: 0.4 };
+    }
   }
 
   return (
@@ -291,202 +303,123 @@ function AssessmentModal({ strategy, viability, recommendedStrategy, leadTimeYea
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="fixed inset-0 flex items-center justify-center z-50 p-4"
-      style={{ background: "rgba(0,0,0,0.8)", backdropFilter: "blur(8px)" }}
+      style={{ background: "rgba(0,0,0,0.85)", backdropFilter: "blur(10px)" }}
       onClick={onClose}
     >
+      {testState === 'results' && viability.overallScore >= 70 && (
+        <Confetti width={window.innerWidth} height={window.innerHeight} recycle={false} numberOfPieces={400} gravity={0.15} />
+      )}
+
       <motion.div
-        initial={{ opacity: 0, scale: 0.92, y: 24 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.92, y: 24 }}
-        transition={{ duration: 0.22 }}
+        initial={{ opacity: 0, scale: 0.92, y: 24, boxShadow: `0 0 60px ${strategy.color}22` }}
+        animate={modalAnimation}
+        exit={{ opacity: 0, scale: 0.92, y: 24, boxShadow: `0 0 60px ${strategy.color}22` }}
+        transition={modalTransition}
         className="w-full rounded-2xl overflow-hidden flex flex-col"
-        style={{
-          maxWidth: 500,
-          maxHeight: "88vh",
-          background: "#0f0f0f",
-          border: `1px solid ${strategy.color}44`,
-          boxShadow: `0 0 60px ${strategy.color}1a, 0 30px 60px rgba(0,0,0,0.8)`,
-        }}
+        style={{ maxWidth: 500, maxHeight: "90vh", background: "#0f0f0f", border: `1px solid rgba(255,255,255,0.15)` }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Imagen de cabecera */}
         <div style={{ height: 160, position: "relative", flexShrink: 0 }}>
           <img src={strategy.img} alt={strategy.name} className="w-full h-full object-cover" style={{ filter: "brightness(0.5)" }} />
           <div style={{ position: "absolute", inset: 0, background: `linear-gradient(to bottom, ${strategy.color}22 0%, rgba(15,15,15,0.95) 100%)` }} />
-          <button
-            onClick={onClose}
-            className="absolute top-3 right-3 rounded-full p-1.5 transition-all hover:scale-110"
-            style={{ background: "rgba(0,0,0,0.5)", border: "1px solid rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.7)", backdropFilter: "blur(4px)" }}
-          >
-            <X size={14} />
+          <button onClick={onClose} className="absolute top-3 right-3 rounded-full p-1.5" style={{ background: "rgba(0,0,0,0.5)", border: "1px solid rgba(255,255,255,0.15)", color: "white" }}>
+            <X size={16} />
           </button>
-          {isRecommended && (
-            <div className="absolute top-3 left-3 rounded-full px-2.5 py-1" style={{ background: `${strategy.color}33`, border: `1px solid ${strategy.color}66`, backdropFilter: "blur(4px)" }}>
-              <span style={{ color: strategy.color, fontSize: "0.65rem", fontWeight: 700 }}>⭐ MEJOR OPCIÓN</span>
-            </div>
-          )}
           <div className="absolute bottom-4 left-4 flex items-center gap-3">
-            <div className="flex items-center justify-center rounded-full" style={{ width: 44, height: 44, background: `${strategy.color}33`, border: `2px solid ${strategy.color}`, fontSize: "1.2rem" }}>
+            <div className="flex items-center justify-center rounded-full" style={{ width: 50, height: 50, background: `${strategy.color}33`, border: `2px solid ${strategy.color}`, fontSize: "1.5rem" }}>
               {strategy.emoji}
             </div>
             <div>
-              <div style={{ color: strategy.color, fontWeight: 800, fontSize: "1.05rem" }}>{strategy.name}</div>
-              <div style={{ color: "rgba(255,255,255,0.45)", fontSize: "0.72rem" }}>Evaluación de misión</div>
+              <div style={{ color: strategy.color, fontWeight: 800, fontSize: "1.3rem" }}>{strategy.name}</div>
+              <div style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.8rem", textTransform: "uppercase", letterSpacing: "1px" }}>
+                {testState === 'results' ? 'Reporte de Misión' : 'Expediente de Estrategia'}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Contenido scrollable */}
-        <div className="overflow-y-auto flex-1" style={{ padding: "1.25rem" }}>
-          <div className="space-y-3">
-
-            {/* Probabilidad de éxito */}
-            <div className="p-4 rounded-2xl" style={{ background: "rgba(255,255,255,0.04)", border: `1px solid ${strategy.color}22` }}>
-              <div className="flex justify-between items-end mb-2">
-                <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.08em" }}>PROBABILIDAD DE ÉXITO</span>
-                <span style={{ color: strategy.color, fontWeight: 800, fontSize: "1.5rem", lineHeight: 1 }}>{viability.successRate}%</span>
-              </div>
-              <div className="w-full rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.08)", height: 8 }}>
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${viability.successRate}%` }}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
-                  className="h-full rounded-full"
-                  style={{ background: strategy.color }}
-                />
-              </div>
-            </div>
-
-            {/* Tiempo y tamaño */}
-            <div className="grid grid-cols-2 gap-2.5">
-              <div className="p-3 rounded-2xl" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
-                <div style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.63rem", fontWeight: 700, letterSpacing: "0.08em" }}>TIEMPO DE ACCIÓN</div>
-                <div style={{ color: viability.feasible ? "#4ade80" : "#f87171", fontWeight: 800, fontSize: "0.92rem", marginTop: 4 }}>
-                  {viability.feasible ? "Suficiente" : "Insuficiente"}
-                </div>
-                <div style={{ color: "rgba(255,255,255,0.3)", fontSize: "0.65rem", marginTop: 2 }}>
-                  {viability.feasible ? `${leadTimeYears} años disponibles` : `Faltan ${strategy.minLeadYears - leadTimeYears} año(s)`}
+        <div className="overflow-y-auto flex-1 p-5 space-y-4">
+          {testState === 'reading' && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+              <div className="p-4 rounded-xl mb-4" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)" }}>
+                <div style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.75rem", fontWeight: 700, marginBottom: 8, letterSpacing: "1px" }}>¿CÓMO FUNCIONA?</div>
+                <p style={{ color: "white", fontSize: "0.9rem", lineHeight: 1.5 }}>{strategy.description}</p>
+                <div className="mt-3 p-3 rounded-lg" style={{ background: "rgba(0,0,0,0.3)", borderLeft: `3px solid ${strategy.color}` }}>
+                  <p style={{ color: "#e2e8f0", fontSize: "0.85rem", fontStyle: "italic" }}>{strategy.analogy}</p>
                 </div>
               </div>
-              <div className="p-3 rounded-2xl" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
-                <div style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.63rem", fontWeight: 700, letterSpacing: "0.08em" }}>TAMAÑO OBJETIVO</div>
-                <div style={{ color: "rgba(255,255,255,0.9)", fontWeight: 800, fontSize: "0.92rem", marginTop: 4 }}>{diameterM} m</div>
-                <div style={{ color: "rgba(255,255,255,0.3)", fontSize: "0.65rem", marginTop: 2 }}>
-                  {diameterM <= strategy.maxDiameterM ? "Dentro del rango" : "Excede el límite"}
-                </div>
-              </div>
-            </div>
-
-            {/* Alerta tiempo insuficiente */}
-            {!viability.feasible && (
-              <div className="flex gap-2.5 p-3 rounded-2xl" style={{ background: "rgba(251,146,60,0.08)", border: "1px solid rgba(251,146,60,0.22)" }}>
-                <AlertTriangle size={13} style={{ color: "#fb923c", flexShrink: 0, marginTop: 1 }} />
-                <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.76rem", lineHeight: 1.55 }}>
-                  Requiere mínimo {strategy.minLeadYears} años. Con {leadTimeYears} año(s) la probabilidad cae drásticamente.
-                  Considera la <strong style={{ color: "#fb923c" }}>Explosión Nuclear</strong> (mínimo 2 años).
-                </p>
-              </div>
-            )}
-
-            {/* Retroalimentación */}
-            <div className="p-3.5 rounded-2xl" style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${verdictColor}33` }}>
-              <div style={{ color: verdictColor, fontWeight: 700, fontSize: "0.68rem", letterSpacing: "0.08em", marginBottom: 6 }}>RETROALIMENTACIÓN</div>
-              <p style={{ color: "rgba(255,255,255,0.75)", fontSize: "0.82rem", lineHeight: 1.65 }}>{verdict}</p>
-            </div>
-
-            {/* Mejor estrategia (si no es la recomendada) */}
-            {!isRecommended && (
-              <div className="flex gap-2.5 p-3.5 rounded-2xl" style={{ background: "rgba(16,185,129,0.07)", border: "1px solid rgba(16,185,129,0.22)" }}>
-                <span style={{ fontSize: "1rem", flexShrink: 0 }}>{recommendedStrategy.emoji}</span>
-                <div>
-                  <div style={{ color: "#10b981", fontWeight: 700, fontSize: "0.76rem" }}>Mejor estrategia para esta amenaza</div>
-                  <div style={{ color: "rgba(255,255,255,0.55)", fontSize: "0.74rem", marginTop: 2 }}>
-                    <strong style={{ color: "rgba(255,255,255,0.85)" }}>{recommendedStrategy.name}</strong> ofrece el mejor
-                    equilibrio de efectividad y viabilidad con tus parámetros actuales.
+              <div className="space-y-2 mb-6">
+                <div style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.75rem", fontWeight: 700, marginTop: 4, letterSpacing: "1px" }}>DATOS DE LA MISIÓN</div>
+                {strategy.notes.map((note, i) => (
+                  <div key={i} className="flex items-center gap-3 p-3 rounded-lg" style={{ background: "rgba(255,255,255,0.03)" }}>
+                    <span style={{ fontSize: "1.2rem" }}>{note.icon}</span>
+                    <p style={{ color: "rgba(255,255,255,0.8)", fontSize: "0.85rem" }}>{note.text}</p>
                   </div>
+                ))}
+              </div>
+              <button onClick={runSimulation} className="w-full py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 hover:scale-[1.02] transition-transform" style={{ background: "linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)", color: "white", fontSize: "1rem", letterSpacing: "1px", border: "none", boxShadow: "0 10px 20px -5px rgba(124, 58, 237, 0.4)" }}>
+                <span>INICIAR SIMULACIÓN</span><span style={{ fontSize: "1.2rem" }}>🚀</span>
+              </button>
+            </motion.div>
+          )}
+
+          {testState === 'simulating' && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center py-10">
+              <Loader2 className="animate-spin mb-4" size={48} color={strategy.color} />
+              <p style={{ color: "white", fontWeight: "bold", fontSize: "1.1rem", letterSpacing: "1px" }}>Calculando trayectorias...</p>
+              <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.85rem", marginTop: "8px" }}>Evaluando física del asteroide</p>
+            </motion.div>
+          )}
+
+          {testState === 'results' && (
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
+              <div className="p-5 rounded-2xl text-center flex flex-col items-center justify-center mb-5" style={{ background: `${verdictColor}11`, border: `2px solid ${verdictColor}` }}>
+                <div style={{ fontSize: "2.5rem", marginBottom: "8px" }}>{emojiVerdict}</div>
+                <p style={{ color: "white", fontSize: "1.1rem", fontWeight: "bold", marginBottom: "12px" }}>{verdict}</p>
+                <div style={{ background: "rgba(0,0,0,0.4)", padding: "10px 14px", borderRadius: "10px", width: "100%" }}>
+                  <p style={{ color: "rgba(255,255,255,0.85)", fontSize: "0.85rem", fontStyle: "italic", lineHeight: 1.4 }}>{reasonText}</p>
                 </div>
               </div>
-            )}
-
-            {/* Métricas */}
-            <div className="space-y-2 p-3.5 rounded-2xl" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
-              <div style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.63rem", fontWeight: 700, letterSpacing: "0.08em", marginBottom: 8 }}>MÉTRICAS</div>
-              <div className="flex justify-between" style={{ fontSize: "0.72rem" }}>
-                <span style={{ color: "rgba(255,255,255,0.5)" }}>Tasa de éxito</span>
-                <span style={{ color: strategy.color, fontWeight: 700 }}>{viability.successRate}%</span>
-              </div>
-              <ProgressBar value={viability.successRate} color={strategy.color} />
-              <div className="flex justify-between pt-1" style={{ fontSize: "0.72rem" }}>
-                <span style={{ color: "rgba(255,255,255,0.5)" }}>Efectividad</span>
-                <span style={{ color: strategy.color, fontWeight: 700 }}>{viability.effectiveness}%</span>
-              </div>
-              <ProgressBar value={viability.effectiveness} color={strategy.color} />
-            </div>
-
-            {/* Cómo funciona */}
-            <div className="p-3.5 rounded-2xl" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
-              <div style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.63rem", fontWeight: 700, letterSpacing: "0.08em", marginBottom: 8 }}>¿CÓMO FUNCIONA?</div>
-              <p style={{ color: "rgba(255,255,255,0.72)", fontSize: "0.8rem", lineHeight: 1.65 }}>{strategy.description}</p>
-            </div>
-
-            {/* Notas técnicas */}
-            <div className="space-y-2">
-              <div style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.63rem", fontWeight: 700, letterSpacing: "0.08em" }}>CONSIDERACIONES TÉCNICAS</div>
-              {strategy.notes.map((note, i) => (
-                <div key={i} className="flex items-start gap-2.5 p-3 rounded-xl" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
-                  <span style={{ fontSize: "0.88rem", flexShrink: 0 }}>{note.icon}</span>
-                  <p style={{ color: "rgba(255,255,255,0.62)", fontSize: "0.77rem", lineHeight: 1.55 }}>{note.text}</p>
+              <div className="p-4 rounded-xl mb-6" style={{ background: "rgba(255,255,255,0.05)" }}>
+                <div className="flex justify-between items-center mb-2">
+                  <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.75rem", fontWeight: 700, letterSpacing: "1px" }}>PROBABILIDAD DE ÉXITO</span>
+                  <span style={{ color: verdictColor, fontWeight: "bold", fontSize: "1.2rem" }}>{viability.overallScore}%</span>
                 </div>
-              ))}
-            </div>
-
-            {/* Detalles */}
-            <div className="grid grid-cols-2 gap-2">
-              {[
-                { label: "COSTO", value: strategy.cost },
-                { label: "TECNOLOGÍA", value: strategy.techReadiness },
-                { label: "TIEMPO MÍNIMO", value: `${strategy.minLeadYears} años` },
-                { label: "DIÁMETRO MÁX.", value: `${strategy.maxDiameterM} m` },
-              ].map((item) => (
-                <div key={item.label} className="p-3 rounded-xl text-center" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
-                  <div style={{ color: strategy.color, fontWeight: 800, fontSize: "0.76rem" }}>{item.value}</div>
-                  <div style={{ color: "rgba(255,255,255,0.28)", fontSize: "0.58rem", marginTop: 2 }}>{item.label}</div>
+                <div className="w-full rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.1)", height: 16 }}>
+                  <motion.div initial={{ width: 0 }} animate={{ width: `${viability.overallScore}%` }} transition={{ duration: 1.5, ease: "easeOut" }} className="h-full rounded-full" style={{ background: verdictColor }} />
                 </div>
-              ))}
-            </div>
-
-            <button
-              onClick={onClose}
-              className="w-full py-2.5 rounded-2xl font-bold transition-all hover:scale-[1.02]"
-              style={{ background: `${strategy.color}18`, border: `1px solid ${strategy.color}44`, color: strategy.color, fontSize: "0.82rem" }}
-            >
-              Cerrar evaluación
-            </button>
-          </div>
+              </div>
+              <button onClick={onClose} className="w-full py-3 rounded-xl font-bold mt-2 hover:bg-white/10 transition-colors" style={{ background: "transparent", border: `1px solid ${strategy.color}`, color: strategy.color, fontSize: "1rem" }}>
+                Cerrar Reporte
+              </button>
+            </motion.div>
+          )}
         </div>
       </motion.div>
     </motion.div>
   );
 }
 
-// ─── Componente principal ─────────────────────────────────────────────────────
+// ─── Componente Principal ─────────────────────────────────────────────────────
 export default function DefensaPlanetaria() {
   const location = useLocation();
   const navigate = useNavigate();
   const { inputParameters: inputs } = location.state || {};
 
-  const [leadTimeYears, setLeadTimeYears] = useState(10);
+  const [leadTimeYears, setLeadTimeYears] = useState(25);
   const [selectedId, setSelectedId] = useState(null);
 
-  // Elimina scroll horizontal causado por zoom: 1.25
   useEffect(() => {
     document.body.style.overflowX = "hidden";
     return () => { document.body.style.overflowX = ""; };
   }, []);
 
-  const isMetallic = inputs?.composition === "metallic" || inputs?.composition === "Metálico";
-  const diameterM = inputs?.diameter_km != null ? Math.round(inputs.diameter_km * 1000) : (inputs?.diameter_m ?? 200);
-  const velocityKms = inputs?.velocity_kms ?? inputs?.velocity_km_s ?? 15;
+  const isMetallic = inputs?.composition === "metallic" || inputs?.composition === "Metálico" || inputs?.composition === "Metálica";
+  const diameterM = inputs?.diameter_km != null ? Math.round(inputs.diameter_km * 1000) : (inputs?.diameter_m ?? 2500);
+  const velocityKms = inputs?.velocity_kms ?? inputs?.velocity_km_s ?? 10;
+  const angleDeg = inputs?.angle_deg ?? 45;
+
+  const asteroidImg = isMetallic ? asteroidMetalico : asteroidRoca;
 
   const viabilities = useMemo(() => {
     return STRATEGIES.reduce((acc, s) => {
@@ -495,28 +428,16 @@ export default function DefensaPlanetaria() {
     }, {});
   }, [diameterM, leadTimeYears, isMetallic, velocityKms]);
 
-  const recommendedStrategy = useMemo(() => {
-    const feasible = STRATEGIES.filter((s) => viabilities[s.id].feasible);
-    const pool = feasible.length > 0 ? feasible : STRATEGIES;
-    return pool.reduce((best, s) =>
-      viabilities[s.id].overallScore > viabilities[best.id].overallScore ? s : best
-    );
-  }, [viabilities]);
-
   const selectedStrategy = STRATEGIES.find((s) => s.id === selectedId);
 
   if (!inputs) {
     return (
-      <div className="w-full min-h-screen flex items-center justify-center" style={{ background: "#000000" }}>
+      <div className="w-full min-h-screen flex items-center justify-center bg-black">
         <div className="text-center p-8">
-          <div style={{ fontSize: "3rem", marginBottom: 16 }}>🛡️</div>
-          <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "1rem", marginBottom: 24 }}>No hay datos de simulación disponibles.</p>
-          <button
-            onClick={() => navigate("/skyfallx-game")}
-            className="px-6 py-3 rounded-2xl font-bold transition-all hover:scale-105"
-            style={{ background: "rgba(16,185,129,0.12)", border: "1px solid rgba(16,185,129,0.35)", color: "#10b981" }}
-          >
-            ← Crear una simulación
+          <div style={{ fontSize: "3rem", marginBottom: 16 }}>📡</div>
+          <p className="text-white text-lg mb-6">No hay lecturas en el radar espacial.</p>
+          <button onClick={() => navigate("/skyfallx-game")} className="px-6 py-3 rounded-xl bg-blue-500 text-white font-bold hover:scale-105 transition-transform">
+            ← Rastrear nuevo asteroide
           </button>
         </div>
       </div>
@@ -525,158 +446,144 @@ export default function DefensaPlanetaria() {
 
   return (
     <>
-      <div className="w-full min-h-screen" style={{ zoom: 1.25, background: "#000000" }}>
-
-        {/* ── Header ── */}
-        <div className="px-6 pt-10 pb-6 flex justify-between items-start">
+      <div className="w-full min-h-screen bg-black" style={{ zoom: 1.25 }}>
+        
+        {/* Cabecera compacta con padding superior restaurado (pt-10) y separada del contenido (pb-8) */}
+        <div className="px-6 pt-14 pb-8 flex justify-between items-start">
           <div>
             <motion.h1
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              style={{ color: "#ffffff", fontSize: "clamp(1.6rem, 3.5vw, 2.4rem)", fontWeight: 800, letterSpacing: "-0.02em", textShadow: "0 0 24px rgba(16,185,129,0.4)" }}
+              style={{ color: "#ffffff", fontSize: "2.5rem", fontWeight: 800 }}
             >
               Defensa Planetaria
             </motion.h1>
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}
-              style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.85rem", marginTop: 4 }}>
-              Evalúa las estrategias de mitigación según los parámetros de tu simulación.
-            </motion.p>
+            <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.85rem", marginTop: 2 }}>
+              Checa las estrategias disponibles para salvar la Tierra.
+            </p>
           </div>
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="flex gap-2 flex-shrink-0 mt-1">
+          
+          <div className="flex gap-2 flex-shrink-0 mt-1">
             <button
               onClick={() => navigate(-1)}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl transition-all hover:scale-105"
-              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.6)", fontSize: "0.78rem", fontWeight: 600 }}
+              style={{
+                display: "flex", alignItems: "center", gap: "0.25rem",
+                background: "#0f0f0f", border: "1px solid rgba(255,255,255,0.15)",
+                color: "#ffffff", borderRadius: "8px",
+                padding: "0.35rem 0.6rem", fontSize: "0.65rem", fontWeight: 700,
+                letterSpacing: "0.05em", textTransform: "uppercase", cursor: "pointer",
+                transition: "background 0.2s"
+              }}
+              onMouseEnter={e => e.currentTarget.style.background="#1a1a1a"}
+              onMouseLeave={e => e.currentTarget.style.background="#0f0f0f"}
             >
-              <ChevronLeft size={13} /> Resultados
+              <span style={{ fontSize: "0.9rem", paddingBottom: "1px" }}>←</span> Resultados
             </button>
             <button
               onClick={() => navigate("/skyfallx-game")}
-              className="px-3 py-2 rounded-xl transition-all hover:scale-105"
-              style={{ background: "rgba(16,185,129,0.1)", border: "1px solid rgba(16,185,129,0.28)", color: "#10b981", fontSize: "0.78rem", fontWeight: 600 }}
+              style={{
+                display: "flex", alignItems: "center", gap: "0.25rem",
+                background: "linear-gradient(90deg, #7c3aed 0%, #4f46e5 100%)",
+                border: "none",
+                color: "#ffffff", borderRadius: "8px",
+                padding: "0.35rem 0.6rem", fontSize: "0.65rem", fontWeight: 700,
+                letterSpacing: "0.05em", textTransform: "uppercase", cursor: "pointer",
+                transition: "opacity 0.2s"
+              }}
+              onMouseEnter={e => e.currentTarget.style.opacity="0.9"}
+              onMouseLeave={e => e.currentTarget.style.opacity="1"}
             >
-              Nuevo asteroide →
+              Nuevo asteroide <span style={{ fontSize: "0.9rem" }}>→</span>
             </button>
-          </motion.div>
+          </div>
         </div>
 
-        <div className="px-6 pb-12 space-y-5">
+        {/* Contenedor principal con MÁS espacio vertical entre secciones (space-y-8) */}
+        <div className="px-6 pb-12 space-y-8">
 
-          {/* ── Parámetros de la amenaza ── */}
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-            className="rounded-2xl p-5" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.09)" }}>
-            <div style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.1em", marginBottom: 12 }}>
-              PARÁMETROS DE LA AMENAZA
+          {/* Panel de Parámetros de la Amenaza */}
+          <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.09)" }}>
+            <div style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.1em", marginBottom: "0.5rem" }}>
+              FICHA DEL ASTEROIDE ☄️
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {[
-                { label: "Diámetro", value: `${diameterM} m` },
-                { label: "Velocidad", value: `${velocityKms} km/s` },
-                { label: "Composición", value: isMetallic ? "Metálico" : "Roca" },
-                { label: "Ángulo", value: `${inputs?.angle_deg ?? "?"}°` },
-              ].map((item) => (
-                <div key={item.label} className="text-center p-3 rounded-xl" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}>
-                  <div style={{ color: "rgba(255,255,255,0.85)", fontWeight: 800, fontSize: "1rem" }}>{item.value}</div>
-                  <div style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.66rem", marginTop: 2 }}>{item.label}</div>
-                </div>
-              ))}
+            
+            <div className="flex flex-row gap-4 items-center">
+              {/* ¡Imagen a la izquierda, AHORA MÁS GRANDE (140px)! */}
+              <div style={{ 
+                width: "140px", height: "140px", flexShrink: 0, 
+                display: "flex", alignItems: "center", justifyContent: "center" 
+              }}>
+                <img
+                  src={asteroidImg}
+                  alt={isMetallic ? "Asteroide metálico" : "Asteroide rocoso"}
+                  style={{
+                    width: "100%", height: "100%", objectFit: "contain",
+                    filter: "drop-shadow(0 0 20px rgba(255,255,255,0.2))", // Le subí un poquito la sombra para que resalte
+                  }}
+                />
+              </div>
+              
+              {/* Cuadrícula de datos a la derecha, más compacta */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full">
+                {[
+                  { value: `${diameterM} m`, label: "Diámetro", extra: getComparativeText(diameterM) },
+                  { value: `${velocityKms} km/s`, label: "Velocidad" },
+                  { value: isMetallic ? "Metálico" : "Roca", label: "Composición" },
+                  { value: `${angleDeg}°`, label: "Ángulo" }
+                ].map((item, idx) => (
+                  <div key={idx} className="text-center p-2 rounded-lg flex flex-col justify-center" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", height: "100%" }}>
+                    <div style={{ color: "rgba(255,255,255,0.85)", fontWeight: 800, fontSize: "0.95rem" }}>{item.value}</div>
+                    <div style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.6rem", marginTop: 2, textTransform: "uppercase" }}>{item.label}</div>
+                    {item.extra && (
+                      <div style={{ color: "#4ade80", fontSize: "0.6rem", marginTop: "4px", fontWeight: "bold" }}>
+                        {item.extra}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
-          </motion.div>
+          </div>
 
-          {/* ── Slider de tiempo ── */}
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
-            className="rounded-2xl p-5" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.09)" }}>
+          {/* Reloj del fin del mundo con color índigo/morado */}
+          <div className="rounded-xl p-5" style={{ background: "rgba(255,255,255,0.05)" }}>
             <div className="flex justify-between items-center mb-3">
-              <div style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.1em" }}>
-                TIEMPO DISPONIBLE ANTES DEL IMPACTO
-              </div>
-              <span style={{ color: "#10b981", fontWeight: 800, fontSize: "1.15rem" }}>
-                {leadTimeYears} {leadTimeYears === 1 ? "año" : "años"}
-              </span>
+              <div className="text-white/50 font-bold text-[0.65rem] tracking-widest">TIEMPO HASTA EL IMPACTO</div>
+              <span style={{ color: "#a78bfa" }} className="font-bold text-xl">{leadTimeYears} años</span>
             </div>
-            <input type="range" min={1} max={20} value={leadTimeYears}
+            <input type="range" min={1} max={50} value={leadTimeYears}
               onChange={(e) => setLeadTimeYears(Number(e.target.value))}
-              className="w-full cursor-pointer" style={{ accentColor: "#10b981" }} />
-            <div className="flex justify-between mt-1" style={{ color: "rgba(255,255,255,0.2)", fontSize: "0.64rem" }}>
-              <span>1 año</span><span>10 años</span><span>20 años</span>
+              className="w-full cursor-pointer" style={{ accentColor: "#7c3aed" }} />
+            <div className="flex justify-between mt-1" style={{ color: "rgba(255,255,255,0.3)", fontSize: "0.6rem" }}>
+              <span>1 año</span><span>25 años</span><span>50 años</span>
             </div>
-          </motion.div>
+          </div>
 
-          {/* ── Estrategia recomendada ── */}
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-            className="rounded-2xl p-5" style={{ background: "rgba(16,185,129,0.07)", border: "1px solid rgba(16,185,129,0.25)" }}>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center rounded-full flex-shrink-0"
-                style={{ width: 44, height: 44, background: "rgba(16,185,129,0.15)", border: "2px solid rgba(16,185,129,0.4)", fontSize: "1.2rem" }}>
-                {recommendedStrategy.emoji}
-              </div>
-              <div>
-                <div style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.08em" }}>
-                  ESTRATEGIA RECOMENDADA PARA ESTA AMENAZA
-                </div>
-                <div style={{ color: "#10b981", fontWeight: 800, fontSize: "1.05rem", marginTop: 2 }}>{recommendedStrategy.name}</div>
-                <div style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.78rem", marginTop: 2 }}>
-                  Mejor equilibrio entre efectividad y viabilidad con tus parámetros actuales.
-                </div>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* ── Grid de estrategias ── */}
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
-            <div style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.1em", marginBottom: 14 }}>
-              SELECCIONA UNA ESTRATEGIA PARA VER SU EVALUACIÓN
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* Grid de estrategias */}
+          <div>
+            <div className="text-white/50 font-bold text-[0.65rem] tracking-widest mb-3">ESTRATEGIAS DISPONIBLES</div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
               {STRATEGIES.map((strategy) => (
                 <StrategyCard
                   key={strategy.id}
                   strategy={strategy}
-                  viability={viabilities[strategy.id]}
-                  isRecommended={strategy.id === recommendedStrategy.id}
                   onClick={() => setSelectedId(strategy.id)}
                 />
               ))}
             </div>
-          </motion.div>
-
-          {/* ── Navegación inferior ── */}
-          <div className="flex flex-col sm:flex-row justify-center gap-3 pt-4">
-            <button
-              onClick={() => navigate("/result")}
-              className="w-full mt-6 transition-all hover:opacity-90"
-              style={{
-                padding: "1rem",
-                borderRadius: 10,
-                fontWeight: 700,
-                fontSize: "0.9rem",
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "#fff",
-                background:
-                  "linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)",
-              }}
-            >
-              ¿Y… qué se pudo haber hecho?
-            </button>
           </div>
-        </div>
 
-        <p className="text-center pb-6" style={{ color: "rgba(255,255,255,0.18)", fontSize: "0.7rem" }}>
-          Estrategias basadas en literatura científica de NASA, ESA y la comunidad de defensa planetaria.
-        </p>
+        </div>
       </div>
 
-      {/* Modal fuera del zoom */}
       <AnimatePresence>
         {selectedStrategy && (
           <AssessmentModal
             strategy={selectedStrategy}
             viability={viabilities[selectedStrategy.id]}
-            recommendedStrategy={recommendedStrategy}
             leadTimeYears={leadTimeYears}
             diameterM={diameterM}
-            isRecommended={selectedStrategy.id === recommendedStrategy.id}
+            isMetallic={isMetallic}
             onClose={() => setSelectedId(null)}
           />
         )}
