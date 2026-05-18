@@ -14,7 +14,7 @@ const NavBar = () => {
 
   return (
     // La barra se fija en la parte superior, tiene un fondo semitransparente oscuro y utiliza Flexbox.
-    <nav className="fixed top-0 left-0 w-full overflow-hidden p-1 z-50 shadow-lg border-b border-gray-700" style={{ background: "rgba(0, 0, 0, 0.85)", backdropFilter: "blur(12px)" }}>
+    <nav className="fixed top-0 left-0 w-full overflow-hidden p-1 z-60 shadow-lg border-b border-gray-700" style={{ background: "rgba(0, 0, 0, 0.85)", backdropFilter: "blur(12px)" }}>
       <div className="flex justify-between items-center max-w-7xl mx-auto">
         {/* Logo o Título de la Aplicación */}
 

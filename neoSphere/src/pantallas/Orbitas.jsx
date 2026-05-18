@@ -47,9 +47,13 @@ const Orbitas = () => {
   };
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden bg-black">
-      <div className="absolute top-0 left-0 w-full z-50 pointer-events-none">
-        <div className="pointer-events-auto p-15">
+    // 1. Pushes the whole screen down 48px (mt-12) and subtracts that from the height
+    // This completely prevents the black background from overlapping the NavBar area.
+    <div className="relative w-screen h-[calc(100vh-48px)] mt-12 overflow-hidden bg-black">
+      
+  
+      <div className="absolute top-0 left-0 w-full z-40 pointer-events-none">
+        <div className="pointer-events-auto p-2">
           <AsteroidsDisplayBar
             topAsteroids={topAsteroids}
             asteroidsDatabase={catalogoAsteroides}
@@ -58,7 +62,9 @@ const Orbitas = () => {
         </div>
       </div>
 
-      <main className="absolute inset-0 z-0">
+      {/* 3. Pushes the simulator canvas slightly down (top-16) relative to this container 
+          so it doesn't sit directly underneath the text ticker bar */}
+      <main className="absolute inset-x-0 top-16 bottom-0 z-0">
         <OrbitSimulator
           targetAsteroid={focusedAsteroid}
           onReturn={handleDetailRedirect}
