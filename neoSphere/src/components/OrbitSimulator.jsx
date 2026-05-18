@@ -92,7 +92,6 @@ function Scene({ planetColors, asteroidColor, hideOrbits, targetAsteroid }) {
         if (!orbitData.coordenadas || orbitData.coordenadas.length === 0) return null;
         const isPlanet = planetColors.hasOwnProperty(nombre);
         
-        // Coincidencia flexible por si acaso el JSON y tu catálogo difieren ligeramente
         const isTarget = targetAsteroid && (
           nombre.toLowerCase().includes(targetAsteroid.toLowerCase()) ||
           targetAsteroid.toLowerCase().includes(nombre.toLowerCase())
@@ -100,7 +99,6 @@ function Scene({ planetColors, asteroidColor, hideOrbits, targetAsteroid }) {
 
         if (hideOrbits && !isPlanet && !isTarget) return null;
 
-        // El asteroide seleccionado adopta un color neón distintivo rosa/rojo
         const color = isPlanet 
           ? planetColors[nombre] 
           : isTarget 
@@ -134,7 +132,6 @@ function Scene({ planetColors, asteroidColor, hideOrbits, targetAsteroid }) {
   );
 }
 
-// Pasamos las props necesarias desde el componente padre común
 function OrbitSimulator({ onReturn, targetAsteroid, asteroids = [], selectedAsteroid, setSelectedAsteroid }) {
   const [planetColors, setPlanetColors] = useState(INITIAL_PLANET_COLORS);
   const [asteroidColor, setAsteroidColor] = useState('#8c949fff');
@@ -143,9 +140,8 @@ function OrbitSimulator({ onReturn, targetAsteroid, asteroids = [], selectedAste
   const [panelCollapsed, setPanelCollapsed] = useState(false);
   const [bootTime] = useState(Date.now());
   const [uptime, setUptime] = useState('00:00:00');
-  const [localSearch, setLocalSearch] = useState(""); // Filtro de texto para la lista del HUD
+  const [localSearch, setLocalSearch] = useState("");
 
-  // Filtrado de asteroides para el panel lateral
   const hudFilteredAsteroids = useMemo(() => {
     if (!localSearch) return asteroids;
     return asteroids.filter(ast => {
@@ -154,14 +150,12 @@ function OrbitSimulator({ onReturn, targetAsteroid, asteroids = [], selectedAste
     });
   }, [asteroids, localSearch]);
 
-  // Si viene un asteroide seleccionado por defecto desde afuera, aislamos la vista
   useEffect(() => {
     if (targetAsteroid) {
       setHideOrbits(true);
     }
   }, [targetAsteroid]);
 
-  // Ticker de Uptime
   useEffect(() => {
     const interval = setInterval(() => {
       const elapsed = Math.floor((Date.now() - bootTime) / 1000);
@@ -195,7 +189,7 @@ function OrbitSimulator({ onReturn, targetAsteroid, asteroids = [], selectedAste
     <div className="relative w-full h-full">
       {/* ============ HUD PANEL — TOP LEFT ============ */}
       <div
-        className="absolute top-24 left-4 z-30 font-mono text-emerald-400 select-none flex flex-col"
+        className="absolute top-24 left-4 z-30 font-sans text-violet-400 select-none flex flex-col"
         style={{
           width: panelCollapsed ? '220px' : '360px',
           transition: 'width 0.3s ease',
@@ -203,7 +197,7 @@ function OrbitSimulator({ onReturn, targetAsteroid, asteroids = [], selectedAste
         }}
       >
         <div
-          className="relative bg-black/85 backdrop-blur-md border border-emerald-500/40 shadow-[0_0_20px_rgba(16,185,129,0.15)] flex flex-col overflow-hidden"
+          className="relative bg-[#a855f7]/20 border border-[#a855f7]/50 backdrop-blur-md shadow-[0_0_20px_rgba(168,85,247,0.15)] flex flex-col overflow-hidden"
           style={{
             clipPath: 'polygon(0 12px, 12px 0, calc(100% - 12px) 0, 100% 12px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 12px 100%, 0 calc(100% - 12px))',
           }}
@@ -212,28 +206,28 @@ function OrbitSimulator({ onReturn, targetAsteroid, asteroids = [], selectedAste
           <div
             className="pointer-events-none absolute inset-0 opacity-10"
             style={{
-              backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(16,185,129,0.4) 2px, rgba(16,185,129,0.4) 3px)',
+              backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(168,85,247,0.4) 2px, rgba(168,85,247,0.4) 3px)',
             }}
           />
 
           {/* Header bar */}
-          <div className="flex items-center justify-between px-3 py-2 border-b border-emerald-500/30 bg-emerald-950/30 shrink-0">
+          <div className="flex items-center justify-between px-3 py-2 border-b border-violet-500/30 bg-violet-950/30 shrink-0">
             <div className="flex items-center gap-2">
-              <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_6px_#34d399]" />
-              <span className="text-[10px] tracking-[0.2em] text-emerald-300">PANEL DE CONTROL</span>
+              <span className="inline-block w-2 h-2 rounded-full bg-violet-400 animate-pulse shadow-[0_0_6px_#a855f7]" />
+              <span className="text-[10px] tracking-[0.2em] text-violet-300">PANEL DE CONTROL</span>
             </div>
             <button
               onClick={() => setPanelCollapsed(c => !c)}
-              className="text-emerald-400 hover:text-emerald-200 text-xs px-1 transition"
+              className="text-violet-400 hover:text-violet-200 text-xs px-1 transition"
             >
               {panelCollapsed ? '[+]' : '[—]'}
             </button>
           </div>
 
           {/* Status strip */}
-          <div className="px-3 py-1.5 border-b border-emerald-500/20 flex justify-between text-[9px] tracking-widest text-emerald-500/70 shrink-0">
-            <span>ESTATUS: <span className="text-emerald-300">EN LINEA</span></span>
-            <span>SYS_UP: <span className="text-emerald-300">{uptime}</span></span>
+          <div className="px-3 py-1.5 border-b border-violet-500/20 flex justify-between text-[9px] tracking-widest text-violet-500/70 shrink-0">
+            <span>ESTATUS: <span className="text-violet-300">EN LINEA</span></span>
+            <span>SYS_UP: <span className="text-violet-300">{uptime}</span></span>
           </div>
 
           {!panelCollapsed && (
@@ -241,17 +235,17 @@ function OrbitSimulator({ onReturn, targetAsteroid, asteroids = [], selectedAste
               
               {/* LISTA INTERACTIVA DE SELECCIÓN */}
               <div className="flex flex-col gap-1.5">
-                <span className="text-[9px] tracking-[0.2em] text-emerald-500/60 uppercase font-bold">// SELECCIÓN DE OBJETIVO</span>
+                <span className="text-[9px] tracking-[0.2em] text-violet-500/60 uppercase font-bold">// SELECCIÓN DE OBJETIVO</span>
                 <input 
                   type="text"
                   placeholder="Filtrar lista..."
                   value={localSearch}
                   onChange={(e) => setLocalSearch(e.target.value)}
-                  className="w-full bg-emerald-950/40 border border-emerald-500/30 px-2 py-1 text-xs text-emerald-300 placeholder:text-emerald-800 focus:outline-none focus:border-emerald-400 rounded-sm font-mono"
+                  className="w-full bg-violet-950/40 border border-violet-500/30 px-2 py-1 text-xs text-violet-300 placeholder:text-violet-800 focus:outline-none focus:border-violet-400 rounded-sm font-sans"
                 />
-                <div className="flex flex-col gap-1 max-h-[150px] overflow-y-auto border border-emerald-500/20 bg-black/50 p-1 rounded-sm">
+                <div className="flex flex-col gap-1 max-h-[150px] overflow-y-auto border border-violet-500/20 bg-black/50 p-1 rounded-sm">
                   {hudFilteredAsteroids.length === 0 ? (
-                    <span className="text-[10px] text-emerald-700 p-1 italic text-center">Sin asteroides</span>
+                    <span className="text-[10px] text-violet-700 p-1 italic text-center">Sin asteroides</span>
                   ) : (
                     hudFilteredAsteroids.map(ast => {
                       const currentName = ast.full_name || ast.identificador;
@@ -261,10 +255,10 @@ function OrbitSimulator({ onReturn, targetAsteroid, asteroids = [], selectedAste
                         <button
                           key={ast.identificador}
                           onClick={() => setSelectedAsteroid(ast)}
-                          className={`w-full text-left px-2 py-1 text-[11px] font-mono transition-all flex justify-between ${
+                          className={`w-full text-left px-2 py-1 text-[11px] font-sans transition-all flex justify-between ${
                             isSelected 
-                              ? 'bg-emerald-500/20 text-emerald-200 font-bold border-l-2 border-emerald-400 pl-1' 
-                              : 'bg-transparent text-emerald-500/60 hover:bg-emerald-500/10'
+                              ? 'bg-violet-500/20 text-violet-200 font-bold border-l-2 border-violet-400 pl-1' 
+                              : 'bg-transparent text-violet-500/60 hover:bg-violet-500/10'
                           }`}
                         >
                           <span className="truncate pr-1">{isSelected ? '▶ ' : ''}{currentName}</span>
@@ -278,13 +272,13 @@ function OrbitSimulator({ onReturn, targetAsteroid, asteroids = [], selectedAste
 
               {/* DETALLES MATEMÁTICOS DE TELEMETRÍA */}
               {selectedAsteroid && (
-                <div className="p-2.5 bg-emerald-950/20 border border-emerald-500/30 rounded-sm text-[11px] space-y-1">
-                  <div className="text-emerald-300 font-bold truncate">TARGET: {targetAsteroid}</div>
-                  <div className="grid grid-cols-2 gap-x-2 gap-y-0.5 text-[10px] text-emerald-400/80 pt-1 border-t border-emerald-500/10">
-                    <div>DIÁMETRO: <span className="text-emerald-200">{selectedAsteroid.diameter ? `${selectedAsteroid.diameter.toFixed(2)} km` : 'N/D'}</span></div>
-                    <div>PERIHELIO: <span className="text-emerald-200">{selectedAsteroid.q ? `${selectedAsteroid.q.toFixed(2)} UA` : 'N/D'}</span></div>
-                    <div>AFELIO: <span className="text-emerald-200">{selectedAsteroid.ad ? `${selectedAsteroid.ad.toFixed(2)} UA` : 'N/D'}</span></div>
-                    <div>PELIGROSO: <span className={selectedAsteroid.es_peligroso === true || selectedAsteroid.es_peligroso === 'Y' ? "text-rose-400 font-bold" : "text-emerald-300"}>{selectedAsteroid.es_peligroso === true || selectedAsteroid.es_peligroso === 'Y' ? 'PHA' : 'NO'}</span></div>
+                <div className="p-2.5 bg-violet-950/20 border border-violet-500/30 rounded-sm text-[11px] space-y-1">
+                  <div className="text-violet-300 font-bold truncate">TARGET: {targetAsteroid}</div>
+                  <div className="grid grid-cols-2 gap-x-2 gap-y-0.5 text-[10px] text-violet-400/80 pt-1 border-t border-violet-500/10">
+                    <div>DIÁMETRO: <span className="text-violet-200">{selectedAsteroid.diameter ? `${selectedAsteroid.diameter.toFixed(2)} km` : 'N/D'}</span></div>
+                    <div>PERIHELIO: <span className="text-violet-200">{selectedAsteroid.q ? `${selectedAsteroid.q.toFixed(2)} UA` : 'N/D'}</span></div>
+                    <div>AFELIO: <span className="text-violet-200">{selectedAsteroid.ad ? `${selectedAsteroid.ad.toFixed(2)} UA` : 'N/D'}</span></div>
+                    <div>PELIGROSO: <span className={selectedAsteroid.es_peligroso === true || selectedAsteroid.es_peligroso === 'Y' ? "text-rose-400 font-bold" : "text-violet-300"}>{selectedAsteroid.es_peligroso === true || selectedAsteroid.es_peligroso === 'Y' ? 'PHA' : 'NO'}</span></div>
                   </div>
                 </div>
               )}
@@ -301,9 +295,9 @@ function OrbitSimulator({ onReturn, targetAsteroid, asteroids = [], selectedAste
 
               {/* Divider with label */}
               <div className="flex items-center gap-2">
-                <div className="flex-1 h-px bg-emerald-500/30" />
-                <span className="text-[9px] tracking-[0.2em] text-emerald-500/60">PLANETAS</span>
-                <div className="flex-1 h-px bg-emerald-500/30" />
+                <div className="flex-1 h-px bg-violet-500/30" />
+                <span className="text-[9px] tracking-[0.2em] text-violet-500/60 font-bold">PLANETAS</span>
+                <div className="flex-1 h-px bg-violet-500/30" />
               </div>
 
               {/* Planet channels */}
@@ -321,9 +315,9 @@ function OrbitSimulator({ onReturn, targetAsteroid, asteroids = [], selectedAste
               </div>
 
               {/* Footer readout */}
-              <div className="pt-2 border-t border-emerald-500/20 flex justify-between text-[9px] tracking-widest text-emerald-500/50 shrink-0">
-                <span>CHANNELS: <span className="text-emerald-300">09</span></span>
-                <span>SYNC: <span className="text-emerald-300">100%</span></span>
+              <div className="pt-2 border-t border-violet-500/20 flex justify-between text-[9px] tracking-widest text-violet-500/50 shrink-0">
+                <span>CHANNELS: <span className="text-violet-300">09</span></span>
+                <span>SYNC: <span className="text-violet-300">100%</span></span>
               </div>
             </div>
           )}
@@ -331,7 +325,7 @@ function OrbitSimulator({ onReturn, targetAsteroid, asteroids = [], selectedAste
       </div>
 
       {/* ============ BOTTOM RIGHT ACTION BUTTONS ============ */}
-      <div className="absolute bottom-6 right-6 z-30 flex flex-col gap-2 font-mono">
+      <div className="absolute bottom-6 right-6 z-30 flex flex-col gap-2 font-sans">
         <HudButton onClick={handleRefresh}>↻ RECARGAR</HudButton>
         <HudButton onClick={toggleHideOrbits}>
           {hideOrbits ? '◉ MOSTRAR ASTEROIDES' : '◯ OCULTAR ASTEROIDES'}
@@ -342,7 +336,7 @@ function OrbitSimulator({ onReturn, targetAsteroid, asteroids = [], selectedAste
       </div>
 
       {/* ============ CANVAS RENDERING ORIGINAL NATIVO ============ */}
-      <Suspense fallback={<div className="text-emerald-400 font-mono p-4">[SYS] Cargando simulador de órbitas...</div>}>
+      <Suspense fallback={<div className="text-violet-400 font-sans p-4">[SYS] Cargando simulador de órbitas...</div>}>
         <Canvas
           key={canvasKey}
           camera={{ position: [20, 20, 20], fov: 75, near: 0.1, far: 1000 }}
@@ -365,10 +359,10 @@ function OrbitSimulator({ onReturn, targetAsteroid, asteroids = [], selectedAste
 function ColorChannel({ code, label, color, onChange, compact = false }) {
   return (
     <label
-      className={`group relative flex items-center gap-2 px-2 py-1.5 border border-emerald-500/20 bg-emerald-950/20 hover:bg-emerald-900/30 hover:border-emerald-400/60 transition cursor-pointer ${compact ? '' : 'border-emerald-500/40'}`}
+      className={`group relative flex items-center gap-2 px-2 py-1.5 border border-violet-500/20 bg-violet-950/20 hover:bg-violet-900/30 hover:border-violet-400/60 transition cursor-pointer ${compact ? '' : 'border-violet-500/40'}`}
     >
       <span
-        className="relative inline-block w-6 h-6 border border-emerald-500/50 shrink-0"
+        className="relative inline-block w-6 h-6 border border-violet-500/50 shrink-0"
         style={{
           backgroundColor: color,
           boxShadow: `0 0 8px ${color}`,
@@ -382,16 +376,16 @@ function ColorChannel({ code, label, color, onChange, compact = false }) {
         />
       </span>
 
-      <div className="flex flex-col leading-tight min-w-0 flex-1">
-        <span className="text-[8px] tracking-[0.15em] text-emerald-500/60 truncate">
+      <div className="flex flex-col leading-tight min-w-0 flex-1 font-sans">
+        <span className="text-[8px] tracking-[0.15em] text-violet-500/60 truncate">
           {code}
         </span>
-        <span className="text-[11px] text-emerald-200 uppercase tracking-wider truncate">
+        <span className="text-[11px] text-violet-200 uppercase tracking-wider truncate">
           {label}
         </span>
       </div>
 
-      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_4px_#34d399] shrink-0" />
+      <span className="w-1.5 h-1.5 rounded-full bg-violet-400 shadow-[0_0_4px_#a855f7] shrink-0" />
     </label>
   );
 }
@@ -403,11 +397,11 @@ function HudButton({ children, onClick, variant = 'default' }) {
     <button
       onClick={onClick}
       className={`
-        relative px-4 py-2 text-xs tracking-[0.15em] uppercase
+        relative px-4 py-2 text-xs tracking-[0.15em] uppercase font-sans
         border backdrop-blur-md transition-all
         ${isPrimary
-          ? 'bg-emerald-900/40 border-emerald-400/60 text-emerald-200 hover:bg-emerald-800/60 hover:border-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.3)]'
-          : 'bg-black/70 border-emerald-500/30 text-emerald-400 hover:bg-emerald-950/50 hover:border-emerald-400/60'}
+          ? 'bg-[#a855f7]/20 border border-[#a855f7]/50 border-violet-400/60 text-violet-200 hover:bg-violet-800/60 hover:border-violet-300 shadow-[0_0_12px_rgba(168,85,247,0.3)]'
+          : 'bg-[#a855f7]/20 border border-[#a855f7]/50 text-violet-400 hover:bg-violet-950/50 hover:border-violet-400/60'}
       `}
       style={{
         clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)',
