@@ -13,7 +13,6 @@ import SlideGallery from "./pantallas/SlideGallery.jsx";
 import SkyfallX1 from "./pantallas/skyfallX1.jsx"; // Corregido a 's' minúscula
 import Explora from "./pantallas/explora.jsx";
 import Impacto from "./pantallas/impacto.jsx"; // Corregido a 'i' minúscula (probable error)
-import Resultados from "./pantallas/resultados.jsx"; // Corregido a 'r' minúscula (probable error)
 import Orbit from "./pantallas/OrbitRedirect.jsx"; // Nombre completo del archivo
 import Orbitas from "./pantallas/Orbitas.jsx"
 import VideoLayout1 from "./pantallas/VideoLayout1.jsx"; // Asumimos V mayúscula
@@ -38,7 +37,6 @@ function App() {
           <Route path="/explora" element={<Explora />} />
           <Route path="/video1" element={<VideoLayout1 />} />
           <Route path="/impacto" element={<Impacto />} />
-          <Route path="/result" element={<Resultados />} />
           <Route path="/orbita" element={<Orbit />} />
           <Route path="/orbitas" element={<Orbitas />} />
           <Route path="/defensa-planetaria" element={<DefensaPlanetaria />} />
