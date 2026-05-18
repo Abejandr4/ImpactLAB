@@ -330,9 +330,6 @@ function OrbitSimulator({ onReturn, targetAsteroid, asteroids = [], selectedAste
         <HudButton onClick={toggleHideOrbits}>
           {hideOrbits ? '◉ MOSTRAR ASTEROIDES' : '◯ OCULTAR ASTEROIDES'}
         </HudButton>
-        <HudButton onClick={onReturn} variant="primary">
-          ▶ DETALLES DEL ASTEROIDE
-        </HudButton>
       </div>
 
       {/* ============ CANVAS RENDERING ORIGINAL NATIVO ============ */}

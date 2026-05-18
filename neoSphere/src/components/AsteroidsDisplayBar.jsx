@@ -43,7 +43,7 @@ const AsteroidsDisplayBar = ({ topAsteroids, asteroidsDatabase, onSelectAsteroid
                 ? 'bg-red-950/30 text-red-500 border border-red-900'
                 : 'bg-emerald-950/30 text-emerald-500 border border-emerald-900'
             }`}>
-              {ast.es_peligroso ? "⚠️ HAZARDOUS" : "✅ STABLE"}
+              {ast.es_peligroso ? "⚠️ PELIGROSOS" : "✅ ESTABLE"}
             </span>
           </div>
         ))}

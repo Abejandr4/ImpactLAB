@@ -1,5 +1,5 @@
 // src/components/AsteroidDetails.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react'; // Imporamos useRef
 import useAsteroidStore from '../store';
 import { motion, AnimatePresence } from 'framer-motion';
 import OrbitSimulator from './OrbitSimulator';
@@ -41,9 +41,12 @@ const POPUP_DEFINITIONS = {
 };
 
 function AsteroidDetails() {
-  const { selectedAsteroid } = useAsteroidStore();
+  const { selectedAsteroid, setSelectedAsteroid } = useAsteroidStore(); // Extraemos setSelectedAsteroid si el HUD del simulador necesita mutarlo
   const [popupContent, setPopupContent] = useState(null);
   const [simulatorKey, setSimulatorKey] = useState(0);
+  
+  // Referencia para hacer scroll al panel de información escrita
+  const detailsRef = useRef(null);
 
   // Forzar reinicio suave del simulador si cambia el asteroide para recalcular enfoques
   useEffect(() => {
@@ -63,6 +66,14 @@ function AsteroidDetails() {
   }
 
   const isHazardous = selectedAsteroid.es_peligroso === true || selectedAsteroid.es_peligroso === 'Y';
+  const asteroidName = selectedAsteroid.full_name || selectedAsteroid.identificador;
+
+  // Función que se dispara al dar click en "DETALLES DEL ASTEROIDE" en el HUD inferior derecho
+  const handleScrollToDetails = () => {
+    if (detailsRef.current) {
+      detailsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   return (
     <>
@@ -81,13 +92,16 @@ function AsteroidDetails() {
         <div className="simulatorContainer" style={{ position: 'relative', height: '400px', marginBottom: '1.5rem' }}>        
           <OrbitSimulator 
             key={simulatorKey} 
-            // Pasamos el objeto completo para aprovechar los datos en el HUD
-            selectedAsteroid={selectedAsteroid} 
+            selectedAsteroid={selectedAsteroid}
+            setSelectedAsteroid={setSelectedAsteroid}
+            targetAsteroid={asteroidName} // Pasamos el nombre para habilitar la telemetría del HUD y líneas de órbita personalizadas
+            onReturn={handleScrollToDetails} // Vinculamos la acción del botón de abajo a la derecha
           />
         </div>
 
-        <div className="detailsHeader">
-          <h1 className="detailsTitle">{selectedAsteroid.full_name || selectedAsteroid.identificador}</h1>
+        {/* Punto de anclaje de scroll asignado a la referencia */}
+        <div ref={detailsRef} className="detailsHeader pt-4">
+          <h1 className="detailsTitle">{asteroidName}</h1>
         </div>
         
         <div className='moduleGroup'>
