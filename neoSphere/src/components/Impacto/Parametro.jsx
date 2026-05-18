@@ -54,7 +54,7 @@ const Parametro = ({
       >
         <span
           style={{
-            fontSize: "0.8rem",
+            fontSize: "0.95rem",
             color: PALETTE.textSec,
             textTransform: "uppercase",
             letterSpacing: "0.08em",
