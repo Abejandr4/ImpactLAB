@@ -30,7 +30,7 @@ const VideoLayout1 = () => {
 
       <button
         onClick={handleVideoEnd}
-        className="absolute bottom-5 right-5 text-white bg-red-600 opacity-70 p-7 rounded z-10 hover:opacity-100"
+        className="absolute bottom-5 right-5 text-white bg-gray-800 opacity-70 p-7 rounded z-10 hover:opacity-100"
       >
         SALTAR
       </button>

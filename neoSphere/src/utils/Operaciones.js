@@ -232,7 +232,7 @@ const calculateImpactData = (impactLat, impactLon, radiusMeters, propertyKey) =>
     // Cálculo de la radiación térmica y efectos de ignición
     if (velocity_kms <= 15)
       return {
-        message: "Insufficient speed for a significant fireball.",
+        message: "Velocidad insuficiente para generar una bola de fuego significativa.",
       };
 
     const fireball_radius_m = 0.002 * Math.pow(energy_j, 1 / 3);
@@ -257,7 +257,7 @@ const calculateImpactData = (impactLat, impactLon, radiusMeters, propertyKey) =>
       fireballRadius_km: fireball_radius_m / 1000,
       thermalExposure_Jm2: thermal_exposure_Jm2,
       ignitionEffects:
-        ignition_effects || "Ignition of common materials is not expected.",
+        ignition_effects || "No se prevé la ignición de materiales comunes.",
     };
   };
 
@@ -295,7 +295,7 @@ const calculateImpactData = (impactLat, impactLon, radiusMeters, propertyKey) =>
     const r_km = r_m / 1000;
     const D_fr_km = crater_D_fr_m / 1000;
     if (r_km < D_fr_km / 2)
-      return { message: "Location within the final crater." };
+      return { message: "Ubicación dentro del cráter final." };
 
     const dc = 2400 * Math.pow(D_fr_km / 2, -1.62);
     const alpha = 2.65;
@@ -351,15 +351,15 @@ const calculateImpactData = (impactLat, impactLon, radiusMeters, propertyKey) =>
       (((5 * p) / (7 * P0)) * c0) / Math.sqrt(1 + (6 * p) / (7 * P0));
 
     // Descripción de daños basada en sobrepresión (Pa)
-    let damage = "No significant damage.";
-    if (p > 6900) damage = "Broken glass windows.";
+    let damage = "No se hay daños significativos.";
+    if (p > 6900) damage = "Ventanas de cristales rotas.";
     if (p > 22900)
-      damage = "Severe damage to roofs and interior walls of wooden houses.";
-    if (p > 26800) damage = "Almost total collapse of wooden-framed buildings.";
-    if (p > 42600) damage = "Collapse of masonry buildings.";
-    if (p > 121000) damage = "Collapse of truss bridges.";
+      damage = "Daños graves en los tejados y las paredes interiores de casas de madera.";
+    if (p > 26800) damage = "Colapso casi total de edificios con estructura de madera.";
+    if (p > 42600) damage = "Colapso de edificios de mampostería.";
+    if (p > 121000) damage = "Colapso de puentes de celosía (con varillas en triángulos).";
     if (p > 273000)
-      damage = "Steel-framed office buildings suffer extreme distortion.";
+      damage = "Los edificios con estructura de acero sufren deformación extrema.";
 
     return {
       overpressure_Pa: overpressure_Pa,
@@ -393,7 +393,7 @@ const calculateImpactData = (impactLat, impactLon, radiusMeters, propertyKey) =>
     (CONST.PI / 12) * density_kgm3 * Math.pow(L0_m, 3) * Math.pow(v_final, 2);
 
   let target_density = CONST.RHO_T_CRYSTALLINE;
-  let final_message = `Impact on land at a speed of ${(v_final / 1000).toFixed(
+  let final_message = `Impacto sobre tierra a una velocidad de ${(v_final / 1000).toFixed(
     2
   )} km/s.`;
   const airBlast = calculateAirBlast(energy_final, false);
@@ -414,7 +414,7 @@ const calculateImpactData = (impactLat, impactLon, radiusMeters, propertyKey) =>
 
   // Devolver todos los resultados
   return {
-    scenario: "Surface Impact",
+    scenario: "Impacto superficial",
     finalImpactMessage: final_message,
     impactEnergyMegatons: energy_final / 4.184e15,
     crater: crater,

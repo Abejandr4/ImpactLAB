@@ -20,139 +20,133 @@ L.Icon.Default.mergeOptions({
 import { simulateAsteroidImpact } from "../utils/Operaciones";
 
 // --- CONSTANTES GLOBALES ---
-// const IMPACT_POSITION = [19.0413, -98.2062]; coordenadas de puebla
 const MAP_ZOOM = 9;
 const MAX_DISTANCE_KM = 500;
 
-// --- CONFIGURACIÓN DE ESTILOS POR EFECTO ---
-const effectStyles = {
-  "Sismo": {
-    text: "text-red-500",
-    bg: "bg-red-500",
-    accent: "accent-red-500",
-    border: "border-red-500",
-    hex: "#ef4444" 
-  },
-  "Resumen general": {
-    text: "text-red-500",
-    bg: "bg-red-500",
-    accent: "accent-red-500",
-    border: "border-red-500",
-    hex: "#ef4444" 
-  },
-  "Pérdidas": {
-    text: "text-cyan-500",
-    bg: "bg-cyan-500",
-    accent: "accent-cyan-500",
-    border: "border-cyan-500",
-    hex: "#06b6d4" 
-  },
-  "Cráter": {
-    text: "text-violet-500",
-    bg: "bg-violet-500",
-    accent: "accent-violet-500",
-    border: "border-violet-500",
-    hex: "#8b5cf6" 
-  },
-  "Onda de Choque": {
-    text: "text-yellow-500",
-    bg: "bg-yellow-500",
-    accent: "accent-yellow-500",
-    border: "border-yellow-500",
-    hex: "#eab308"
-  },
-  "Retorno de eyecciones": {
-    text: "text-green-500",
-    bg: "bg-green-500",
-    accent: "accent-green-500",
-    border: "border-green-500",
-    hex: "#22c55e"
-  },
-  "Radiación Térmica": {
-    text: "text-pink-500",
-    bg: "bg-pink-500",
-    accent: "accent-pink-500",
-    border: "border-pink-500",
-    hex: "#ec4899"
-  },
+// =====================================================================
+//  PALETA DEL SITIO  (negro puro + acentos)
+// =====================================================================
+const PALETTE = {
+  bg: "#000000",
+  card: "rgba(255,255,255,0.04)",
+  // card más oscura estilo "Prepara tu asteroide" (contenedores internos)
+  cardDeep: "#0a0a0a",
+  cardBorder: "rgba(255,255,255,0.09)",
+  textMain: "rgba(255,255,255,0.85)",
+  textSec: "rgba(255,255,255,0.45)",
+  textFaint: "rgba(255,255,255,0.25)",
 };
 
-const headerTextsByEffect = {
-  "Sismo": "Al momento de impacto, se generará un sismo.",
-  "Pérdidas": "Al momento de impacto, habrían numerosas pérdidas de varios tipos.",
-  "Cráter": "Este es el efecto del cráter. ¡Puedes ver en el mapa un círculo que representa el diámetro del impacto!",
-  "Onda de Choque": "¡La onda de choque expansiva es destructiva! Se propaga a través de la atmósfera causando daños estructurales.",
-  "Retorno de eyecciones": "El material eyectado por el impacto es lanzado a la atmósfera y regresa al suelo cubriendo grandes áreas.",
-  "Radiación Térmica": "La radiación térmica se propaga a la velocidad de la luz y puede provocar incendios y quemaduras instantáneas.",
-  "Resumen general": "Este es un resumen general de todo lo causado por el impacto del meteorito.",
-};
+// =====================================================================
+//  CONFIGURACIÓN DE CATEGORÍAS  (orden y colores según boceto)
+//  - "crater" usa un café/marrón propio
+//  - el resto usa los acentos de la paleta del sitio
+// =====================================================================
+const CATEGORIES = [
+  {
+    id: "crater",
+    label: "Cráter",
+    hex: "#a16207", // café / marrón
+    glow: "rgba(161,98,7,0.35)",
+  },
+  {
+    id: "termica",
+    label: "Radiación térmica",
+    hex: "#f59e0b", // ámbar
+    glow: "rgba(245,158,11,0.35)",
+  },
+  {
+    id: "onda",
+    label: "Onda de choque",
+    hex: "#06b6d4", // cyan
+    glow: "rgba(6,182,212,0.35)",
+  },
+  {
+    id: "sismo",
+    label: "Sismo",
+    hex: "#a855f7", // violeta
+    glow: "rgba(168,85,247,0.35)",
+  },
+  {
+    id: "ejecta",
+    label: "Eyecta",
+    hex: "#6366f1", // índigo
+    glow: "rgba(99,102,241,0.35)",
+  },
+  {
+    id: "vulnerabilidad",
+    label: "Vulnerabilidad",
+    hex: "#10b981", // verde
+    glow: "rgba(16,185,129,0.35)",
+  },
+];
 
 const Impacto = () => {
   const location = useLocation();
-  console.log("Estado de la ubicación:", location.state); //para debug y asi
   const navigate = useNavigate();
 
-  //state for geojson
+  // --- GeoJSON ---
   const [geoJsonData, setGeoJsonData] = useState(null);
 
   const { simulationResults: initialResults, inputParameters: inputs } =
     location.state || {};
 
   const impactPos = useMemo(() => {
-      return inputs ? [inputs.lat, inputs.lng] : [19.0433, -98.2022];
-    }, [inputs]);
+    return inputs ? [inputs.lat, inputs.lng] : [19.0433, -98.2022];
+  }, [inputs]);
 
-useEffect(() => {
-  let isMounted = true;
+  useEffect(() => {
+    let isMounted = true;
 
-  fetch(`${import.meta.env.BASE_URL}data.json`)
-    .then((res) => {
-      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-      return res.json();
-    })
-    .then((data) => {
-      if (isMounted) setGeoJsonData(data);
-    })
-    .catch((err) => console.error("Error loading data:", err));
+    fetch(`${import.meta.env.BASE_URL}data.json`)
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        if (isMounted) setGeoJsonData(data);
+      })
+      .catch((err) => console.error("Error loading data:", err));
 
-  return () => { isMounted = false; }; // Cleanup
-}, []);
-
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const [distanceSliderValue, setDistanceSliderValue] = useState(20);
-  const [selectedEffect, setSelectedEffect] = useState("Sismo");
-  const [headerText, setHeaderText] = useState(headerTextsByEffect["Sismo"]);
+  // Categoría abierta en el acordeón (solo una a la vez). Por defecto la primera.
+  const [openCategory, setOpenCategory] = useState("crater");
 
   // --- LÓGICA DE CÁLCULO ---
 
-  // 1. Distancia actual basada en el slider
   const currentDistanceKm = useMemo(
     () => (distanceSliderValue / 100) * MAX_DISTANCE_KM,
     [distanceSliderValue]
   );
 
-  // 2. Recalcular efectos de la simulación
-const recalculatedEffects = useMemo(() => {
-  if (!inputs) return null;
-  const currentInputs = {
-    ...inputs,
-    geoJsonData,
-    distance_from_impact_km: currentDistanceKm,
-  };
-  return simulateAsteroidImpact(currentInputs);
-}, [inputs, currentDistanceKm, geoJsonData]);
+  const recalculatedEffects = useMemo(() => {
+    if (!inputs) return null;
+    const currentInputs = {
+      ...inputs,
+      geoJsonData,
+      distance_from_impact_km: currentDistanceKm,
+    };
+    return simulateAsteroidImpact(currentInputs);
+  }, [inputs, currentDistanceKm, geoJsonData]);
 
-  // 3. Obtener radio del cráter (Necesario para el cálculo de población)
   const craterRadiusMeters = useMemo(() => {
     if (!recalculatedEffects) return 0;
     const { scenario, crater } = recalculatedEffects;
-    return scenario !== "Explosión Aérea" && scenario !== "Airburst" && crater?.finalDiameter_m
+    return scenario !== "Explosión Aérea" &&
+      scenario !== "Airburst" &&
+      crater?.finalDiameter_m
       ? crater.finalDiameter_m / 2
       : 0;
   }, [recalculatedEffects]);
 
   const sueloAfectado = useMemo(() => {
-    if (!inputs || !inputs.lat) return { zona: "Desconocida", tipoSuelo: "No especificado" };
+    if (!inputs || !inputs.lat)
+      return { zona: "Desconocida", tipoSuelo: "No especificado" };
 
     const lat = inputs.lat;
     let zona = "";
@@ -172,19 +166,32 @@ const recalculatedEffects = useMemo(() => {
     return { zona, tipoSuelo };
   }, [inputs]);
 
-  const totalAffectedPopulation = recalculatedEffects?.affectedData?.totalPopulation || 0;
-  const totalAffectedHousing = recalculatedEffects?.affectedData?.totalHousing || 0;
+  const totalAffectedPopulation =
+    recalculatedEffects?.affectedData?.totalPopulation || 0;
+  const totalAffectedHousing =
+    recalculatedEffects?.affectedData?.totalHousing || 0;
 
-  // Obtenemos el estilo activo actual de forma memoizada
-  const activeStyle = useMemo(() => 
-    effectStyles[selectedEffect] || effectStyles["Pérdidas"], 
-  [selectedEffect]);
+  // Estilo del acento activo (la categoría abierta)
+  const activeCat = useMemo(
+    () => CATEGORIES.find((c) => c.id === openCategory) || CATEGORIES[0],
+    [openCategory]
+  );
 
-  // Pantalla de carga
+  // -------------------------------------------------------------------
+  //  Pantalla de carga
+  // -------------------------------------------------------------------
   if (!inputs || !recalculatedEffects) {
     return (
-      <div className="bg-blue-950 text-red-500 min-h-screen p-5 text-center flex items-center justify-center">
-        <p className="text-xl font-bold">Cargando datos de la simulación...</p>
+      <div
+        style={{ background: PALETTE.bg, color: PALETTE.textMain }}
+        className="min-h-screen flex items-center justify-center font-sans"
+      >
+        <p
+          className="text-xl"
+          style={{ fontWeight: 600, letterSpacing: "0.05em" }}
+        >
+          Cargando datos de la simulación…
+        </p>
       </div>
     );
   }
@@ -193,290 +200,728 @@ const recalculatedEffects = useMemo(() => {
   const {
     impactEnergyMegatons = 0,
     crater = { finalDiameter_m: 0, transientDiameter_m: 0, type: "N/A" },
-    airBlast = { overpressure_Pa: 0, wind_velocity_ms: 0, arrival_time_s: 0, damageDescription: "N/A" },
+    airBlast = {
+      overpressure_Pa: 0,
+      wind_velocity_ms: 0,
+      arrival_time_s: 0,
+      damageDescription: "N/A",
+    },
     seismicEffects = { richterMagnitude: 0, mercalliIntensity: "N/A" },
-    thermalRadiation = { thermalExposure_Jm2: 0, fireballRadius_km: 0, ignitionEffects: "N/A" },
-    ejecta = { thickness_m: 0, meanFragmentSize_mm: 0, message: "No hay eyecciones." },
+    thermalRadiation = {
+      thermalExposure_Jm2: 0,
+      fireballRadius_km: 0,
+      ignitionEffects: "N/A",
+    },
+    ejecta = {
+      thickness_m: 0,
+      meanFragmentSize_mm: 0,
+      message: "No hay eyecciones.",
+    },
     scenario = "N/A",
-    burstAltitude = 0,
+    burstAltitude_km = 0,
   } = recalculatedEffects;
 
-  const displayData = {
-    zone: "Puebla",
-    totalEnergy: `${impactEnergyMegatons.toLocaleString(undefined, { maximumFractionDigits: 2 })} MT`,
-    craterDetails: {
-      finalDiameter: `${(crater.finalDiameter_m / 1000).toFixed(2)} km`,
-      transientDiameter: `${(crater.transientDiameter_m / 1000).toFixed(2)} km`,
-      type: crater.type === "Simple" ? "Simple" : "Complejo",
-    },
-    seismicDetails: {
-      magnitude: seismicEffects.richterMagnitude.toFixed(2),
-      richterScale: seismicEffects.richterMagnitude.toFixed(2),
-      mercalliIntensity: seismicEffects.mercalliIntensity,
-    },
-    currentDistanceKm: currentDistanceKm.toFixed(1),
+  const isAirburst = scenario === "Explosión Aérea" || scenario === "Airburst";
+
+  // -------------------------------------------------------------------
+  //  Radio dibujado en el mapa según la categoría abierta
+  //  (un círculo distinto por categoría)
+  // -------------------------------------------------------------------
+  const mapCircleRadius = useMemo(() => {
+    switch (openCategory) {
+      case "crater":
+        return craterRadiusMeters;
+      case "termica":
+        return (thermalRadiation?.fireballRadius_km || 0) * 1000;
+      case "onda":
+      case "sismo":
+      case "ejecta":
+        // estos efectos se evalúan a la distancia del observador
+        return currentDistanceKm * 1000;
+      case "vulnerabilidad":
+        // "radio más grande": cubre la zona poblada afectada (≥ cráter)
+        return Math.max(craterRadiusMeters, currentDistanceKm * 1000);
+      default:
+        return craterRadiusMeters;
+    }
+  }, [
+    openCategory,
+    craterRadiusMeters,
+    thermalRadiation,
+    currentDistanceKm,
+  ]);
+
+  // ===================================================================
+  //  Estilos reutilizables (estética del sitio)
+  // ===================================================================
+  const labelStyle = {
+    fontSize: "0.95rem",
+    color: PALETTE.textSec,
+    textTransform: "uppercase",
+    letterSpacing: "0.08em",
+  };
+  const bigValueStyle = {
+    fontSize: "1.35rem",
+    fontWeight: 600,
+    color: "#fff",
+  };
+  const cardStyle = {
+    background: PALETTE.card,
+    border: `1px solid ${PALETTE.cardBorder}`,
+    borderRadius: 14,
   };
 
-  const renderEffectDetails = useCallback(() => {
-    // Casos especiales para Airburst
-    if (scenario === "Explosión Aérea" || scenario === "Airburst") {
-      if (selectedEffect === "Cráter")
-        return <p className="text-base font-medium mt-2 text-white italic">No se forma cráter. Explosión aérea a {(burstAltitude / 1000).toFixed(1)} km de altitud.</p>;
-      if (selectedEffect === "Retorno de eyecciones")
-        return <p className="text-base font-medium mt-2 text-white italic">No hay eyecciones significativas debido a la explosión aérea.</p>;
-    }
-
-    switch (selectedEffect) {
-      case "Sismo":
-        return (
-          <div className="space-y-4 text-sm pt-2">
-            {/* Sección de Tipo de Suelo */}
-            <div>
-              <p className="font-bold text-red-500 text-lg uppercase tracking-wider">Geología del Impacto</p>
-              <div className="grid grid-cols-2 gap-2 mt-2">
-                <div className="bg-white/5 p-3 rounded border border-white/10">
-                  <p className="text-gray-400 text-xs uppercase">Zona Geográfica</p>
-                  <p className="text-white font-bold text-lg">{sueloAfectado.zona}</p>
-                </div>
-                <div className="bg-white/5 p-3 rounded border border-white/10">
-                  <p className="text-gray-400 text-xs uppercase">Composición</p>
-                  <p className="text-white font-bold text-lg">{sueloAfectado.tipoSuelo}</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="text-xs text-gray-500 italic mt-2">
-              * El tipo de suelo influye en la propagación de las ondas sísmicas. 
-              Datos basados en proyecciones de latitud y censos locales.
-            </div>
-          </div>
-        );
-      case "Pérdidas":
-        return (
-          <div className="space-y-1 text-sm pt-2">
-            <p className="font-bold text-red-500 text-lg uppercase">Impacto en Zona Poblada</p>
-            <div className="bg-red-500/10 p-4 rounded-lg border border-red-500/30 mt-2">
-              <p className="text-gray-300">Población afectada por el cráter:</p>
-              <p className="text-4xl font-black text-white">
-                {totalAffectedPopulation.toLocaleString()} 
-                <span className="text-sm ml-2 font-normal text-gray-400">personas</span>
-              </p>
-            </div>
-            <div className="bg-red-500/10 p-4 rounded-lg border border-red-500/30 mt-2">
-              <p className="text-gray-300">Viviendas afectadas:</p>
-              <p className="text-4xl font-black text-white">
-                {totalAffectedHousing.toLocaleString()} 
-                <span className="text-sm ml-2 font-normal text-gray-400">viviendas</span>
-              </p>
-            </div>
-            <p className="font-medium text-gray-400 mt-4 italic">Basado en datos censales (INEGI) locales.</p>
-          </div>
-        );
-      case "Cráter":
-        return (
-          <div className="space-y-1 text-sm pt-2">
-            <p className="font-medium text-red-500 text-lg">¡El círculo en el mapa representa el cráter!</p>
-            <p className="font-medium text-gray-300">Diámetro Final: <span className="font-bold text-white text-base">{displayData.craterDetails.finalDiameter}</span></p>
-            <p className="font-medium text-gray-300">Tipo: <span className="font-bold text-white text-base">{displayData.craterDetails.type}</span></p>
-          </div>
-        );
-      case "Onda de Choque":
-        return (
-          <div className="space-y-1 text-sm pt-2">
-            <p className="text-lg font-bold text-yellow-400">{airBlast.overpressure_Pa.toLocaleString()} Pa</p>
-            <p className="font-medium text-gray-300">Tiempo de llegada: <span className="font-bold text-white text-base">{airBlast.arrival_time_s.toFixed(1)} s</span></p>
-            <p className="text-sm mt-2 text-yellow-400 font-bold italic">Daño Esperado: {airBlast.damageDescription}</p>
-          </div>
-        );
-      case "Radiación Térmica":
-        return (
-          <div className="space-y-1 text-sm pt-2">
-            <p className="text-lg font-bold text-pink-400">{thermalRadiation.thermalExposure_Jm2.toLocaleString()} J/m²</p>
-            <p className="font-medium text-gray-300">Radio de la bola de fuego generada: <span className="font-bold text-white text-base">{thermalRadiation.fireballRadius_km.toFixed(2)} km</span></p>
-            <p className="text-sm mt-2 text-pink-400 font-bold italic">Efectos: {thermalRadiation.ignitionEffects}</p>
-          </div>
-        );
-      case "Retorno de eyecciones":
-        return (
-          <div className="space-y-1 text-sm pt-2">
-            <p className="font-medium text-gray-300">Grosor capa: <span className="font-bold text-white text-base">{(ejecta.thickness_m * 1000).toFixed(2)} mm</span></p>
-            <p className="font-medium text-gray-300">Tamaño de fragmento promedio: <span className="font-bold text-white text-base">{ejecta.meanFragmentSize_mm.toFixed(2)} mm</span></p>
-          </div>
-        );
-      case "Resumen general":
-        return (
-           <div className="space-y-1 text-sm pt-2">
-            <p className="font-medium text-red-500 text-lg">Resumen de destrucción masiva:</p>
-            <p className="font-medium text-gray-300">Cráter final de {displayData.craterDetails.finalDiameter}.</p>
-            <p className="font-medium text-gray-300">Población en zona cero: {totalAffectedPopulation.toLocaleString()}.</p>
-          </div>
-        )
-      default:
-        return <p className="text-base font-medium mt-2 text-white">Selecciona un efecto.</p>;
-    }
-  }, [selectedEffect, scenario, crater, airBlast, thermalRadiation, ejecta, burstAltitude, displayData, totalAffectedPopulation]);
-
-  const effectButtons = [
-    { name: "Sismo", label: "Sismo" },
-    { name: "Pérdidas", label: "Pérdidas" },
-    { name: "Cráter", label: "Cráter" },
-    { name: "Onda de Choque", label: "Onda de Choque" },
-    { name: "Retorno de eyecciones", label: "Retorno de eyecciones" },
-    { name: "Radiación Térmica", label: "Radiación Térmica" },
-    { name: "Resumen general", label: "Resumen general" }
-  ];
-
-  return (
-    <div className="h-screen overflow-y-auto bg-blue-950 text-white font-sans p-4 sm:p-6">
-      <div className="bg-gray-900 rounded-xl shadow-2xl p-4 sm:p-6 max-w-7xl mx-auto">
-        
-
-{/* Header con transición de color */}
-<header className="px-0 sm:px-10 py-10 border-b border-gray-800 mb-6 transition-all duration-500 flex justify-between items-start gap-4">
-  <div>
-    <h1 className={`text-3xl font-bold tracking-widest transition-colors duration-500 ${activeStyle.text}`}>
-      RESULTADOS DE LA SIMULACIÓN
-    </h1>
-    <div className="mt-4 text-xl text-gray-300 leading-relaxed min-h-12">
-      <p>{headerText}</p>
+  // Fila etiqueta + valor reutilizable
+  const Row = ({ label, value, accent }) => (
+    <div className="flex justify-between items-baseline gap-3 py-1.5">
+      <span style={{ ...labelStyle, fontSize: "0.8rem" }}>{label}</span>
+      <span
+        style={{
+          fontSize: "1.05rem",
+          fontWeight: 600,
+          color: accent || "#fff",
+          textAlign: "right",
+        }}
+      >
+        {value}
+      </span>
     </div>
-  </div>
-  <div className="flex flex-col sm:flex-row gap-3 shrink-0 mt-1">
-    <button
-      onClick={() => navigate("/skyfallx-game")}
-      className="px-4 py-2 rounded-lg font-semibold text-sm bg-gray-700 hover:bg-gray-600 text-white border border-gray-500 transition-all whitespace-nowrap"
-    >
-      ← Nuevo asteroide
-    </button>
-    <button
-      onClick={() => navigate("/defensa-planetaria", { state: { simulationResults: recalculatedEffects, inputParameters: inputs } })}
-      className="px-4 py-2 rounded-lg font-semibold text-sm bg-red-700 hover:bg-red-600 text-white border border-red-500 transition-all whitespace-nowrap"
-    >
-      Defensa Planetaria →
-    </button>
-  </div>
-</header>
+  );
 
-        {/* Sección de Botones */}
-        <div className="w-full bg-gray-800/50 p-6 rounded-xl shadow-xl mb-8 border border-gray-700">
-          <h2 className={`text-xl font-bold mb-4 transition-colors duration-500 ${activeStyle.text}`}>
-            Selecciona un efecto para ver más detalles.
-          </h2>
-          <div className="flex flex-wrap gap-4">
-            {effectButtons.map((btn) => (
-              <button
-                key={btn.name}
-                className={`p-3 flex-1 min-w-40 text-lg font-semibold rounded-xl transition-all shadow-md 
-                  ${selectedEffect === btn.name 
-                    ? `${effectStyles[btn.name].bg} text-black transform scale-105` 
-                    : "bg-gray-800 hover:bg-gray-700 text-white border border-gray-600"
-                  }
-                `}
-                onClick={() => {
-                  setSelectedEffect(btn.name);
-                  setHeaderText(headerTextsByEffect[btn.name]); 
+  // ===================================================================
+  //  Contenido por categoría  (parámetros del boceto)
+  // ===================================================================
+  const renderCategoryBody = (id) => {
+    switch (id) {
+      // ---------------------------------------------------------------
+      case "crater":
+        if (isAirburst)
+          return (
+            <p style={{ color: PALETTE.textSec, fontStyle: "italic" }}>
+              No se forma cráter. Explosión aérea a{" "}
+              {burstAltitude_km.toFixed(1)} km de altitud.
+            </p>
+          );
+        return (
+          <div>
+            <Row
+              label="Diámetro final"
+              value={`${(crater.finalDiameter_m / 1000).toFixed(2)} km`}
+              accent={activeCat.hex}
+            />
+            <Row
+              label="Tipo"
+              value={crater.type === "Simple" ? "Simple" : "Complejo"}
+            />
+            <Row label="Volumen fundido" value="N/D" />
+          </div>
+        );
+
+      // ---------------------------------------------------------------
+      case "termica": {
+        if (thermalRadiation?.message)
+          return (
+            <p style={{ color: PALETTE.textSec, fontStyle: "italic" }}>
+              {thermalRadiation.message}
+            </p>
+          );
+        return (
+          <div>
+            <Row
+              label="Radiación térmica"
+              value={`${thermalRadiation.thermalExposure_Jm2.toLocaleString(
+                undefined,
+                { maximumFractionDigits: 0 }
+              )} J/m²`}
+              accent={activeCat.hex}
+            />
+            <Row
+              label="Radio bola de fuego"
+              value={`${thermalRadiation.fireballRadius_km.toFixed(2)} km`}
+            />
+            <div className="pt-3">
+              <span style={{ ...labelStyle, fontSize: "0.8rem" }}>
+                Efectos de ignición
+              </span>
+              <p
+                className="mt-1 leading-relaxed"
+                style={{
+                  color: activeCat.hex,
+                  fontWeight: 600,
+                  fontSize: "0.95rem",
                 }}
               >
-                {btn.label}
-              </button>
-            ))}
+                {thermalRadiation.ignitionEffects}
+              </p>
+            </div>
           </div>
-        </div>
+        );
+      }
 
-        {/* Grid Principal */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
-          
-          {/* Columna Mapa */}
-          <div className="space-y-6 lg:col-span-8">
-            <div className="bg-gray-800 p-4 rounded-xl shadow-md border border-gray-700">
-              <h2 className={`text-xl font-bold mb-3 transition-colors duration-500 ${activeStyle.text}`}>
-                Zona de Impacto: <span className="text-white text-2xl ml-2">{displayData.zone}</span>
-              </h2>
-              <div className="h-96 rounded-lg overflow-hidden border border-gray-700 shadow-inner">
-                  <MapContainer 
-                        center={impactPos} // UPDATED
-                        zoom={MAP_ZOOM} 
-                        scrollWheelZoom={false} 
-                        className="h-full w-full"
-                      >
-                  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                  
-                  {/* Capa GeoJSON del Mapa de Población 
-                  {geoJsonData && (
-                    <GeoJSON 
-                      data={geoJsonData} 
-                      style={{ color: "#4b5563", weight: 1, fillOpacity: 0.1, interactive: false }} 
-                    />
-                  )}*/}
+      // ---------------------------------------------------------------
+      case "onda":
+        return (
+          <div>
+            <Row
+              label="Sobrepresión"
+              value={`${airBlast.overpressure_Pa.toLocaleString(undefined, {
+                maximumFractionDigits: 0,
+              })} Pa`}
+              accent={activeCat.hex}
+            />
+            <Row
+              label="Tiempo de llegada"
+              value={`${airBlast.arrival_time_s.toFixed(1)} s`}
+            />
+            <Row
+              label="Viento"
+              value={`${airBlast.wind_velocity_ms.toFixed(1)} m/s`}
+            />
+            <div className="pt-3">
+              <span style={{ ...labelStyle, fontSize: "0.8rem" }}>
+                Material que se rompe
+              </span>
+              <p
+                className="mt-1 leading-relaxed"
+                style={{
+                  color: activeCat.hex,
+                  fontWeight: 600,
+                  fontSize: "0.95rem",
+                }}
+              >
+                {airBlast.damageDescription}
+              </p>
+            </div>
+          </div>
+        );
 
-                  {craterRadiusMeters > 0 ? (
-                    <Circle 
-                      center={impactPos} 
-                      radius={craterRadiusMeters} 
-                      pathOptions={{ 
-                        color: activeStyle.hex, 
-                        fillColor: activeStyle.hex, 
-                        fillOpacity: 0.5, 
-                        weight: 3 
-                      }} 
-                    />
-                  ) : (
-                    <Marker position={impactPos} />
-                  )}
-                </MapContainer>
+      // ---------------------------------------------------------------
+      case "sismo":
+        return (
+          <div>
+            <div
+              className="rounded-xl p-4 mb-4"
+              style={{
+                background: `${activeCat.hex}14`,
+                border: `1px solid ${activeCat.hex}33`,
+              }}
+            >
+              <span style={{ ...labelStyle, fontSize: "0.75rem" }}>
+                Magnitud
+              </span>
+              <p
+                style={{
+                  fontSize: "2.4rem",
+                  fontWeight: 800,
+                  color: activeCat.hex,
+                  lineHeight: 1.1,
+                }}
+              >
+                {seismicEffects.richterMagnitude.toFixed(2)}
+              </p>
+              <span
+                style={{ color: PALETTE.textSec, fontSize: "0.8rem" }}
+              >
+                escala Richter
+              </span>
+            </div>
+            <Row
+              label="Escala Mercalli"
+              value={seismicEffects.mercalliIntensity}
+            />
+            <div
+              className="pt-3 mt-2"
+              style={{ borderTop: `1px solid ${PALETTE.cardBorder}` }}
+            >
+              <span style={{ ...labelStyle, fontSize: "0.8rem" }}>
+                Geología del impacto
+              </span>
+              <div className="grid grid-cols-2 gap-2 mt-2">
+                <div
+                  className="rounded-lg p-3"
+                  style={{
+                    background: PALETTE.card,
+                    border: `1px solid ${PALETTE.cardBorder}`,
+                  }}
+                >
+                  <p
+                    style={{
+                      color: PALETTE.textSec,
+                      fontSize: "0.7rem",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    Zona
+                  </p>
+                  <p style={{ color: "#fff", fontWeight: 600 }}>
+                    {sueloAfectado.zona}
+                  </p>
+                </div>
+                <div
+                  className="rounded-lg p-3"
+                  style={{
+                    background: PALETTE.card,
+                    border: `1px solid ${PALETTE.cardBorder}`,
+                  }}
+                >
+                  <p
+                    style={{
+                      color: PALETTE.textSec,
+                      fontSize: "0.7rem",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    Composición
+                  </p>
+                  <p style={{ color: "#fff", fontWeight: 600 }}>
+                    {sueloAfectado.tipoSuelo}
+                  </p>
+                </div>
               </div>
             </div>
-
-            <div className="bg-gray-800 p-5 rounded-xl shadow-md border border-gray-700">
-              <h2 className={`text-xl font-bold mb-2 transition-colors duration-500 ${activeStyle.text}`}>Energía Total Liberada:</h2>
-              <p className="text-4xl font-extrabold text-white">{displayData.totalEnergy}</p>
-            </div>
           </div>
+        );
 
-          {/* Columna Detalles Dinámicos */}
-          <div className={`lg:col-span-4 space-y-5 bg-gray-800 p-6 rounded-xl shadow-xl border-t-8 transition-all duration-500 ${activeStyle.border}`}>
-            <h2 className={`text-xl font-bold transition-colors duration-500 ${activeStyle.text}`}>
-              Detalles del Impacto a Distancia
-            </h2>
-
-            <div className="space-y-4">
-              <div className="flex justify-between items-end">
-                <span className="text-lg font-medium text-gray-300">Distancia del observador</span>
-                <span className={`text-3xl font-bold transition-colors duration-500 ${activeStyle.text}`}>
-                  {displayData.currentDistanceKm} km
+      // ---------------------------------------------------------------
+      case "ejecta":
+        if (isAirburst)
+          return (
+            <p style={{ color: PALETTE.textSec, fontStyle: "italic" }}>
+              No hay eyecciones significativas debido a la explosión aérea.
+            </p>
+          );
+        if (ejecta?.message && ejecta.thickness_m === undefined)
+          return (
+            <p style={{ color: PALETTE.textSec, fontStyle: "italic" }}>
+              {ejecta.message}
+            </p>
+          );
+        return (
+          <div>
+            <div className="mb-2">
+              <div className="flex justify-between items-baseline">
+                <span style={{ ...labelStyle, fontSize: "0.8rem" }}>
+                  Radio del retorno
+                </span>
+                <span style={{ ...bigValueStyle, color: activeCat.hex }}>
+                  {currentDistanceKm.toFixed(1)} km
                 </span>
               </div>
               <input
-                type="range" min="0" max="100" value={distanceSliderValue}
-                onChange={(e) => setDistanceSliderValue(Number(e.target.value))}
-                className={`w-full h-3 bg-gray-700 rounded-lg appearance-none cursor-pointer ${activeStyle.accent}`}
+                type="range"
+                min="0"
+                max="100"
+                value={distanceSliderValue}
+                onChange={(e) =>
+                  setDistanceSliderValue(Number(e.target.value))
+                }
+                className="w-full mt-3 appearance-none cursor-pointer"
+                style={{
+                  height: 6,
+                  borderRadius: 9999,
+                  background: `linear-gradient(to right, ${activeCat.hex} ${distanceSliderValue}%, rgba(255,255,255,0.1) ${distanceSliderValue}%)`,
+                  accentColor: activeCat.hex,
+                }}
               />
+              <div
+                className="flex justify-between mt-1"
+                style={{ color: PALETTE.textFaint, fontSize: "0.7rem" }}
+              >
+                <span>0 km</span>
+                <span>{MAX_DISTANCE_KM} km</span>
+              </div>
+            </div>
+            <Row
+              label="Grosor de capa"
+              value={`${(ejecta.thickness_m * 1000).toFixed(2)} mm`}
+            />
+            <Row
+              label="Tamaño de fragmentos"
+              value={`${ejecta.meanFragmentSize_mm.toFixed(2)} mm`}
+            />
+          </div>
+        );
+
+      // ---------------------------------------------------------------
+      case "vulnerabilidad":
+        return (
+          <div>
+            <div
+              className="rounded-xl p-4 mb-3"
+              style={{
+                background: `${activeCat.hex}14`,
+                border: `1px solid ${activeCat.hex}33`,
+              }}
+            >
+              <span style={{ ...labelStyle, fontSize: "0.75rem" }}>
+                Población afectada
+              </span>
+              <p
+                style={{
+                  fontSize: "2rem",
+                  fontWeight: 800,
+                  color: "#fff",
+                  lineHeight: 1.15,
+                }}
+              >
+                {totalAffectedPopulation.toLocaleString()}
+                <span
+                  style={{
+                    fontSize: "0.85rem",
+                    fontWeight: 400,
+                    color: PALETTE.textSec,
+                    marginLeft: 8,
+                  }}
+                >
+                  personas
+                </span>
+              </p>
+            </div>
+            <div
+              className="rounded-xl p-4"
+              style={{
+                background: `${activeCat.hex}14`,
+                border: `1px solid ${activeCat.hex}33`,
+              }}
+            >
+              <span style={{ ...labelStyle, fontSize: "0.75rem" }}>
+                Viviendas afectadas
+              </span>
+              <p
+                style={{
+                  fontSize: "2rem",
+                  fontWeight: 800,
+                  color: "#fff",
+                  lineHeight: 1.15,
+                }}
+              >
+                {totalAffectedHousing.toLocaleString()}
+                <span
+                  style={{
+                    fontSize: "0.85rem",
+                    fontWeight: 400,
+                    color: PALETTE.textSec,
+                    marginLeft: 8,
+                  }}
+                >
+                  viviendas
+                </span>
+              </p>
+            </div>
+            <p
+              className="mt-3"
+              style={{
+                color: PALETTE.textFaint,
+                fontSize: "0.75rem",
+                fontStyle: "italic",
+              }}
+            >
+              Basado en datos censales (INEGI) locales.
+            </p>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  // ===================================================================
+  //  RENDER
+  // ===================================================================
+  return (
+    <div
+      className="h-screen w-screen overflow-hidden font-sans flex flex-col pt-10"
+      style={{ background: PALETTE.bg, color: PALETTE.textMain }}
+    >
+      {/* ---------------- HEADER ---------------- */}
+      <header
+        className="flex items-center justify-between px-6 py-4 shrink-0"
+        style={{ borderBottom: `1px solid ${PALETTE.cardBorder}` }}
+      >
+        <h1
+          style={{
+            margin: 0,
+            fontSize: "clamp(1.8rem, 3.2vw, 2.8rem)",
+            fontWeight: 800,
+            color: "#ffffff",
+            textShadow: "0 0 20px rgba(255,255,255,0.2), 0 0 40px rgba(255,255,255,0.08)",
+            letterSpacing: "-0.02em",
+            lineHeight: 1.1,
+          }}
+        >
+          Resultados del Asteroide
+        </h1>
+
+        <div className="flex gap-3">
+          <button
+            onClick={() => navigate("/skyfallx-game")}
+            className="transition-all"
+            style={{
+              padding: "0.55rem 1.1rem",
+              borderRadius: 10,
+              fontWeight: 700,
+              fontSize: "0.8rem",
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              color: PALETTE.textMain,
+              background: PALETTE.card,
+              border: `1px solid ${PALETTE.cardBorder}`,
+            }}
+          >
+            <><span style={{ fontSize: "1.1rem" }}>←</span> Otro impacto</>
+          </button>
+          <button
+            onClick={() =>
+              navigate("/defensa-planetaria", {
+                state: {
+                  simulationResults: recalculatedEffects,
+                  inputParameters: inputs,
+                },
+              })
+            }
+            className="transition-all hover:opacity-90"
+            style={{
+              padding: "0.55rem 1.1rem",
+              borderRadius: 10,
+              fontWeight: 700,
+              fontSize: "0.8rem",
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              color: "#fff",
+              background:
+                "linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)",
+            }}
+          >
+            <>Defensa Planetaria <span style={{ fontSize: "1.1rem" }}>→</span></>
+          </button>
+        </div>
+      </header>
+
+
+      {/* ---------------- BODY: MAPA (2/3) + SIDEBAR (1/3) ---------------- */}
+      <div className="flex-1 flex overflow-hidden gap-4 p-4">
+        {/* ===== MAPA ===== */}
+        <div className="relative flex-1 lg:basis-2/3 h-full">
+          <div
+            className="relative h-full w-full overflow-hidden"
+            style={{
+              borderRadius: 16,
+              border: `1px solid ${PALETTE.cardBorder}`,
+            }}
+          >
+            {/* Badge de coordenadas (estilo referencia) */}
+            <div
+              className="absolute top-4 left-4 z-[500] px-3 py-1.5 rounded-lg backdrop-blur-md"
+              style={{
+                background: "rgba(0,0,0,0.55)",
+                border: `1px solid ${PALETTE.cardBorder}`,
+              }}
+            >
+              <span
+                style={{
+                  color: PALETTE.textSec,
+                  fontSize: "0.78rem",
+                  fontWeight: 500,
+                  letterSpacing: "0.02em",
+                }}
+              >
+                {impactPos[0].toFixed(4)}°N · {Math.abs(impactPos[1]).toFixed(4)}°O
+              </span>
             </div>
 
-            <div className="min-h-30 bg-black/20 p-4 rounded-lg border border-gray-700/50">
-              {renderEffectDetails()}
+            {/* Label flotante: distancia del observador */}
+            <div
+              className="absolute bottom-4 left-4 z-[500] px-4 py-3 rounded-2xl backdrop-blur-md"
+              style={{
+                background: "rgba(0,0,0,0.8)",
+                border: `1px solid ${PALETTE.cardBorder}`,
+                maxWidth: 340,
+              }}
+            >
+              <span style={{ ...labelStyle, fontSize: "0.75rem" }}>Energía total liberada</span>
+              <p style={{ fontSize: "1.4rem", fontWeight: 700, color: "#fff", lineHeight: 1.2, marginTop: "0.25rem" }}>
+                {impactEnergyMegatons.toLocaleString(undefined, { maximumFractionDigits: 2 })}{" "}
+                <span style={{ fontSize: "0.85rem", fontWeight: 400, color: PALETTE.textSec }}>MT</span>
+              </p>
             </div>
 
-            <div className="space-y-2 pt-4 border-t border-gray-700">
-              <h3 className={`text-xl font-bold transition-colors duration-500 ${activeStyle.text}`}>
-                Efectos Sísmicos (a {displayData.currentDistanceKm} km)
-              </h3>
-              <p className="text-4xl font-extrabold text-red-500">MAG: {displayData.seismicDetails.magnitude}</p>
-              <p className="text-2xl font-medium text-red-500">en la escala Richter</p>
-              <p className="text-4xl font-extrabold text-red-500">{displayData.seismicDetails.mercalliIntensity}</p>
-              <p className="text-2xl font-medium text-red-500">en la escala Mercalli</p>
-            </div>
+            <MapContainer
+              center={impactPos}
+              zoom={MAP_ZOOM}
+              scrollWheelZoom={false}
+              className="h-full w-full"
+              style={{ background: "#000" }}
+            >
+              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+
+              {/* Capa GeoJSON del Mapa de Población
+              {geoJsonData && (
+                <GeoJSON
+                  data={geoJsonData}
+                  style={{ color: "#4b5563", weight: 1, fillOpacity: 0.1, interactive: false }}
+                />
+              )} */}
+
+              {mapCircleRadius > 0 ? (
+                <Circle
+                  center={impactPos}
+                  radius={mapCircleRadius}
+                  pathOptions={{
+                    color: activeCat.hex,
+                    fillColor: activeCat.hex,
+                    fillOpacity: 0.35,
+                    weight: 3,
+                  }}
+                />
+              ) : (
+                <Marker position={impactPos} />
+              )}
+            </MapContainer>
           </div>
         </div>
 
-        <div className="flex justify-center mt-10">
-          <button
-            className="px-12 py-4 text-2xl font-extrabold rounded-xl shadow-2xl transition-all bg-gray-700 hover:bg-gray-600 hover:scale-105 text-white border-b-4 border-gray-900 active:border-b-0"
-            onClick={() => navigate("/result")}
-          >
-            ¿Y... qué se pudo haber hecho?
-          </button>
-        </div>
+        {/* ===== SIDEBAR: RESULTADOS (acordeón con scroll) ===== */}
+        <aside
+          className="h-full overflow-y-auto shrink-0 w-full max-w-md lg:basis-1/3"
+          style={{
+            background: PALETTE.card,
+            border: `1px solid ${PALETTE.cardBorder}`,
+            borderRadius: 16,
+          }}
+        >
+          <div className="p-6">
+            {/* Título de sección tenue (estilo "PREPARA TU ASTEROIDE") */}
+            <p
+              style={{
+                color: PALETTE.textSec,
+                fontSize: "0.95rem",
+                fontWeight: 600,
+                textTransform: "uppercase",
+                letterSpacing: "0.14em",
+                marginBottom: "1.5rem",
+              }}
+            >
+              Consecuencias del impacto
+            </p>
+
+            {/* Etiqueta del bloque de acordeón */}
+            <p
+              style={{
+                color: PALETTE.textFaint,
+                fontSize: "0.75rem",
+                fontWeight: 600,
+                textTransform: "uppercase",
+                letterSpacing: "0.12em",
+                marginBottom: "0.75rem",
+              }}
+            >
+              Categoría
+            </p>
+
+            <div className="space-y-3">
+              {CATEGORIES.map((cat) => {
+                const isOpen = openCategory === cat.id;
+                return (
+                  <div
+                    key={cat.id}
+                    className="overflow-hidden transition-all duration-300"
+                    style={{
+                      background: PALETTE.cardDeep,
+                      border: `1px solid ${
+                        isOpen ? `${cat.hex}66` : PALETTE.cardBorder
+                      }`,
+                      borderRadius: 16,
+                      boxShadow: isOpen ? `0 0 24px ${cat.glow}` : "none",
+                    }}
+                  >
+                    {/* --- Cabecera del acordeón --- */}
+                    <button
+                      onClick={() =>
+                        setOpenCategory(isOpen ? null : cat.id)
+                      }
+                      className="w-full flex items-center justify-between px-5 py-4 transition-colors"
+                      style={{ background: "transparent" }}
+                    >
+                      <span className="flex items-center gap-3">
+                        <span
+                          style={{
+                            width: 10,
+                            height: 10,
+                            borderRadius: 9999,
+                            background: cat.hex,
+                            boxShadow: `0 0 10px ${cat.hex}`,
+                            display: "inline-block",
+                          }}
+                        />
+                        <span
+                          style={{
+                            fontWeight: 700,
+                            fontSize: "1rem",
+                            color: isOpen ? cat.hex : PALETTE.textMain,
+                            transition: "color 0.3s",
+                          }}
+                        >
+                          {cat.label}
+                        </span>
+                      </span>
+                      <span
+                        style={{
+                          color: isOpen ? cat.hex : PALETTE.textSec,
+                          transform: isOpen
+                            ? "rotate(180deg)"
+                            : "rotate(0deg)",
+                          transition: "transform 0.3s, color 0.3s",
+                          fontSize: "0.85rem",
+                        }}
+                      >
+                        ▼
+                      </span>
+                    </button>
+
+                    {/* --- Cuerpo expandible --- */}
+                    <div
+                      style={{
+                        maxHeight: isOpen ? 1200 : 0,
+                        opacity: isOpen ? 1 : 0,
+                        transition:
+                          "max-height 0.4s ease, opacity 0.3s ease",
+                        overflow: "hidden",
+                      }}
+                    >
+                      <div
+                        className="px-5 pb-5 pt-2"
+                        style={{
+                          borderTop: `1px solid ${PALETTE.cardBorder}`,
+                        }}
+                      >
+                        {renderCategoryBody(cat.id)}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <button
+              onClick={() => navigate("/result")}
+              className="w-full mt-6 transition-all hover:opacity-90"
+              style={{
+                padding: "1rem",
+                borderRadius: 10,
+                fontWeight: 700,
+                fontSize: "0.9rem",
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: "#fff",
+                background:
+                  "linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)",
+              }}
+            >
+              ¿Y… qué se pudo haber hecho?
+            </button>
+          </div>
+        </aside>
       </div>
     </div>
   );
