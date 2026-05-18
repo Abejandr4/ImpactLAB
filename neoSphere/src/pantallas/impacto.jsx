@@ -3,6 +3,9 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { MapContainer, TileLayer, Circle, Marker, GeoJSON } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import Parametro from "../components/Impacto/Parametro";
+import { formatLongitud } from "../utils/formatUnidades";
+import { analogiaCrater } from "../utils/analogias";
 
 // --- CONFIGURACIÓN DE ICONOS DE LEAFLET ---
 import L from "leaflet";
@@ -18,68 +21,11 @@ L.Icon.Default.mergeOptions({
 });
 
 import { simulateAsteroidImpact } from "../utils/Operaciones";
+import { PALETTE, CATEGORIES } from "../utils/categorias";
 
 // --- CONSTANTES GLOBALES ---
 const MAP_ZOOM = 9;
 const MAX_DISTANCE_KM = 500;
-
-// =====================================================================
-//  PALETA DEL SITIO  (negro puro + acentos)
-// =====================================================================
-const PALETTE = {
-  bg: "#000000",
-  card: "rgba(255,255,255,0.04)",
-  // card más oscura estilo "Prepara tu asteroide" (contenedores internos)
-  cardDeep: "#0a0a0a",
-  cardBorder: "rgba(255,255,255,0.09)",
-  textMain: "rgba(255,255,255,0.85)",
-  textSec: "rgba(255,255,255,0.45)",
-  textFaint: "rgba(255,255,255,0.25)",
-};
-
-// =====================================================================
-//  CONFIGURACIÓN DE CATEGORÍAS  (orden y colores según boceto)
-//  - "crater" usa un café/marrón propio
-//  - el resto usa los acentos de la paleta del sitio
-// =====================================================================
-const CATEGORIES = [
-  {
-    id: "crater",
-    label: "Cráter",
-    hex: "#a16207", // café / marrón
-    glow: "rgba(161,98,7,0.35)",
-  },
-  {
-    id: "termica",
-    label: "Radiación térmica",
-    hex: "#f59e0b", // ámbar
-    glow: "rgba(245,158,11,0.35)",
-  },
-  {
-    id: "onda",
-    label: "Onda de choque",
-    hex: "#06b6d4", // cyan
-    glow: "rgba(6,182,212,0.35)",
-  },
-  {
-    id: "sismo",
-    label: "Sismo",
-    hex: "#a855f7", // violeta
-    glow: "rgba(168,85,247,0.35)",
-  },
-  {
-    id: "ejecta",
-    label: "Eyecta",
-    hex: "#6366f1", // índigo
-    glow: "rgba(99,102,241,0.35)",
-  },
-  {
-    id: "vulnerabilidad",
-    label: "Vulnerabilidad",
-    hex: "#10b981", // verde
-    glow: "rgba(16,185,129,0.35)",
-  },
-];
 
 const Impacto = () => {
   const location = useLocation();
@@ -113,9 +59,36 @@ const Impacto = () => {
     };
   }, []);
 
+  // --- ESTADO ---
   const [distanceSliderValue, setDistanceSliderValue] = useState(20);
+  const [tooltipAbierto, setTooltipAbierto] = useState(null);
   // Categoría abierta en el acordeón (solo una a la vez). Por defecto la primera.
   const [openCategory, setOpenCategory] = useState("crater");
+
+  // --- CALLBACKS ---
+  const handleToggleTooltip = useCallback((id) => {
+    setTooltipAbierto((prev) => (prev === id ? null : id));
+  }, []);
+
+  // --- LISTENER GLOBAL DE TOOLTIP (click-fuera) ---
+  useEffect(() => {
+    if (!tooltipAbierto) return;
+
+    const handleClickOutside = (e) => {
+      if (!e.target.closest('[data-tooltip="true"]')) {
+        setTooltipAbierto(null);
+      }
+    };
+
+    const timer = setTimeout(() => {
+      document.addEventListener("click", handleClickOutside);
+    }, 0);
+
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [tooltipAbierto]);
 
   // --- LÓGICA DE CÁLCULO ---
 
@@ -167,9 +140,9 @@ const Impacto = () => {
   }, [inputs]);
 
   const totalAffectedPopulation =
-    recalculatedEffects?.affectedData?.totalPopulation || 0;
+    recalculatedEffects?.affectedData?.combinedReferencePopulation || 0;
   const totalAffectedHousing =
-    recalculatedEffects?.affectedData?.totalHousing || 0;
+    recalculatedEffects?.affectedData?.housingInBlast || 0;
 
   // Estilo del acento activo (la categoría abierta)
   const activeCat = useMemo(
@@ -202,7 +175,7 @@ const Impacto = () => {
     crater = { finalDiameter_m: 0, transientDiameter_m: 0, type: "N/A" },
     airBlast = {
       overpressure_Pa: 0,
-      wind_velocity_ms: 0,
+      windVelocity_ms: 0,
       arrival_time_s: 0,
       damageDescription: "N/A",
     },
@@ -304,10 +277,15 @@ const Impacto = () => {
           );
         return (
           <div>
-            <Row
+            <Parametro
               label="Diámetro final"
-              value={`${(crater.finalDiameter_m / 1000).toFixed(2)} km`}
+              valor={formatLongitud(crater.finalDiameter_m).display}
               accent={activeCat.hex}
+              tooltipId="crater.diametro"
+              analogia={analogiaCrater(crater.finalDiameter_m)}
+              destacado={true}
+              tooltipAbierto={tooltipAbierto}
+              onToggleTooltip={handleToggleTooltip}
             />
             <Row
               label="Tipo"
@@ -375,7 +353,7 @@ const Impacto = () => {
             />
             <Row
               label="Viento"
-              value={`${airBlast.wind_velocity_ms.toFixed(1)} m/s`}
+              value={`${airBlast.windVelocity_ms.toFixed(1)} m/s`}
             />
             <div className="pt-3">
               <span style={{ ...labelStyle, fontSize: "0.8rem" }}>
