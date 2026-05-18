@@ -187,13 +187,13 @@ function OrbitSimulator({ onReturn, targetAsteroid, asteroids = [], selectedAste
 
   return (
     <div className="relative w-full h-full">
-      {/* ============ HUD PANEL — TOP LEFT ============ */}
+      {/* ============ HUD PANEL — CENTERED VERTICALLY ============ */}
       <div
-        className="absolute top-24 left-4 z-30 font-sans text-violet-400 select-none flex flex-col"
+        className="absolute top-1/2 -translate-y-1/2 left-4 z-30 font-sans text-violet-400 select-none flex flex-col"
         style={{
           width: panelCollapsed ? '220px' : '360px',
           transition: 'width 0.3s ease',
-          maxHeight: '80%'
+          maxHeight: '85%'
         }}
       >
         <div
@@ -231,7 +231,7 @@ function OrbitSimulator({ onReturn, targetAsteroid, asteroids = [], selectedAste
           </div>
 
           {!panelCollapsed && (
-            <div className="p-3 space-y-3 overflow-y-auto max-h-[60vh]">
+            <div className="p-3 space-y-3 overflow-y-auto max-h-[65vh]">
               
               {/* LISTA INTERACTIVA DE SELECCIÓN */}
               <div className="flex flex-col gap-1.5">
