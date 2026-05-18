@@ -72,18 +72,23 @@ const Orbitas = () => {
       </main>
 
       <AnimatePresence>
-        {focusedAsteroid && (
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            className="absolute bottom-10 left-10 z-40 p-4 bg-black/60 border border-white/20 rounded-lg backdrop-blur-md"
-          >
-            <p className="text-gray-400 text-xs uppercase tracking-widest">Objetivo Enfocado</p>
-            <h2 className="text-white text-2xl font-bold">{focusedAsteroid}</h2>
-          </motion.div>
-        )}
-      </AnimatePresence>
+  {focusedAsteroid && (
+    <motion.div
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 20 }}
+      className="absolute top-24 right-6 z-40 p-4 bg-black/60 border border-white/20 rounded-lg backdrop-blur-md"
+    >
+      <p className="text-gray-400 text-xs uppercase tracking-widest">
+        Objetivo Enfocado
+      </p>
+
+      <h2 className="text-white text-2xl font-bold">
+        {focusedAsteroid}
+      </h2>
+    </motion.div>
+  )}
+</AnimatePresence>
     </div>
   );
 };
