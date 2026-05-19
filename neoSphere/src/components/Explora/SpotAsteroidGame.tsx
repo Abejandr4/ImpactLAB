@@ -150,7 +150,7 @@ export function SpotAsteroidGame() {
       <div className="mb-3 flex items-start gap-3 p-3 rounded-xl" style={{ background: "rgba(139,92,246,0.1)", border: "1px solid rgba(139,92,246,0.25)" }}>
         <span style={{ fontSize: "1.2rem" }}>🔭</span>
         <p style={{ color: "rgba(255,255,255,0.75)", fontSize: "0.82rem", lineHeight: 1.6 }}>
-          Los astrónomos detectan asteroides buscando objetos que se mueven en el cielo. En este juego, los <strong style={{ color: "#f97316" }}>asteroides naranja brillan y pulsan</strong> — las estrellas son blancas y quietas. ¡Encuéntralos todos!
+          Los astrónomos detectan asteroides buscando objetos que se mueven en el cielo. En este juego, los <strong style={{ color: "#f97316" }}>asteroides naranja brillan</strong> — las estrellas son blancas y quietas. ¡Encuéntralos todos!
         </p>
       </div>
 
