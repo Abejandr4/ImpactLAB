@@ -6,9 +6,6 @@
 //   - Vista detallada por efecto, según chip activo.
 //
 // En airburst se ocultan los chips de Sismo, Eyecta y Cráter.
-//
-// El estado del chip activo (filtroEfecto) vive en impacto.jsx para que el
-// mapa (Fase 5) pueda usarlo para resaltar el círculo correspondiente.
 
 import React from "react";
 import Tooltip from "./Tooltip";
@@ -17,13 +14,8 @@ import { formatNumero } from "../../utils/formatUnidades";
 import { analogiaVictimas } from "../../utils/analogias";
 
 // =============================================================
-// Helpers internos
+// Configuración interna de efectos
 // =============================================================
-
-// Mapeo de cada chip a los campos que necesita del retorno simulado.
-// Cada entry sabe: cómo llamarse, qué radio leer, dónde están las víctimas,
-// dónde está la población, dónde están las viviendas, y de qué categoría
-// hereda el color.
 const EFECTOS = [
   {
     id: "onda",
@@ -72,7 +64,7 @@ const EFECTOS = [
     radioKey: "craterRadius_km",
     populationKey: "populationInCrater",
     housingKey: "housingInCrater",
-    victimsKey: null, // dentro del cráter no hay matiz: 100% de afectación
+    victimsKey: null,
     requiresSuperficial: true,
   },
 ];
@@ -84,7 +76,6 @@ const getColor = (catId) =>
 // Sub-componentes
 // =============================================================
 
-// Chip de filtro (botón redondeado horizontal)
 const Chip = ({ label, active, color, onClick }) => (
   <button
     type="button"
@@ -107,7 +98,6 @@ const Chip = ({ label, active, color, onClick }) => (
   </button>
 );
 
-// Card de un escenario (Optimista / Pesimista) — usado en el toggle expandible
 const ScenarioCard = ({ label, value, accent }) => (
   <div
     style={{
@@ -144,7 +134,6 @@ const ScenarioCard = ({ label, value, accent }) => (
   </div>
 );
 
-// Fila compacta para el filtro "Todos": efecto · radio · víctimas
 const FilaResumen = ({ efecto, accent, recalculatedEffects }) => {
   const af = recalculatedEffects?.affectedData || {};
   const v = recalculatedEffects?.victims || {};
@@ -155,7 +144,6 @@ const FilaResumen = ({ efecto, accent, recalculatedEffects }) => {
   if (efecto.victimsKey && v[efecto.victimsKey]) {
     victimasEsperadas = v[efecto.victimsKey].expected?.estimated || 0;
   } else if (efecto.id === "crater") {
-    // dentro del cráter: 100% de la población expuesta
     victimasEsperadas = poblacion;
   } else {
     victimasEsperadas = 0;
@@ -237,140 +225,211 @@ const CategoriaVulnerabilidad = ({
   const affectedData = recalculatedEffects?.affectedData || {};
   const victims = recalculatedEffects?.victims || {};
 
-  // Filtrar chips según escenario (airburst excluye sismo, eyecta, cráter)
   const chipsDisponibles = EFECTOS.filter(
     (e) => !isAirburst || !e.requiresSuperficial
   );
 
-  // Víctimas esperadas combinadas (el número grande del header)
   const expectedCombined = combinedVictims.expected?.estimated || 0;
   const bestCombined = combinedVictims.best?.estimated || 0;
   const worstCombined = combinedVictims.worst?.estimated || 0;
 
   // ------------------------------------------------------------
-  // VISTA: HEADER (siempre visible)
+  // VISTA: HEADER
   // ------------------------------------------------------------
-  const renderHeader = () => (
-    <div
-      style={{
-        background: `${accent}14`,
-        border: `1px solid ${accent}33`,
-        borderRadius: 12,
-        padding: "1rem",
-        marginBottom: "1rem",
-      }}
-    >
-      <div
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          marginBottom: "0.35rem",
-        }}
-      >
-        <span
-          style={{
-            fontSize: "0.75rem",
-            color: PALETTE.textSec,
-            textTransform: "uppercase",
-            letterSpacing: "0.08em",
-          }}
-        >
-          Víctimas esperadas
-        </span>
-        <Tooltip
-          tooltipId="vulnerabilidad.combinada"
-          abierto={tooltipAbierto === "vulnerabilidad.combinada"}
-          onToggle={() => onToggleTooltip("vulnerabilidad.combinada")}
-          accent={accent}
-        />
-      </div>
+  const renderHeader = () => {
+    // Suma de viviendas en los radios afectados (blast + crater)
+    // Como blast suele contener al crater, basta con tomar el housing del blast
+    // y sumar el del cráter si es mayor (defensive)
+    const viviendasBlast = affectedData?.housingInBlast || 0;
+    const viviendasCrater = affectedData?.housingInCrater || 0;
+    const viviendasTotal = Math.max(viviendasBlast, viviendasCrater);
 
-      <p
-        style={{
-          fontSize: "2.1rem",
-          fontWeight: 800,
-          color: accent,
-          lineHeight: 1.1,
-          margin: 0,
-        }}
-      >
-        {formatNumero(expectedCombined).display}
-        <span
-          style={{
-            fontSize: "0.8rem",
-            fontWeight: 400,
-            color: PALETTE.textSec,
-            marginLeft: 6,
-          }}
-        >
-          personas
-        </span>
-      </p>
-
-      {/* Analogía bajo el número Esperado */}
-      {analogiaVictimas(expectedCombined) && (
-        <p
-          style={{
-            margin: "0.4rem 0 0",
-            fontSize: "0.85rem",
-            color: PALETTE.textMain,
-            fontStyle: "italic",
-            opacity: 0.85,
-            lineHeight: 1.4,
-          }}
-        >
-          ≈ {analogiaVictimas(expectedCombined)}
-        </p>
-      )}
-
-      {/* Toggle para ver Optimista / Pesimista */}
-      <button
-        type="button"
-        onClick={() => setVerEscenarios((v) => !v)}
-        style={{
-          marginTop: "0.75rem",
-          padding: 0,
-          background: "transparent",
-          border: "none",
-          color: PALETTE.textSec,
-          fontSize: "0.75rem",
-          cursor: "pointer",
-          display: "inline-flex",
-          alignItems: "center",
-          gap: "0.3rem",
-        }}
-      >
-        {verEscenarios ? "▲ Ocultar" : "▼ Ver rango (mejor / peor caso)"}
-        <Tooltip
-          tooltipId="vulnerabilidad.escenarios"
-          abierto={tooltipAbierto === "vulnerabilidad.escenarios"}
-          onToggle={() => onToggleTooltip("vulnerabilidad.escenarios")}
-          accent={accent}
-        />
-      </button>
-
-      {verEscenarios && (
+    return (
+      <>
+        {/* Bloque víctimas esperadas */}
         <div
           style={{
-            display: "flex",
-            gap: "0.5rem",
-            marginTop: "0.6rem",
+            background: `${accent}14`,
+            border: `1px solid ${accent}33`,
+            borderRadius: 12,
+            padding: "1rem",
+            marginBottom: "0.75rem",
           }}
         >
-          <ScenarioCard
-            label="Optimista"
-            value={formatNumero(bestCombined).display}
-            accent={PALETTE.textMain}
-          />
-          <ScenarioCard
-            label="Pesimista"
-            value={formatNumero(worstCombined).display}
-            accent={PALETTE.textMain}
-          />
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              marginBottom: "0.35rem",
+            }}
+          >
+            <span
+              style={{
+                fontSize: "0.75rem",
+                color: PALETTE.textSec,
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+              }}
+            >
+              Víctimas esperadas
+            </span>
+            <Tooltip
+              tooltipId="vulnerabilidad.combinada"
+              abierto={tooltipAbierto === "vulnerabilidad.combinada"}
+              onToggle={() => onToggleTooltip("vulnerabilidad.combinada")}
+              accent={accent}
+            />
+          </div>
+
+          <p
+            style={{
+              fontSize: "2.1rem",
+              fontWeight: 800,
+              color: accent,
+              lineHeight: 1.1,
+              margin: 0,
+            }}
+          >
+            {formatNumero(expectedCombined).display}
+            <span
+              style={{
+                fontSize: "0.8rem",
+                fontWeight: 400,
+                color: PALETTE.textSec,
+                marginLeft: 6,
+              }}
+            >
+              personas
+            </span>
+          </p>
+
+          {analogiaVictimas(expectedCombined) && (
+            <p
+              style={{
+                margin: "0.4rem 0 0",
+                fontSize: "0.85rem",
+                color: PALETTE.textMain,
+                fontStyle: "italic",
+                opacity: 0.85,
+                lineHeight: 1.4,
+              }}
+            >
+              ≈ {analogiaVictimas(expectedCombined)}
+            </p>
+          )}
+
+          <div
+            style={{
+              marginTop: "0.75rem",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.3rem",
+            }}
+          >
+            <button
+              type="button"
+              onClick={() => setVerEscenarios((v) => !v)}
+              style={{
+                padding: 0,
+                background: "transparent",
+                border: "none",
+                color: PALETTE.textSec,
+                fontSize: "0.75rem",
+                cursor: "pointer",
+              }}
+            >
+              {verEscenarios ? "▲ Ocultar" : "▼ Ver rango (mejor / peor caso)"}
+            </button>
+            <Tooltip
+              tooltipId="vulnerabilidad.escenarios"
+              abierto={tooltipAbierto === "vulnerabilidad.escenarios"}
+              onToggle={() => onToggleTooltip("vulnerabilidad.escenarios")}
+              accent={accent}
+            />
+          </div>
+
+          {verEscenarios && (
+            <div
+              style={{
+                display: "flex",
+                gap: "0.5rem",
+                marginTop: "0.6rem",
+              }}
+            >
+              <ScenarioCard
+                label="Optimista"
+                value={formatNumero(bestCombined).display}
+                accent={PALETTE.textMain}
+              />
+              <ScenarioCard
+                label="Pesimista"
+                value={formatNumero(worstCombined).display}
+                accent={PALETTE.textMain}
+              />
+            </div>
+          )}
         </div>
-      )}
-    </div>
-  );
+
+        {/* Bloque viviendas afectadas */}
+        <div
+          style={{
+            background: `${accent}14`,
+            border: `1px solid ${accent}33`,
+            borderRadius: 12,
+            padding: "1rem",
+            marginBottom: "1rem",
+          }}
+        >
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              marginBottom: "0.35rem",
+            }}
+          >
+            <span
+              style={{
+                fontSize: "0.75rem",
+                color: PALETTE.textSec,
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+              }}
+            >
+              Viviendas afectadas
+            </span>
+            <Tooltip
+              tooltipId="vulnerabilidad.viviendas"
+              abierto={tooltipAbierto === "vulnerabilidad.viviendas"}
+              onToggle={() => onToggleTooltip("vulnerabilidad.viviendas")}
+              accent={accent}
+            />
+          </div>
+
+          <p
+            style={{
+              fontSize: "1.7rem",
+              fontWeight: 800,
+              color: accent,
+              lineHeight: 1.1,
+              margin: 0,
+            }}
+          >
+            {formatNumero(viviendasTotal).display}
+            <span
+              style={{
+                fontSize: "0.8rem",
+                fontWeight: 400,
+                color: PALETTE.textSec,
+                marginLeft: 6,
+              }}
+            >
+              viviendas
+            </span>
+          </p>
+        </div>
+      </>
+    );
+  };
 
   // ------------------------------------------------------------
   // VISTA: CHIPS DE FILTRO
@@ -453,8 +512,6 @@ const CategoriaVulnerabilidad = ({
       : null;
     const vEfecto = victims[efecto.victimsKey];
 
-    // Caso especial: si fireball es null (térmica no aplica) o ejecta es null
-    // (observador dentro del cráter)
     if (!vEfecto) {
       return (
         <div>
@@ -484,7 +541,6 @@ const CategoriaVulnerabilidad = ({
           padding: "0.85rem",
         }}
       >
-        {/* Radio y población expuesta */}
         <div
           style={{
             display: "grid",
@@ -509,7 +565,6 @@ const CategoriaVulnerabilidad = ({
           )}
         </div>
 
-        {/* Víctimas esperadas con analogía */}
         <div
           style={{
             paddingTop: "0.75rem",
@@ -544,7 +599,6 @@ const CategoriaVulnerabilidad = ({
           )}
         </div>
 
-        {/* Rango mejor / peor caso */}
         <div
           style={{
             display: "flex",
@@ -568,7 +622,7 @@ const CategoriaVulnerabilidad = ({
   };
 
   // ------------------------------------------------------------
-  // VISTA: FILTRO "CRÁTER" — sin escenarios, mensaje fijo
+  // VISTA: FILTRO "CRÁTER"
   // ------------------------------------------------------------
   const renderDetalleCrater = () => {
     const efecto = EFECTOS.find((e) => e.id === "crater");

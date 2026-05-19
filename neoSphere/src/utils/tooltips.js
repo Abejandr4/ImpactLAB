@@ -191,6 +191,11 @@ export const TOOLTIPS = {
     descripcion:
       "Hasta dónde llega el efecto con suficiente fuerza para causar daño serio.",
   },
+  "global.energia": {
+    titulo: "Megatones (MT)",
+    descripcion:
+      "Unidad para medir explosiones gigantes. 1 megatón equivale a un millón de toneladas de dinamita explotando al mismo tiempo.",
+  },
 };
 
 /**

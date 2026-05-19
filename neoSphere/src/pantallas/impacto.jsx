@@ -1,14 +1,13 @@
 // src/pantallas/Impacto.jsx
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { MapContainer, TileLayer, Circle, Marker, GeoJSON } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
 import CategoriaCrater from "../components/Impacto/CategoriaCrater";
 import CategoriaTermica from "../components/Impacto/CategoriaTermica";
 import CategoriaOnda from "../components/Impacto/CategoriaOnda";
 import CategoriaSismo from "../components/Impacto/CategoriaSismo";
 import CategoriaEyecta from "../components/Impacto/CategoriaEyecta";
 import CategoriaVulnerabilidad from "../components/Impacto/CategoriaVulnerabilidad";
+import MapaImpacto from "../components/Impacto/MapaImpacto";
 
 // --- CONFIGURACIÓN DE ICONOS DE LEAFLET ---
 import L from "leaflet";
@@ -28,7 +27,6 @@ import { PALETTE, CATEGORIES } from "../utils/categorias";
 
 // --- CONSTANTES GLOBALES ---
 const MAP_ZOOM = 9;
-const MAX_DISTANCE_KM = 500;
 
 const Impacto = () => {
   const location = useLocation();
@@ -94,32 +92,69 @@ const Impacto = () => {
     };
   }, [tooltipAbierto]);
 
+  // --- AUTO-SCROLL: al abrir una categoría, llevarla justo debajo del slider sticky ---
+  useEffect(() => {
+    if (!openCategory) return;
+
+    const timer = setTimeout(() => {
+      const elemento = document.querySelector(
+        `[data-categoria="${openCategory}"]`
+      );
+      const aside = document.querySelector("[data-sidebar-scroll]");
+      const sticky = document.querySelector("[data-slider-sticky]");
+
+      if (!elemento || !aside) return;
+
+      elemento.scrollIntoView({ block: "start", behavior: "auto" });
+
+      const stickyHeight = sticky?.getBoundingClientRect().height || 0;
+      if (stickyHeight > 0) {
+        aside.scrollBy({
+          top: -stickyHeight - 12,
+          behavior: "auto",
+        });
+      }
+    }, 50);
+
+    return () => clearTimeout(timer);
+  }, [openCategory]);
+
   // --- LÓGICA DE CÁLCULO ---
 
+  // 1) Cálculo base (con distancia=0) — sirve para conocer los radios máximos.
+  //    No depende de currentDistanceKm, así que no genera ciclo.
+  const baseEffects = useMemo(() => {
+    if (!inputs) return null;
+    return simulateAsteroidImpact({
+      ...inputs,
+      geoJsonData,
+      distance_from_impact_km: 0,
+    });
+  }, [inputs, geoJsonData]);
+
+  // 2) Máximo del slider = radio máximo de la categoría abierta (del cálculo base)
+  const sliderMaxKm = useMemo(() => {
+    if (openCategory === "vulnerabilidad") return 0;
+    const cat = CATEGORIES.find((c) => c.id === openCategory);
+    if (!cat?.radioKey) return 0;
+    return baseEffects?.affectedData?.[cat.radioKey] || 0;
+  }, [openCategory, baseEffects]);
+
+  // 3) Distancia actual del observador
   const currentDistanceKm = useMemo(
-    () => (distanceSliderValue / 100) * MAX_DISTANCE_KM,
-    [distanceSliderValue]
+    () => (distanceSliderValue / 100) * sliderMaxKm,
+    [distanceSliderValue, sliderMaxKm]
   );
 
+  // 4) Cálculo real con la distancia actual — este es el que se muestra
   const recalculatedEffects = useMemo(() => {
     if (!inputs) return null;
-    const currentInputs = {
+    return simulateAsteroidImpact({
       ...inputs,
       geoJsonData,
       distance_from_impact_km: currentDistanceKm,
-    };
-    return simulateAsteroidImpact(currentInputs);
+    });
   }, [inputs, currentDistanceKm, geoJsonData]);
-
-  const craterRadiusMeters = useMemo(() => {
-    if (!recalculatedEffects) return 0;
-    const { scenario, crater } = recalculatedEffects;
-    return scenario !== "Explosión Aérea" &&
-      scenario !== "Airburst" &&
-      crater?.finalDiameter_m
-      ? crater.finalDiameter_m / 2
-      : 0;
-  }, [recalculatedEffects]);
 
   const sueloAfectado = useMemo(() => {
     if (!inputs || !inputs.lat)
@@ -171,6 +206,8 @@ const Impacto = () => {
   // Desestructuración de resultados calculados
   const {
     impactEnergyMegatons = 0,
+    impactVelocity_kms = 0,
+    burstVelocity_kms = 0,
     crater = { finalDiameter_m: 0, transientDiameter_m: 0, type: "N/A" },
     airBlast = {
       overpressure_Pa: 0,
@@ -195,34 +232,6 @@ const Impacto = () => {
 
   const isAirburst = scenario === "Explosión Aérea" || scenario === "Airburst";
 
-  // -------------------------------------------------------------------
-  //  Radio dibujado en el mapa según la categoría abierta
-  //  (un círculo distinto por categoría)
-  // -------------------------------------------------------------------
-  const mapCircleRadius = useMemo(() => {
-    switch (openCategory) {
-      case "crater":
-        return craterRadiusMeters;
-      case "termica":
-        return (thermalRadiation?.fireballRadius_km || 0) * 1000;
-      case "onda":
-      case "sismo":
-      case "ejecta":
-        // estos efectos se evalúan a la distancia del observador
-        return currentDistanceKm * 1000;
-      case "vulnerabilidad":
-        // "radio más grande": cubre la zona poblada afectada (≥ cráter)
-        return Math.max(craterRadiusMeters, currentDistanceKm * 1000);
-      default:
-        return craterRadiusMeters;
-    }
-  }, [
-    openCategory,
-    craterRadiusMeters,
-    thermalRadiation,
-    currentDistanceKm,
-  ]);
-
   // ===================================================================
   //  Estilos reutilizables (estética del sitio)
   // ===================================================================
@@ -237,14 +246,9 @@ const Impacto = () => {
     fontWeight: 600,
     color: "#fff",
   };
-  const cardStyle = {
-    background: PALETTE.card,
-    border: `1px solid ${PALETTE.cardBorder}`,
-    borderRadius: 14,
-  };
 
   // ===================================================================
-  //  Contenido por categoría  
+  //  Contenido por categoría
   // ===================================================================
   const renderCategoryBody = (id) => {
     switch (id) {
@@ -340,7 +344,8 @@ const Impacto = () => {
             fontSize: "clamp(1.8rem, 3.2vw, 2.8rem)",
             fontWeight: 800,
             color: "#ffffff",
-            textShadow: "0 0 20px rgba(255,255,255,0.2), 0 0 40px rgba(255,255,255,0.08)",
+            textShadow:
+              "0 0 20px rgba(255,255,255,0.2), 0 0 40px rgba(255,255,255,0.08)",
             letterSpacing: "-0.02em",
             lineHeight: 1.1,
           }}
@@ -364,7 +369,9 @@ const Impacto = () => {
               border: `1px solid ${PALETTE.cardBorder}`,
             }}
           >
-            <><span style={{ fontSize: "1.1rem" }}>←</span> Otro impacto</>
+            <>
+              <span style={{ fontSize: "1.1rem" }}>←</span> Otro impacto
+            </>
           </button>
           <button
             onClick={() =>
@@ -384,100 +391,39 @@ const Impacto = () => {
               letterSpacing: "0.12em",
               textTransform: "uppercase",
               color: "#fff",
-              background:
-                "linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)",
+              background: "linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)",
             }}
           >
-            <>Defensa Planetaria <span style={{ fontSize: "1.1rem" }}>→</span></>
+            <>
+              Defensa Planetaria <span style={{ fontSize: "1.1rem" }}>→</span>
+            </>
           </button>
         </div>
       </header>
-
 
       {/* ---------------- BODY: MAPA (2/3) + SIDEBAR (1/3) ---------------- */}
       <div className="flex-1 flex overflow-hidden gap-4 p-4">
         {/* ===== MAPA ===== */}
         <div className="relative flex-1 lg:basis-2/3 h-full">
-          <div
-            className="relative h-full w-full overflow-hidden"
-            style={{
-              borderRadius: 16,
-              border: `1px solid ${PALETTE.cardBorder}`,
-            }}
-          >
-            {/* Badge de coordenadas (estilo referencia) */}
-            <div
-              className="absolute top-4 left-4 z-[500] px-3 py-1.5 rounded-lg backdrop-blur-md"
-              style={{
-                background: "rgba(0,0,0,0.55)",
-                border: `1px solid ${PALETTE.cardBorder}`,
-              }}
-            >
-              <span
-                style={{
-                  color: PALETTE.textSec,
-                  fontSize: "0.78rem",
-                  fontWeight: 500,
-                  letterSpacing: "0.02em",
-                }}
-              >
-                {impactPos[0].toFixed(4)}°N · {Math.abs(impactPos[1]).toFixed(4)}°O
-              </span>
-            </div>
-
-            {/* Label flotante: distancia del observador */}
-            <div
-              className="absolute bottom-4 left-4 z-[500] px-4 py-3 rounded-2xl backdrop-blur-md"
-              style={{
-                background: "rgba(0,0,0,0.8)",
-                border: `1px solid ${PALETTE.cardBorder}`,
-                maxWidth: 340,
-              }}
-            >
-              <span style={{ ...labelStyle, fontSize: "0.75rem" }}>Energía total liberada</span>
-              <p style={{ fontSize: "1.4rem", fontWeight: 700, color: "#fff", lineHeight: 1.2, marginTop: "0.25rem" }}>
-                {impactEnergyMegatons.toLocaleString(undefined, { maximumFractionDigits: 2 })}{" "}
-                <span style={{ fontSize: "0.85rem", fontWeight: 400, color: PALETTE.textSec }}>MT</span>
-              </p>
-            </div>
-
-            <MapContainer
-              center={impactPos}
-              zoom={MAP_ZOOM}
-              scrollWheelZoom={false}
-              className="h-full w-full"
-              style={{ background: "#000" }}
-            >
-              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-
-              {/* Capa GeoJSON del Mapa de Población
-              {geoJsonData && (
-                <GeoJSON
-                  data={geoJsonData}
-                  style={{ color: "#4b5563", weight: 1, fillOpacity: 0.1, interactive: false }}
-                />
-              )} */}
-
-              {mapCircleRadius > 0 ? (
-                <Circle
-                  center={impactPos}
-                  radius={mapCircleRadius}
-                  pathOptions={{
-                    color: activeCat.hex,
-                    fillColor: activeCat.hex,
-                    fillOpacity: 0.35,
-                    weight: 3,
-                  }}
-                />
-              ) : (
-                <Marker position={impactPos} />
-              )}
-            </MapContainer>
-          </div>
+          <MapaImpacto
+            impactPos={impactPos}
+            openCategory={openCategory}
+            filtroEfecto={filtroEfecto}
+            affectedData={recalculatedEffects?.affectedData}
+            currentDistanceKm={currentDistanceKm}
+            isAirburst={isAirburst}
+            impactEnergyMegatons={impactEnergyMegatons}
+            impactVelocity_kms={impactVelocity_kms}
+            burstVelocity_kms={burstVelocity_kms}
+            burstAltitude_km={burstAltitude_km}
+            tooltipAbierto={tooltipAbierto}
+            onToggleTooltip={handleToggleTooltip}
+          />
         </div>
 
         {/* ===== SIDEBAR: RESULTADOS (acordeón con scroll) ===== */}
         <aside
+          data-sidebar-scroll
           className="h-full overflow-y-auto shrink-0 w-full max-w-md lg:basis-1/3"
           style={{
             background: PALETTE.card,
@@ -486,87 +432,120 @@ const Impacto = () => {
           }}
         >
           <div className="p-6">
-            {/* 1. SLIDER STICKY — primero de todo */}
-            <div
-              style={{
-                position: "sticky",
-                top: 0,
-                zIndex: 10,
-                marginLeft: "-1.5rem",
-                marginRight: "-1.5rem",
-                marginTop: "-1.5rem",
-                padding: "1.25rem 1.5rem",
-                background: PALETTE.bg,
-                borderBottom: `1px solid ${PALETTE.cardBorder}`,
-                marginBottom: "1.5rem",
-              }}
-            >
-              <div className="flex justify-between items-baseline">
-                <span style={{ ...labelStyle, fontSize: "0.8rem" }}>
-                  Distancia al centro
-                </span>
-                <span style={{ ...bigValueStyle, color: activeCat.hex }}>
-                  {currentDistanceKm.toFixed(1)} km
-                </span>
-              </div>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={distanceSliderValue}
-                onChange={(e) => setDistanceSliderValue(Number(e.target.value))}
-                className="w-full mt-3 appearance-none cursor-pointer"
-                style={{
-                  height: 6,
-                  borderRadius: 9999,
-                  background: `linear-gradient(to right, ${activeCat.hex} ${distanceSliderValue}%, rgba(255,255,255,0.1) ${distanceSliderValue}%)`,
-                  accentColor: activeCat.hex,
-                }}
-              />
+            {/* SLIDER STICKY — versión compacta con "Se observa:" incluido */}
+            {openCategory !== "vulnerabilidad" && (
               <div
-                className="flex justify-between mt-1"
-                style={{ color: PALETTE.textFaint, fontSize: "0.7rem" }}
+                data-slider-sticky
+                style={{
+                  position: "sticky",
+                  top: 0,
+                  zIndex: 10,
+                  marginLeft: "-1.5rem",
+                  marginRight: "-1.5rem",
+                  marginTop: "-1.5rem",
+                  padding: "0.9rem 1.5rem 1rem",
+                  background: PALETTE.bg,
+                  borderBottom: `1px solid ${PALETTE.cardBorder}`,
+                  marginBottom: "1rem",
+                }}
               >
-                <span>0 km</span>
-                <span>{MAX_DISTANCE_KM} km</span>
+                {/* Título principal */}
+                <p
+                  style={{
+                    color: PALETTE.textSec,
+                    fontSize: "0.78rem",
+                    fontWeight: 600,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.12em",
+                    margin: 0,
+                    marginBottom: "0.7rem",
+                  }}
+                >
+                  Consecuencias del impacto
+                </p>
+
+                {/* "A esta distancia:" + valor grande + máximo al lado */}
+                <p
+                  style={{
+                    margin: 0,
+                    color: PALETTE.textMain,
+                    fontSize: "0.82rem",
+                    fontWeight: 500,
+                    marginBottom: "0.15rem",
+                  }}
+                >
+                  A esta distancia:
+                </p>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "baseline",
+                    gap: "0.4rem",
+                    marginBottom: "0.5rem",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "1.55rem",
+                      fontWeight: 800,
+                      color: activeCat.hex,
+                      lineHeight: 1,
+                    }}
+                  >
+                    {currentDistanceKm.toFixed(1)} km
+                  </span>
+                  <span
+                    style={{
+                      fontSize: "0.72rem",
+                      color: PALETTE.textFaint,
+                      fontWeight: 500,
+                    }}
+                  >
+                    de {sliderMaxKm.toFixed(1)} km
+                  </span>
+                </div>
+
+                {/* Slider */}
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={distanceSliderValue}
+                  onChange={(e) =>
+                    setDistanceSliderValue(Number(e.target.value))
+                  }
+                  className="w-full appearance-none cursor-pointer"
+                  style={{
+                    height: 5,
+                    borderRadius: 9999,
+                    background: `linear-gradient(to right, ${activeCat.hex} ${distanceSliderValue}%, rgba(255,255,255,0.1) ${distanceSliderValue}%)`,
+                    accentColor: activeCat.hex,
+                  }}
+                />
+
+                {/* "Se observa:" como cierre del bloque, antes del acordeón */}
+                <p
+                  style={{
+                    color: PALETTE.textMain,
+                    fontSize: "0.82rem",
+                    fontWeight: 500,
+                    margin: 0,
+                    marginTop: "0.85rem",
+                  }}
+                >
+                  Se observa:
+                </p>
               </div>
-            </div>
+            )}
 
-            {/* 2. Título de sección */}
-            <p
-              style={{
-                color: PALETTE.textSec,
-                fontSize: "0.95rem",
-                fontWeight: 600,
-                textTransform: "uppercase",
-                letterSpacing: "0.14em",
-                marginBottom: "1.5rem",
-              }}
-            >
-              Consecuencias del impacto
-            </p>
-
-            {/* 3. Etiqueta del acordeón (puedes borrarla si te parece redundante con el título de arriba) */}
-            <p
-              style={{
-                color: PALETTE.textFaint,
-                fontSize: "0.75rem",
-                fontWeight: 600,
-                textTransform: "uppercase",
-                letterSpacing: "0.12em",
-                marginBottom: "0.75rem",
-              }}
-            >
-              Categoría
-            </p>
-
-            {/* 4. Acordeón */}
+            {/* Acordeón */}
             <div className="space-y-3">
               {CATEGORIES.map((cat) => {
                 const isOpen = openCategory === cat.id;
                 return (
                   <div
                     key={cat.id}
+                    data-categoria={cat.id}
                     className="transition-all duration-300"
                     style={{
                       background: PALETTE.cardDeep,
@@ -580,9 +559,7 @@ const Impacto = () => {
                   >
                     {/* --- Cabecera del acordeón --- */}
                     <button
-                      onClick={() =>
-                        setOpenCategory(isOpen ? null : cat.id)
-                      }
+                      onClick={() => setOpenCategory(isOpen ? null : cat.id)}
                       className="w-full flex items-center justify-between px-5 py-4 transition-colors"
                       style={{ background: "transparent" }}
                     >
@@ -645,7 +622,6 @@ const Impacto = () => {
                 );
               })}
             </div>
-
           </div>
         </aside>
       </div>
