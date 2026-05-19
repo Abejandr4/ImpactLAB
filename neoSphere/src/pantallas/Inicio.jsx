@@ -10,18 +10,28 @@ function Inicio() {
 
   return (
     <div className="relative w-full h-screen bg-black flex justify-center items-center overflow-hidden">
+      {/* Animación inyectada de flotación cósmica (Ajustada más arriba) */}
+      <style>{`
+        @keyframes cosmicFloat {
+          0%, 100% { transform: translateY(12%) translateX(0px); }
+          50% { transform: translateY(9%) translateX(8px); }
+        }
+        .animate-cosmic-float {
+          animation: cosmicFloat 10s ease-in-out infinite;
+        }
+      `}</style>
+
       {/* Background Layer: Particles */}
       <div className="h-full w-full absolute inset-0 z-0">
-        <MeteorShower/>
+        <MeteorShower />
       </div>
 
       {/* Middle Layer: The Peeking Asteroid */}
-      <div className="absolute inset-0 flex justify-center items-center pointer-events-none z-10">
+      <div className="absolute inset-0 flex justify-center items-center pointer-events-none z-10 animate-cosmic-float">
         <img 
           src={Asteroid} 
           alt="Asteroid"
-          className="scale-150 max-w-2xl transform translate-y-1/4 opacity-80" 
-          /* translate-y-1/4 pushes it down so it peeks from behind the text */
+          className="scale-150 max-w-2xl opacity-80 animate-[spin_180s_linear_infinite]" 
         />
       </div>
 
@@ -44,7 +54,7 @@ function Inicio() {
            </h1>
         </div>
 
-        {/* Botones - Elevated higher via z-index and mt */}
+        {/* Botones */}
         <div className="flex flex-row gap-10 mt-10">
           <HoverBorderGradient
             containerClassName="hover:bg-[#bfdbfe] rounded-lg transition px-10 py-4 text-xl min-w-[200px]"
